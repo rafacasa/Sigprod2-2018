@@ -542,7 +542,7 @@ public class Rede {
         Ponto.addAttribute(this.getMapa().getNode(p.getNome()), "ui.class", "equipamentoSelecionado");
     }
     
-    public void ajusteEloElo(Ponto p, Ponto o) {
+    public void ajusteEloElo(Ponto p, Ponto o) throws AjusteImpossivelException {
         Elo ajuste = Criterios_Elo.criterio_elo_elo(elosDisponiveis, p, this, o);
         p.setEquipamentoInstalado(ajuste);
         Ponto.addAttribute(this.getMapa().getNode(p.getNome()), "ui.class", "equipamentoSelecionado");
