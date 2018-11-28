@@ -1,9 +1,9 @@
-package SIGPROD2.dao;
+package sigprod2.dao;
 
-import SIGPROD2.bd.Conexao;
-import SIGPROD2.BD.Tables.Elo.EloBD;
-import SIGPROD2.modelo.Elo;
-import SIGPROD2.modelo.PontoCurva;
+import sigprod2.bd.Conexao;
+import sigprod2.BD.Tables.Elo.EloBD;
+import sigprod2.modelo.Elo;
+import sigprod2.modelo.PontoCurva;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

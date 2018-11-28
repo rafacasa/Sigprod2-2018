@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SIGPROD2.gui;
+package sigprod2.gui;
 
-import SIGPROD2.modelo.Ponto;
+import sigprod2.modelo.Ponto;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;

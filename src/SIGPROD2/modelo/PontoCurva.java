@@ -1,4 +1,4 @@
-package SIGPROD2.modelo;
+package sigprod2.modelo;
 
 /**
  * Esta classe representa um Ponto de Curva de um ELO

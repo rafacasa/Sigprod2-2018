@@ -1,13 +1,13 @@
-package SIGPROD2.modelo;
+package sigprod2.modelo;
 
-import SIGPROD2.Auxiliar.Arquivo;
-import SIGPROD2.auxiliar.AjusteImpossivelException;
-import SIGPROD2.auxiliar.NodeClickDefaultListener;
-import SIGPROD2.auxiliar.NodeClickMouseManager;
-import SIGPROD2.auxiliar.RedeNaoRadialException;
-import SIGPROD2.criterios.Criterios_Elo;
-import SIGPROD2.dao.EloKDao;
-import SIGPROD2.gui.MainFrame;
+import sigprod2.Auxiliar.Arquivo;
+import sigprod2.auxiliar.AjusteImpossivelException;
+import sigprod2.auxiliar.NodeClickDefaultListener;
+import sigprod2.auxiliar.NodeClickMouseManager;
+import sigprod2.auxiliar.RedeNaoRadialException;
+import sigprod2.criterios.Criterios_Elo;
+import sigprod2.dao.EloKDao;
+import sigprod2.gui.MainFrame;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.io.File;

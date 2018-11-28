@@ -1,4 +1,4 @@
-package SIGPROD2.modelo;
+package sigprod2.modelo;
 
 import java.util.ArrayList;
 

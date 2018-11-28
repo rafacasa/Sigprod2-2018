@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SIGPROD2.gui;
+package sigprod2.gui;
 
-import SIGPROD2.auxiliar.Erro;
-import SIGPROD2.auxiliar.NodeClickDefaultListener;
-import SIGPROD2.dao.EloKDao;
-import SIGPROD2.modelo.Elo;
-import SIGPROD2.modelo.Ponto;
+import sigprod2.auxiliar.Erro;
+import sigprod2.auxiliar.NodeClickDefaultListener;
+import sigprod2.dao.EloKDao;
+import sigprod2.modelo.Elo;
+import sigprod2.modelo.Ponto;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;

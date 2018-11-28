@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SIGPROD2.criterios;
+package sigprod2.criterios;
 
-import SIGPROD2.auxiliar.AjusteImpossivelException;
-import SIGPROD2.modelo.Corrente;
-import SIGPROD2.modelo.CurvasElo;
-import SIGPROD2.modelo.Elo;
-import SIGPROD2.modelo.Ponto;
-import SIGPROD2.modelo.Rede;
+import sigprod2.auxiliar.AjusteImpossivelException;
+import sigprod2.modelo.Corrente;
+import sigprod2.modelo.CurvasElo;
+import sigprod2.modelo.Elo;
+import sigprod2.modelo.Ponto;
+import sigprod2.modelo.Rede;
 import java.util.List;
 
 /**

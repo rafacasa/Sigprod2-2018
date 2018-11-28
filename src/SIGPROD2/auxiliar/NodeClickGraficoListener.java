@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SIGPROD2.auxiliar;
+package sigprod2.auxiliar;
 
-import SIGPROD2.gui.MainFrame;
-import SIGPROD2.modelo.Ponto;
-import SIGPROD2.modelo.Rede;
+import sigprod2.gui.MainFrame;
+import sigprod2.modelo.Ponto;
+import sigprod2.modelo.Rede;
 import java.util.Objects;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.view.ViewerListener;

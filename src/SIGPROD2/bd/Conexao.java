@@ -1,6 +1,6 @@
-package SIGPROD2.bd;
+package sigprod2.bd;
 
-import SIGPROD2.auxiliar.Erro;
+import sigprod2.auxiliar.Erro;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;

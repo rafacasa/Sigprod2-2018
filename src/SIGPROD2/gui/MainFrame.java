@@ -1,14 +1,14 @@
-package SIGPROD2.gui;
+package sigprod2.gui;
 
 
-import SIGPROD2.Auxiliar.Arquivo;
-import SIGPROD2.auxiliar.AjusteImpossivelException;
-import SIGPROD2.auxiliar.Erro;
-import SIGPROD2.auxiliar.LoopPumpThread;
-import SIGPROD2.auxiliar.NodeClickGraficoListener;
-import SIGPROD2.modelo.Corrente;
-import SIGPROD2.modelo.Rede;
-import SIGPROD2.modelo.Trecho;
+import sigprod2.Auxiliar.Arquivo;
+import sigprod2.auxiliar.AjusteImpossivelException;
+import sigprod2.auxiliar.Erro;
+import sigprod2.auxiliar.LoopPumpThread;
+import sigprod2.auxiliar.NodeClickGraficoListener;
+import sigprod2.modelo.Corrente;
+import sigprod2.modelo.Rede;
+import sigprod2.modelo.Trecho;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.awt.BorderLayout;

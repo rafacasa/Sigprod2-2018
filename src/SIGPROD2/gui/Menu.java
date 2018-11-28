@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SIGPROD2.gui;
+package sigprod2.gui;
 
-import SIGPROD2.Auxiliar.Arquivo;
+import sigprod2.Auxiliar.Arquivo;
 import java.awt.event.ActionEvent;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;

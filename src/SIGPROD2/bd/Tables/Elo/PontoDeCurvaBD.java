@@ -1,4 +1,4 @@
-package SIGPROD2.BD.Tables.Elo;
+package sigprod2.BD.Tables.Elo;
 
 /**
  * Classe responsável por manter os nomes das colunas e da tabela de Pontos de

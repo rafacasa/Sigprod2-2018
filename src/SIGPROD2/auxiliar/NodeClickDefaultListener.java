@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SIGPROD2.auxiliar;
+package sigprod2.auxiliar;
 
-import SIGPROD2.gui.ExibeElo;
-import SIGPROD2.gui.Informacoes;
-import SIGPROD2.gui.MainFrame;
-import SIGPROD2.gui.SelecaoElo;
-import SIGPROD2.modelo.Ponto;
-import SIGPROD2.modelo.Rede;
+import sigprod2.gui.ExibeElo;
+import sigprod2.gui.Informacoes;
+import sigprod2.gui.MainFrame;
+import sigprod2.gui.SelecaoElo;
+import sigprod2.modelo.Ponto;
+import sigprod2.modelo.Rede;
 import java.awt.Dimension;
 import javax.swing.JPanel;
 import org.graphstream.graph.Node;

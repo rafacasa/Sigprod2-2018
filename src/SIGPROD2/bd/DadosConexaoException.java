@@ -1,4 +1,4 @@
-package SIGPROD2.bd;
+package sigprod2.bd;
 
 /**
  * Classe que representa uma excessão que acontece quando o usuário não
