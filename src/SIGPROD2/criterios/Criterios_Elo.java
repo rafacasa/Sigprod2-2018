@@ -5,7 +5,6 @@
  */
 package sigprod2.criterios;
 
-import java.util.Collections;
 import sigprod2.auxiliar.AjusteImpossivelException;
 import sigprod2.modelo.Corrente;
 import sigprod2.modelo.CurvasElo;
@@ -131,6 +130,116 @@ public class Criterios_Elo {
 
             if (Tprotetor < fatorMult * Tprotegido && IFTmin > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
                 dadosAjuste = "<html>Elo escolhido utilizando FTmax para a seletividade<br>IcargaMax = " + IcargaMax + "<br>Tprotetor = " + Tprotetor + "<br>Tprotegido = " + Tprotegido + "<br>IinrushMax = " + IinrushMax + "<br>I300 = " + I300 + "<br>iFTmin = " + IFTmin + "<br>Iinrush = " + Iinrush + "<br>Elos Abaixo = " + numeroDeElosAbaixo + "</html>";
+                elo.setDadosAjuste(dadosAjuste);
+                return elo;
+            }
+        }
+        throw new AjusteImpossivelException();
+    }
+    
+    public static Elo criterio_elo_elo_1(List<Elo> elos, Ponto pontoRede, Rede rede, Ponto pontoOrigem) throws AjusteImpossivelException {
+        elos.sort((o1, o2) -> {
+            return -Integer.compare(o1.getCorrenteNominal(), o2.getCorrenteNominal());
+        });
+        
+        double fatorMult = 0.75;
+        double I300;
+        double Ielo;
+        double Tprotetor;
+        double Tprotegido;
+        double Iinrush;
+        double IinrushMax;
+        double IFTmin;
+        double IcargaMax;
+        double IccMax;
+        String dadosAjuste;
+        Elo elo;
+        
+        for (int contador = 0; contador < elos.size(); contador++) {
+            elo = elos.get(contador);
+
+            Ielo = elo.getCorrenteNominal();
+            IcargaMax = pontoRede.getIcarga();
+            IccMax = pontoRede.getMaxICC(1);
+            Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
+            Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA);
+            IinrushMax = elo.correntedoTempo(0.1, CurvasElo.MINIMA);
+            I300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
+            IFTmin = rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN);
+            Iinrush = 0;
+
+            if (Tprotetor < fatorMult * Tprotegido && IFTmin > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
+                dadosAjuste = "<html>Elo escolhido utilizando método 1<br>IFTmin = " + IFTmin + "<br>I300 = " + I300 + "<br>IcargaMax = " + IcargaMax + "<br>IinrushMax = " + IinrushMax + "<br>Iinrush = " + Iinrush + "<br>Tprotetor = " + Tprotetor + "<br>Tprotegido = " + Tprotegido + "</html>";
+                elo.setDadosAjuste(dadosAjuste);
+                return elo;
+            }
+        }
+        throw new AjusteImpossivelException();
+    }
+    
+    public static Elo criterio_elo_elo_2(List<Elo> elos, Ponto pontoRede, Rede rede, Ponto pontoOrigem) throws AjusteImpossivelException {
+        double fatorMult = 0.75;
+        double I300;
+        double Ielo;
+        double Tprotetor;
+        double Tprotegido;
+        double Iinrush;
+        double IinrushMax;
+        double IcargaMax;
+        double IccMax;
+        double iFTminSel;
+        String dadosAjuste;
+        Elo elo;
+        
+        for (int contador = 0; contador < elos.size(); contador++) {
+            elo = elos.get(contador);
+            Ielo = elo.getCorrenteNominal();
+            IcargaMax = pontoRede.getIcarga();
+            IccMax = pontoRede.getMaxICC(1);
+            Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
+            Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
+            IinrushMax = elo.correntedoTempo(0.1, CurvasElo.MINIMA);
+            I300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
+            iFTminSel = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
+            Iinrush = 0;
+
+            if (Tprotetor < fatorMult * Tprotegido && iFTminSel > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
+                dadosAjuste = "<html>Elo escolhido utilizando a corrente FTmin de seletividade<br>IcargaMax = " + IcargaMax + "<br>Tprotetor = " + Tprotetor + "<br>Tprotegido = " + Tprotegido + "<br>IinrushMax = " + IinrushMax + "<br>I300 = " + I300 + "<br>iFTminSel = " + iFTminSel + "<br>Iinrush = " + Iinrush + "</html>";
+                elo.setDadosAjuste(dadosAjuste);
+                return elo;
+            }
+        }
+        throw new AjusteImpossivelException();
+    }
+    
+    public static Elo criterio_elo_elo_3(List<Elo> elos, Ponto pontoRede, Rede rede, Ponto pontoOrigem) throws AjusteImpossivelException {        
+        double fatorMult = 0.75;
+        double I300;
+        double Ielo;
+        double Tprotetor;
+        double Tprotegido;
+        double Iinrush;
+        double IinrushMax;
+        double IFTmin;
+        double IcargaMax;
+        double IccMax;
+        String dadosAjuste;
+        Elo elo;
+        
+        for (int contador = 0; contador < elos.size(); contador++) {
+            elo = elos.get(contador);
+            Ielo = elo.getCorrenteNominal();
+            IccMax = pontoRede.getMaxICC(2);
+            IcargaMax = pontoRede.getIcarga();
+            Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
+            Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
+            IinrushMax = elo.correntedoTempo(0.1, CurvasElo.MINIMA);
+            I300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
+            IFTmin = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
+            Iinrush = 0;
+
+            if (Tprotetor < fatorMult * Tprotegido && IFTmin > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
+                dadosAjuste = "<html>Elo escolhido utilizando FTmax para a seletividade<br>IcargaMax = " + IcargaMax + "<br>Tprotetor = " + Tprotetor + "<br>Tprotegido = " + Tprotegido + "<br>IinrushMax = " + IinrushMax + "<br>I300 = " + I300 + "<br>iFTmin = " + IFTmin + "<br>Iinrush = " + Iinrush + "</html>";
                 elo.setDadosAjuste(dadosAjuste);
                 return elo;
             }

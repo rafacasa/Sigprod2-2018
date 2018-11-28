@@ -54,6 +54,9 @@ public class Rede {
         this.trechosRede = new ArrayList();
         this.redeReduzida = new ArrayList<>();
         elosDisponiveis = EloKDao.buscarElos();
+        elosDisponiveis.sort((o1, o2) -> {
+            return -Integer.compare(o1.getCorrenteNominal(), o2.getCorrenteNominal());
+        });
 
         for (String linha : linhas) {
             String[] dados = linha.split("\t");
@@ -542,9 +545,39 @@ public class Rede {
         Ponto.addAttribute(this.getMapa().getNode(p.getNome()), "ui.class", "equipamentoSelecionado");
     }
     
-    public void ajusteEloElo(Ponto p, Ponto o) throws AjusteImpossivelException {
-        Elo ajuste = Criterios_Elo.criterio_elo_elo(elosDisponiveis, p, this, o);
-        p.setEquipamentoInstalado(ajuste);
-        Ponto.addAttribute(this.getMapa().getNode(p.getNome()), "ui.class", "equipamentoSelecionado");
+    public void ajusteEloElo(Ponto pontoRede, Ponto pontoOrigem) throws AjusteImpossivelException {
+//        int numeroDeElosAbaixo = this.contaElosAbaixo(pontoRede);
+//        int index = elosDisponiveis.indexOf(pontoOrigem.getEquipamentoInstalado());
+//        List<Elo> elos = elosDisponiveis.subList(index + 1, elosDisponiveis.size());
+//
+//        if (elos.size() < numeroDeElosAbaixo) {
+//            throw new AjusteImpossivelException();
+//        }
+//        
+//        try {
+//            Criterios_Elo.criterio_elo_elo_1(elos, pontoRede, this, pontoOrigem);
+//        } catch (AjusteImpossivelException ex) {
+//            try {
+//                Criterios_Elo.criterio_elo_elo_2(elos, pontoRede, this, pontoOrigem);
+//            } catch (AjusteImpossivelException ex1) {
+//                try {
+//                    Criterios_Elo.criterio_elo_elo_3(elos, pontoRede, this, pontoOrigem);
+//                } catch (AjusteImpossivelException ex2) {
+//                    reajusteEloElo();
+//                }
+//            }
+//        }
+        
+        
+        
+        
+        
+        Elo ajuste = Criterios_Elo.criterio_elo_elo(elosDisponiveis, pontoRede, this, pontoOrigem);
+        pontoRede.setEquipamentoInstalado(ajuste);
+        Ponto.addAttribute(this.getMapa().getNode(pontoRede.getNome()), "ui.class", "equipamentoSelecionado");
+    }
+    
+    public void reajusteEloElo() {
+        
     }
 }
