@@ -5,7 +5,10 @@
  */
 package sigprod2.modelo;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import org.graphstream.graph.Node;
 
@@ -204,6 +207,17 @@ public class Ponto {
         }
     }
     
-    
+    public double getMaxICC(int i) {
+        List<Double> corr = new ArrayList<>();
+        corr.add(icc3f);
+        corr.add(icc2f);
+        corr.add(iccft);
+        if(i == 1) {
+            return Collections.max(corr);
+        } else {
+            corr.remove(Collections.max(corr));
+            return Collections.max(corr);
+        }
+    }
        
 }
