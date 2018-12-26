@@ -1,6 +1,6 @@
-package SIGPROD2.criterios;
+package sigprod2.criterios;
 
-import SIGPROD2.metricas.Metricas_Elo_Elo;
+import sigprod2.metricas.Metricas_Elo_Elo;
 import java.util.ArrayList;
 import java.util.List;
 import sigprod2.auxiliar.AjusteImpossivelException;
@@ -34,9 +34,14 @@ public class Criterios_Elo_Elo {
     
     private void verificaElosDisponiveis() throws AjusteImpossivelException {
         int numeroDeElosAbaixo = rede.contaElosAbaixo(pontoRede);
+        int index2 = this.elos.size() - numeroDeElosAbaixo;
         int index = elos.indexOf(pontoOrigem.getEquipamentoInstalado());
-        elos = elos.subList(index + 1, elos.size());
-        if (elos.size() < numeroDeElosAbaixo) {
+        try {
+            elos = elos.subList(index + 1, index2);
+        } catch (IndexOutOfBoundsException ex) {
+            throw new AjusteImpossivelException("Não existe elos suficientes para ajustar os elos abaixo deste ponto quando se exclui os elos ajustados nos pontos superiores");
+        }
+        if (elos.size() < 1) {
             throw new AjusteImpossivelException("Não existe elos suficientes para ajustar os elos abaixo deste ponto");
         }
     }

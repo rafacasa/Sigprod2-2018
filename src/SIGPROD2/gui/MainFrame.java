@@ -1,6 +1,7 @@
 package sigprod2.gui;
 
 
+import sigprod2.gui.mainframepanels.Menu;
 import sigprod2.Auxiliar.Arquivo;
 import sigprod2.auxiliar.AjusteImpossivelException;
 import sigprod2.auxiliar.Erro;

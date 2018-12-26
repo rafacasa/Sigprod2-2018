@@ -1,5 +1,6 @@
 package sigprod2.modelo;
 
+import sigprod2.criterios.Criterios_Elo_Elo;
 import sigprod2.Auxiliar.Arquivo;
 import sigprod2.auxiliar.AjusteImpossivelException;
 import sigprod2.auxiliar.NodeClickDefaultListener;
@@ -572,9 +573,14 @@ public class Rede {
         
         
         
-        Elo ajuste = Criterios_Elo.criterio_elo_elo(elosDisponiveis, pontoRede, this, pontoOrigem);
-        pontoRede.setEquipamentoInstalado(ajuste);
-        Ponto.addAttribute(this.getMapa().getNode(pontoRede.getNome()), "ui.class", "equipamentoSelecionado");
+        //Elo ajuste = Criterios_Elo.criterio_elo_elo(elosDisponiveis, pontoRede, this, pontoOrigem);
+        //pontoRede.setEquipamentoInstalado(ajuste);
+        //Ponto.addAttribute(this.getMapa().getNode(pontoRede.getNome()), "ui.class", "equipamentoSelecionado");
+        
+        Criterios_Elo_Elo criteriosEloElo = new Criterios_Elo_Elo(elosDisponiveis, pontoRede, this, pontoOrigem);
+        criteriosEloElo.ajuste();
+        
+        
     }
     
     public void reajusteEloElo() {

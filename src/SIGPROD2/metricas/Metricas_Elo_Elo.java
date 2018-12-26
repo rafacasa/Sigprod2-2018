@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SIGPROD2.metricas;
+package sigprod2.metricas;
 
 import sigprod2.modelo.Elo;
 import sigprod2.modelo.Ponto;

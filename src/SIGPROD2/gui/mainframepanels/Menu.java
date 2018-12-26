@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sigprod2.gui;
+package sigprod2.gui.mainframepanels;
 
 import sigprod2.Auxiliar.Arquivo;
 import java.awt.event.ActionEvent;
@@ -11,6 +11,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import sigprod2.gui.MainFrame;
 
 /**
  *

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sigprod2.gui;
+package sigprod2.gui.mainframepanels;
 
 import sigprod2.modelo.Ponto;
 import java.awt.Component;

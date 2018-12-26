@@ -5,10 +5,10 @@
  */
 package sigprod2.auxiliar;
 
-import sigprod2.gui.ExibeElo;
-import sigprod2.gui.Informacoes;
+import sigprod2.gui.mainframepanels.ExibeElo;
+import sigprod2.gui.mainframepanels.Informacoes;
 import sigprod2.gui.MainFrame;
-import sigprod2.gui.SelecaoElo;
+import sigprod2.gui.mainframepanels.SelecaoElo;
 import sigprod2.modelo.Ponto;
 import sigprod2.modelo.Rede;
 import java.awt.Dimension;
