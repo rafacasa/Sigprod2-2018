@@ -35,7 +35,8 @@ import org.graphstream.graph.Node;
  * @author Rafael Casa
  */
 public class MainFrame extends JFrame {
-
+    
+    public static MainFrame frame;
     //private JPanel contentPane;
     private JPanel panelSuperior;
     private JPanel panelMiddle;
@@ -155,6 +156,7 @@ public class MainFrame extends JFrame {
     }
     
     private void initRede() {
+        MainFrame.frame = this;
         System.setProperty("org.graphstream.ui", "org.graphstream.ui.swing.util.Display");
         Arquivo arquivoRede = new Arquivo("redeElo.ABCEEE");
         try {

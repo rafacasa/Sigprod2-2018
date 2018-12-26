@@ -14,5 +14,8 @@ public class AjusteImpossivelException extends Exception{
     public AjusteImpossivelException() {
         super();
     }
-    
+
+    public AjusteImpossivelException(String message) {
+        super(message);
+    }    
 }

@@ -1,0 +1,143 @@
+package SIGPROD2.criterios;
+
+import SIGPROD2.metricas.Metricas_Elo_Elo;
+import java.util.ArrayList;
+import java.util.List;
+import sigprod2.auxiliar.AjusteImpossivelException;
+import sigprod2.modelo.Corrente;
+import sigprod2.modelo.CurvasElo;
+import sigprod2.modelo.Elo;
+import sigprod2.modelo.Ponto;
+import sigprod2.modelo.Rede;
+
+public class Criterios_Elo_Elo {
+    private List<Elo> elos; 
+    private Ponto pontoRede; 
+    private Rede rede;
+    private Ponto pontoOrigem;
+    private List<Metricas_Elo_Elo> metricas;
+
+    public Criterios_Elo_Elo(List<Elo> elos, Ponto pontoRede, Rede rede, Ponto pontoOrigem) {
+        this.elos = elos;
+        this.pontoRede = pontoRede;
+        this.rede = rede;
+        this.pontoOrigem = pontoOrigem;
+        
+        this.orderElos();
+    }
+    
+    private void orderElos() {
+        this.elos.sort((o1, o2) -> {
+            return -Integer.compare(o1.getCorrenteNominal(), o2.getCorrenteNominal());
+        });
+    }
+    
+    private void verificaElosDisponiveis() throws AjusteImpossivelException {
+        int numeroDeElosAbaixo = rede.contaElosAbaixo(pontoRede);
+        int index = elos.indexOf(pontoOrigem.getEquipamentoInstalado());
+        elos = elos.subList(index + 1, elos.size());
+        if (elos.size() < numeroDeElosAbaixo) {
+            throw new AjusteImpossivelException("Não existe elos suficientes para ajustar os elos abaixo deste ponto");
+        }
+    }
+    
+    private void verificaCriteriosIndiscutiveis() throws AjusteImpossivelException {
+        int iElo;
+        double iInrushMax;
+        double iInrush = 0;
+        double iCargaMax = this.pontoRede.getIcarga();
+        for (Elo elo : this.elos) {
+            iElo = elo.getCorrenteNominal();
+            iInrushMax = elo.correntedoTempo(0.1, CurvasElo.MINIMA);
+            if(iElo <= iCargaMax || iInrushMax<= iInrush) {
+                this.elos.remove(elo);
+            }
+        }
+        if(this.elos.isEmpty()){
+            throw new AjusteImpossivelException("Não exite elos que passam em todos os critérios indiscutíveis");
+        }
+    }
+    
+    private void iniciaMetricas() {
+        this.metricas = new ArrayList<>(this.elos.size());
+        this.elos.forEach((elo) -> {
+            this.metricas.add(new Metricas_Elo_Elo(elo, pontoRede));
+        });
+    }
+    
+    private void metricas1() {
+        Elo elo;
+        Metricas_Elo_Elo metrica;
+        
+        double tProtetor, tProtetorProtegido1;
+        double fatorMult = 0.75;
+        double iCCMax = pontoRede.getMaxICC(1);
+        double tProtegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(iCCMax, CurvasElo.MINIMA);
+        tProtegido *= fatorMult;
+        
+        double i300, iFTMinI300;
+        double iFTMin = rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN);
+        for (int i = 0; i < this.elos.size(); i++) {
+            elo = this.elos.get(i);
+            
+            tProtetor = elo.tempoDaCorrente(iCCMax, CurvasElo.MAXIMA);
+            tProtetorProtegido1 = tProtegido - tProtetor;
+            
+            i300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
+            iFTMinI300 = iFTMin - i300;
+            
+            metrica = this.metricas.get(i);
+            metrica.settProtetorProtegido1(tProtetorProtegido1);
+            metrica.setiFTMinI300(iFTMinI300);
+        }
+    }
+    
+    private void metricas2() {
+        Elo elo;
+        Metricas_Elo_Elo metrica;
+        
+        double i300, iFTMinSelI300;
+        double iFTMinSel = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
+        
+        for (int i = 0; i < this.elos.size(); i++) {
+            elo = this.elos.get(i);
+            
+            i300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
+            iFTMinSelI300 = iFTMinSel - i300;
+            
+            metrica = this.metricas.get(i);
+            metrica.setiFTMinSelI300(iFTMinSelI300);
+        }
+    }
+    
+    private void metricas3() {
+        Elo elo;
+        Metricas_Elo_Elo metrica;
+        
+        double tProtetor, tProtetorProtegido2;
+        double fatorMult = 0.75;
+        double iCCMax = pontoRede.getMaxICC(2);
+        double tProtegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(iCCMax, CurvasElo.MINIMA);
+        tProtegido *= fatorMult;
+        
+        for (int i = 0; i < this.elos.size(); i++) {
+            elo = this.elos.get(i);
+            
+            tProtetor = elo.tempoDaCorrente(iCCMax, CurvasElo.MAXIMA);
+            tProtetorProtegido2 = tProtegido - tProtetor;
+            
+            metrica = this.metricas.get(i);
+            metrica.settProtetorProtegido2(tProtetorProtegido2);
+        }
+    }
+    
+    public List<Metricas_Elo_Elo> ajuste() throws AjusteImpossivelException {
+        this.verificaElosDisponiveis();
+        this.verificaCriteriosIndiscutiveis();
+        this.iniciaMetricas();
+        this.metricas1();
+        this.metricas2();
+        this.metricas3();
+        return this.metricas;
+    }
+}
