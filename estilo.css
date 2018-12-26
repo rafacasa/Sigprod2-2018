@@ -37,6 +37,11 @@ node.equipamentoSelecionado {
 	shape: box;
 }
 
+node.equipamentoSendoAjustado {
+	size: 30px, 30px;
+	shape: box;
+}
+
 node.selecionado {
 	size: 25px, 25px;
 	fill-color: black;

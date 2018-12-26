@@ -74,4 +74,9 @@ public class Metricas_Elo_Elo {
     public Ponto getPonto() {
         return ponto;
     }
+
+    @Override
+    public String toString() {
+        return "ELO " + this.elo.getCorrenteNominal();
+    }
 }

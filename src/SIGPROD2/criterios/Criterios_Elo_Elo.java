@@ -2,6 +2,7 @@ package sigprod2.criterios;
 
 import sigprod2.metricas.Metricas_Elo_Elo;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import sigprod2.auxiliar.AjusteImpossivelException;
 import sigprod2.modelo.Corrente;
@@ -18,7 +19,7 @@ public class Criterios_Elo_Elo {
     private List<Metricas_Elo_Elo> metricas;
 
     public Criterios_Elo_Elo(List<Elo> elos, Ponto pontoRede, Rede rede, Ponto pontoOrigem) {
-        this.elos = elos;
+        this.elos = new ArrayList<>(elos);
         this.pontoRede = pontoRede;
         this.rede = rede;
         this.pontoOrigem = pontoOrigem;
@@ -51,11 +52,15 @@ public class Criterios_Elo_Elo {
         double iInrushMax;
         double iInrush = 0;
         double iCargaMax = this.pontoRede.getIcarga();
-        for (Elo elo : this.elos) {
+        
+        Iterator<Elo> it = this.elos.iterator();
+        
+        while(it.hasNext()) {
+            Elo elo = it.next();
             iElo = elo.getCorrenteNominal();
             iInrushMax = elo.correntedoTempo(0.1, CurvasElo.MINIMA);
             if(iElo <= iCargaMax || iInrushMax<= iInrush) {
-                this.elos.remove(elo);
+                it.remove();
             }
         }
         if(this.elos.isEmpty()){

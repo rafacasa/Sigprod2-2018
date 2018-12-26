@@ -16,6 +16,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.DefaultGraph;
@@ -23,6 +25,9 @@ import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
+import sigprod2.gui.dialogs.EscolheEloElo;
+import sigprod2.gui.mainframepanels.Informacoes;
+import sigprod2.metricas.Metricas_Elo_Elo;
 
 /**
  *
@@ -545,7 +550,7 @@ public class Rede {
         p.setEquipamentoInstalado(ajuste);
         Ponto.addAttribute(this.getMapa().getNode(p.getNome()), "ui.class", "equipamentoSelecionado");
     }
-    
+
     public void ajusteEloElo(Ponto pontoRede, Ponto pontoOrigem) throws AjusteImpossivelException {
 //        int numeroDeElosAbaixo = this.contaElosAbaixo(pontoRede);
 //        int index = elosDisponiveis.indexOf(pontoOrigem.getEquipamentoInstalado());
@@ -568,22 +573,23 @@ public class Rede {
 //                }
 //            }
 //        }
-        
-        
-        
-        
-        
+
         //Elo ajuste = Criterios_Elo.criterio_elo_elo(elosDisponiveis, pontoRede, this, pontoOrigem);
         //pontoRede.setEquipamentoInstalado(ajuste);
         //Ponto.addAttribute(this.getMapa().getNode(pontoRede.getNome()), "ui.class", "equipamentoSelecionado");
-        
         Criterios_Elo_Elo criteriosEloElo = new Criterios_Elo_Elo(elosDisponiveis, pontoRede, this, pontoOrigem);
-        criteriosEloElo.ajuste();
-        
-        
+        List<Metricas_Elo_Elo> metricas = criteriosEloElo.ajuste();
+        Ponto.addAttribute(this.getMapa().getNode(pontoRede.getNome()), "ui.class", "equipamentoSendoAjustado");
+        Informacoes info = new Informacoes(this.getMapa().getNode(pontoRede.getNome()));
+        MainFrame.frame.setInfoPanel(info);
+        EscolheEloElo escolhe = new EscolheEloElo(metricas);
+        Elo ajuste = escolhe.getSelecionado();
+        pontoRede.setEquipamentoInstalado(ajuste);
+        Ponto.removeAttribute(this.getMapa().getNode(pontoRede.getNome()), "ui.class", "equipamentoSendoAjustado");
+        Ponto.addAttribute(this.getMapa().getNode(pontoRede.getNome()), "ui.class", "equipamentoSelecionado");
     }
-    
+
     public void reajusteEloElo() {
-        
+
     }
 }
