@@ -2,8 +2,6 @@ package sigprod2.gui.dialogs;
 
 import java.awt.Dimension;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -70,10 +68,10 @@ public class EscolheEloElo{
         this.lista.setSelectedIndex(-1);
         this.lista.addActionListener(this::listaActionPerformed);
         
-        this.nomeTProtetor1 = new JLabel("TProtetorProtegido1 - ");
-        this.nomeTProtetor2 = new JLabel("TProtetorProtegido2 - ");
-        this.nomeIFTMin = new JLabel("IFTMin - ");
-        this.nomeIFTMinSel = new JLabel("IFTMinSel - ");
+        this.nomeTProtetor1 = new JLabel("TProtetorProtegido1:  ");
+        this.nomeTProtetor2 = new JLabel("TProtetorProtegido2:  ");
+        this.nomeIFTMin = new JLabel("IFTMin:  ");
+        this.nomeIFTMinSel = new JLabel("IFTMinSel:  ");
         
         this.labelTProtetor1 = new JLabel();
         this.labelTProtetor2 = new JLabel();
