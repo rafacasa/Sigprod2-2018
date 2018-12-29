@@ -141,6 +141,30 @@ public class Criterios_Elo_Elo {
         }
     }
     
+    private void calculaPorcentagens() {
+        Elo elo;
+        Metricas_Elo_Elo metrica;
+        
+        double i300, porcentagem;
+        double iFTMinProximo = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
+        double iFTMin2Camadas = rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN);
+        
+        for (int i = 0; i < this.elos.size(); i++) {
+            elo = this.elos.get(i);
+            i300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
+            porcentagem = this.calculaPorcentagemCobertura(iFTMinProximo, iFTMin2Camadas, i300);
+            
+            metrica = this.metricas.get(i);
+            metrica.setPorcentagemProtegida(porcentagem);
+        }
+    }
+    
+    private double calculaPorcentagemCobertura(double iFTMinProximo, double iFTMin2Camadas, double i300) {
+        return ((iFTMinProximo * iFTMin2Camadas) - (iFTMin2Camadas * i300))/(i300*(iFTMinProximo - iFTMin2Camadas));
+    }
+    
+    //Criar um metodo para cada metrica
+    
     public List<Metricas_Elo_Elo> ajuste() throws AjusteImpossivelException {
         this.verificaElosDisponiveis();
         this.verificaCriteriosIndiscutiveis();
@@ -148,6 +172,7 @@ public class Criterios_Elo_Elo {
         this.metricas1();
         this.metricas2();
         this.metricas3();
+        this.calculaPorcentagens();
         return this.metricas;
     }
 }

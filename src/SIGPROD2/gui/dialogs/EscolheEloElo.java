@@ -18,10 +18,10 @@ public class EscolheEloElo{
     private List<Metricas_Elo_Elo> metricas;
     private Elo selecionado;
     private boolean loop;
-    private JPanel panel, panelTProtetor1, panelTProtetor2, panelIFTMin, panelIFTMinSel;
+    private JPanel panel, panelTProtetor1, panelTProtetor2, panelIFTMin, panelIFTMinSel, panelPorcentagem;
     private JComboBox<Metricas_Elo_Elo> lista;
     private JButton botaoSelecionar;
-    private JLabel nomeTProtetor1, nomeTProtetor2, nomeIFTMin, nomeIFTMinSel, labelTProtetor1, labelTProtetor2, labelIFTMin, labelIFTMinSel;
+    private JLabel nomeTProtetor1, nomeTProtetor2, nomeIFTMin, nomeIFTMinSel, nomePorcentagem, labelTProtetor1, labelTProtetor2, labelIFTMin, labelIFTMinSel, labelPorcentagem;
     private JDialog dialog;
 
     public EscolheEloElo(List<Metricas_Elo_Elo> metricas) {
@@ -49,6 +49,9 @@ public class EscolheEloElo{
 
         this.panelIFTMinSel = new JPanel();
         this.panelIFTMinSel.setLayout(new BoxLayout(this.panelIFTMinSel, BoxLayout.LINE_AXIS));
+        
+        this.panelPorcentagem = new JPanel();
+        this.panelPorcentagem.setLayout(new BoxLayout(this.panelPorcentagem, BoxLayout.LINE_AXIS));
     }
 
     private void initComponents() {
@@ -72,11 +75,13 @@ public class EscolheEloElo{
         this.nomeTProtetor2 = new JLabel("TProtetorProtegido2:  ");
         this.nomeIFTMin = new JLabel("IFTMin:  ");
         this.nomeIFTMinSel = new JLabel("IFTMinSel:  ");
+        this.nomePorcentagem = new JLabel("Porcentagem de Cobertura:  ");
         
         this.labelTProtetor1 = new JLabel();
         this.labelTProtetor2 = new JLabel();
         this.labelIFTMin = new JLabel();
         this.labelIFTMinSel = new JLabel();
+        this.labelPorcentagem = new JLabel();
         
         this.botaoSelecionar = new JButton("Selecionar Elo");
         this.botaoSelecionar.addActionListener(this::botaoSelecionarActionPerformed);
@@ -101,6 +106,10 @@ public class EscolheEloElo{
         this.panelIFTMinSel.add(Box.createHorizontalGlue());
         this.panelIFTMinSel.add(this.labelIFTMinSel);
         
+        this.panelPorcentagem.add(this.nomePorcentagem);
+        this.panelPorcentagem.add(Box.createHorizontalGlue());
+        this.panelPorcentagem.add(this.labelPorcentagem);
+        
         this.panel.add(this.lista);
         this.panel.add(Box.createRigidArea(new Dimension(0, 10)));
         this.panel.add(this.panelTProtetor1);
@@ -110,6 +119,8 @@ public class EscolheEloElo{
         this.panel.add(this.panelIFTMinSel);
         this.panel.add(Box.createRigidArea(new Dimension(0, 10)));
         this.panel.add(this.panelTProtetor2);
+        this.panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        this.panel.add(this.panelPorcentagem);
         this.panel.add(Box.createRigidArea(new Dimension(0, 10)));
         this.panel.add(this.botaoSelecionar);
         
@@ -123,6 +134,7 @@ public class EscolheEloElo{
         this.labelTProtetor2.setText(metrica.gettProtetorProtegido2() + "");
         this.labelIFTMin.setText(metrica.getiFTMinI300()+ "");
         this.labelIFTMinSel.setText(metrica.getiFTMinSelI300()+ "");
+        this.labelPorcentagem.setText((metrica.getPorcentagemProtegida() * 100) + "%");
     }
     
     private void botaoSelecionarActionPerformed(java.awt.event.ActionEvent evt) {

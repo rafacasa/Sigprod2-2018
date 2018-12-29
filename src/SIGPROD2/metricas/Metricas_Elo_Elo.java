@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sigprod2.metricas;
 
 import sigprod2.modelo.Elo;
@@ -13,15 +8,16 @@ import sigprod2.modelo.Ponto;
  * @author Rafael Casa
  */
 public class Metricas_Elo_Elo {
-    private double tProtetorProtegido1, tProtetorProtegido2, iFTMinI300, iFTMinSelI300;
+    private double tProtetorProtegido1, tProtetorProtegido2, iFTMinI300, iFTMinSelI300, porcentagemProtegida;
     private Elo elo;
     private Ponto ponto;
 
-    public Metricas_Elo_Elo(double tProtetorProtegido1, double tProtetorProtegido2, double iFTMinI300, double iFTMinSelI300, Elo elo, Ponto ponto) {
+    public Metricas_Elo_Elo(double tProtetorProtegido1, double tProtetorProtegido2, double iFTMinI300, double iFTMinSelI300, double porcentagemProtegida, Elo elo, Ponto ponto) {
         this.tProtetorProtegido1 = tProtetorProtegido1;
         this.tProtetorProtegido2 = tProtetorProtegido2;
         this.iFTMinI300 = iFTMinI300;
         this.iFTMinSelI300 = iFTMinSelI300;
+        this.porcentagemProtegida = porcentagemProtegida;
         this.elo = elo;
         this.ponto = ponto;
     }
@@ -33,6 +29,7 @@ public class Metricas_Elo_Elo {
         this.tProtetorProtegido2 = 0;
         this.iFTMinI300 = 0;
         this.iFTMinSelI300 = 0;
+        this.porcentagemProtegida = 0;
     }
     
     public double gettProtetorProtegido1() {
@@ -65,6 +62,14 @@ public class Metricas_Elo_Elo {
 
     public void setiFTMinSelI300(double iFTMinSelI300) {
         this.iFTMinSelI300 = iFTMinSelI300;
+    }
+
+    public double getPorcentagemProtegida() {
+        return porcentagemProtegida;
+    }
+
+    public void setPorcentagemProtegida(double porcentagemProtegida) {
+        this.porcentagemProtegida = porcentagemProtegida;
     }
 
     public Elo getElo() {
