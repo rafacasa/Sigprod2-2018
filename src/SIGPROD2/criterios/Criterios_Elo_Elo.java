@@ -91,10 +91,10 @@ public class Criterios_Elo_Elo {
             elo = this.elos.get(i);
             
             tProtetor = elo.tempoDaCorrente(iCCMax, CurvasElo.MAXIMA);
-            tProtetorProtegido1 = tProtegido - tProtetor;
+            tProtetorProtegido1 = (tProtegido - tProtetor)/tProtegido;
             
             i300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
-            iFTMinI300 = iFTMin - i300;
+            iFTMinI300 = (iFTMin - i300)/iFTMin;
             
             metrica = this.metricas.get(i);
             metrica.settProtetorProtegido1(tProtetorProtegido1);
@@ -113,7 +113,7 @@ public class Criterios_Elo_Elo {
             elo = this.elos.get(i);
             
             i300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
-            iFTMinSelI300 = iFTMinSel - i300;
+            iFTMinSelI300 = (iFTMinSel - i300)/iFTMinSel;
             
             metrica = this.metricas.get(i);
             metrica.setiFTMinSelI300(iFTMinSelI300);
@@ -134,7 +134,7 @@ public class Criterios_Elo_Elo {
             elo = this.elos.get(i);
             
             tProtetor = elo.tempoDaCorrente(iCCMax, CurvasElo.MAXIMA);
-            tProtetorProtegido2 = tProtegido - tProtetor;
+            tProtetorProtegido2 = (tProtegido - tProtetor)/tProtegido;
             
             metrica = this.metricas.get(i);
             metrica.settProtetorProtegido2(tProtetorProtegido2);
