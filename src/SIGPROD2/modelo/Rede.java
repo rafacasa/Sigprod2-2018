@@ -575,8 +575,14 @@ public class Rede {
         //Elo ajuste = Criterios_Elo.criterio_elo_elo(elosDisponiveis, pontoRede, this, pontoOrigem);
         //pontoRede.setEquipamentoInstalado(ajuste);
         //Ponto.addAttribute(this.getMapa().getNode(pontoRede.getNome()), "ui.class", "equipamentoSelecionado");
+        StringBuilder sb = new StringBuilder();
+        sb.append(pontoRede.getNome()).append(",");
         Criterios_Elo_Elo criteriosEloElo = new Criterios_Elo_Elo(elosDisponiveis, pontoRede, this, pontoOrigem);
         List<Metricas_Elo_Elo> metricas = criteriosEloElo.ajuste();
+        for (Metricas_Elo_Elo metrica : metricas) {
+            sb.append(metrica.getElo().getCorrenteNominal()).append(",").append(metrica.gettProtetorProtegido1()).append(",").append(metrica.getiFTMinI300()).append(",").append(metrica.gettProtetorProtegido1()).append(",").append(metrica.getiFTMinSelI300()).append(",").append(metrica.gettProtetorProtegido2()).append(",").append(metrica.getiFTMinSelI300()).append(",").append(metrica.getPorcentagemProtegida()).append(",");
+        }
+        System.out.println(sb.toString());
         Ponto.addAttribute(this.getMapa().getNode(pontoRede.getNome()), "ui.class", "equipamentoSendoAjustado");
         Informacoes info = new Informacoes(this.getMapa().getNode(pontoRede.getNome()));
         MainFrame.frame.setInfoPanel(info);
