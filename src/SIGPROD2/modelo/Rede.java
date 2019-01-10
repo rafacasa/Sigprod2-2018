@@ -196,6 +196,27 @@ public class Rede {
         return mapa;
     }
 
+    public Ponto getParentRedeReduzida(Ponto p) {
+        for (int i = 0; i < this.redeReduzida.size(); i++) {
+            Trecho get = this.redeReduzida.get(i);
+            if (get.getDestino().equals(p)) {
+                return get.getOrigem();
+            }
+        }
+        return null;
+    }
+
+    public List<Ponto> getDestinosRedeReduzida(Ponto p) {
+        List<Ponto> retorno = new ArrayList<>();
+        for (int i = 0; i < this.redeReduzida.size(); i++) {
+            Trecho get = this.redeReduzida.get(i);
+            if (get.getOrigem().equals(p)) {
+                retorno.add(get.getDestino());
+            }
+        }
+        return retorno;
+    }
+
     public Ponto getPonto(String id) {
         for (Ponto p : this.pontosRede) {
             if (p.getNome().equals(id)) {
@@ -334,6 +355,10 @@ public class Rede {
                 this.camadasRedeReduzida.get(camadaOrigem + 1).add(t.getDestino());
             }
         }
+    }
+
+    public List<List<Ponto>> getCamadasRedeReduzida() {
+        return this.camadasRedeReduzida;
     }
 
     public int contaElosAbaixo(Ponto pontoElo) {

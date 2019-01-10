@@ -190,13 +190,20 @@ public class MainFrame extends JFrame {
         this.revalidate();
         this.repaint();
     }
-    
+
+/*    
     private void botaoExecutarEstudoActionPerformed(java.awt.event.ActionEvent evt) {
         try {
             this.rede.ajuste();
         } catch (AjusteImpossivelException ex) {
             Erro.ajusteInvalido(this);
         }
+    }
+*/
+    private void botaoExecutarEstudoActionPerformed(java.awt.event.ActionEvent evt) {
+        SwingUtilities.invokeLater(() -> {
+            new SIGPROD2.gui.AjusteFrame(this).setVisible(true);
+        });
     }
     
     private void botaoGraficoActionPerformed(java.awt.event.ActionEvent evt) {
