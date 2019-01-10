@@ -37,7 +37,7 @@ public class Rede {
     private List<Trecho> redeReduzida;
     private List<Trecho> trechosRede;
     private List<Ponto> pontosRede;
-    private List<List<Ponto>> L;
+    private List<List<Ponto>> L, camadasRedeReduzida;
     private Graph mapa;
     private Viewer viewer;
     private View view;
@@ -309,6 +309,31 @@ public class Rede {
 
     private void criaRedeReduzida() {
         addTrechosReduzidos(this.trechosRede.get(0).getOrigem());
+        criaCamadasRedeReduzida();
+    }
+
+    private void criaCamadasRedeReduzida() {
+        int camadaOrigem = 0;
+        this.camadasRedeReduzida = new ArrayList<>();
+        List<Ponto> camada1 = new ArrayList<>();
+        camada1.add(this.redeReduzida.get(0).getOrigem());
+        this.camadasRedeReduzida.add(camada1);
+        for (Trecho t : this.redeReduzida) {
+            for (int i = 0; i < this.camadasRedeReduzida.size(); i++) {
+                List<Ponto> get = this.camadasRedeReduzida.get(i);
+                if (get.contains(t.getOrigem())) {
+                    camadaOrigem = i;
+                    break;
+                }
+            }
+            if (camadaOrigem == this.camadasRedeReduzida.size() - 1) {
+                List<Ponto> camadaN = new ArrayList<>();
+                camadaN.add(t.getDestino());
+                this.camadasRedeReduzida.add(camadaN);
+            } else {
+                this.camadasRedeReduzida.get(camadaOrigem + 1).add(t.getDestino());
+            }
+        }
     }
 
     public int contaElosAbaixo(Ponto pontoElo) {
