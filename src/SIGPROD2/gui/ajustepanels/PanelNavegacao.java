@@ -1,10 +1,13 @@
 package SIGPROD2.gui.ajustepanels;
 
+import SIGPROD2.auxiliar.ArrowButton;
 import SIGPROD2.gui.AjusteFrame;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.plaf.basic.BasicArrowButton;
 import sigprod2.modelo.Ponto;
@@ -21,7 +24,8 @@ public class PanelNavegacao extends JPanel {
     private int camadaAtual, pontoAtual;
     private AjusteFrame ajusteFrame;
 
-    private BasicArrowButton up, down, left, right;
+    private ArrowButton up, down, left, right;
+    private JLabel labelCamadas, labelPontos;
 
     public PanelNavegacao(Rede rede, AjusteFrame ajusteFrame) {
         this.rede = rede;
@@ -34,45 +38,60 @@ public class PanelNavegacao extends JPanel {
     }
 
     private void initComponents() {
-        this.up = new BasicArrowButton(BasicArrowButton.NORTH);
-        this.down = new BasicArrowButton(BasicArrowButton.SOUTH);
-        this.left = new BasicArrowButton(BasicArrowButton.WEST);
-        this.right = new BasicArrowButton(BasicArrowButton.EAST);
+        this.up = new ArrowButton(BasicArrowButton.NORTH);
+        this.down = new ArrowButton(BasicArrowButton.SOUTH);
+        this.left = new ArrowButton(BasicArrowButton.WEST);
+        this.right = new ArrowButton(BasicArrowButton.EAST);
 
         this.up.addActionListener(this::subirCamada);
         this.down.addActionListener(this::descerCamada);
         this.left.addActionListener(this::pontoAnterior);
         this.right.addActionListener(this::proximoPonto);
 
-        this.up.setEnabled(false);
-        this.down.setEnabled(false);
-        this.left.setEnabled(false);
-        this.right.setEnabled(false);
-    }
-
-    private void placeComponents() {
         this.up.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.down.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.left.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.right.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        this.up.setEnabled(false);
+        this.down.setEnabled(false);
+        this.left.setEnabled(false);
+        this.right.setEnabled(false);
+
+        this.labelCamadas = new JLabel("Camadas: ");
+        this.labelPontos = new JLabel("Pontos: ");
+    }
+
+    private void placeComponents() {
         JPanel panel1 = new JPanel();
         JPanel panel2 = new JPanel();
-        JPanel panel3 = new JPanel();
 
-        panel2.setLayout(new BoxLayout(panel2, BoxLayout.PAGE_AXIS));
+        panel1.setLayout(new BoxLayout(panel1, BoxLayout.LINE_AXIS));
+        panel2.setLayout(new BoxLayout(panel2, BoxLayout.LINE_AXIS));
 
-        panel1.add(this.left);
-        panel2.add(this.up);
-        panel2.add(Box.createVerticalGlue());
-        panel2.add(this.down);
-        panel3.add(this.right);
+        panel1.add(Box.createHorizontalStrut(10));
+        panel1.add(this.labelCamadas);
+        panel1.add(Box.createHorizontalStrut(10));
+        panel1.add(this.up);
+        panel1.add(Box.createHorizontalStrut(10));
+        panel1.add(this.down);
+        panel1.add(Box.createHorizontalGlue());
 
-        this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+        panel2.add(Box.createHorizontalStrut(10));
+        panel2.add(this.labelPontos);
+        panel2.add(Box.createHorizontalStrut(10));
+        panel2.add(this.left);
+        panel2.add(Box.createHorizontalStrut(10));
+        panel2.add(this.right);
+        panel2.add(Box.createHorizontalGlue());
 
+        this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+
+        this.add(Box.createVerticalGlue());
         this.add(panel1);
+        this.add(Box.createVerticalStrut(20));
         this.add(panel2);
-        this.add(panel3);
+        this.add(Box.createVerticalStrut(20));
     }
 
     public Ponto getPontoAtual() {
