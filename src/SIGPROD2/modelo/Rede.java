@@ -195,6 +195,10 @@ public class Rede {
     public Graph getMapa() {
         return mapa;
     }
+    
+    public List<Elo> getElosDisponiveis() {
+        return this.elosDisponiveis;
+    }
 
     public Ponto getParentRedeReduzida(Ponto p) {
         for (int i = 0; i < this.redeReduzida.size(); i++) {

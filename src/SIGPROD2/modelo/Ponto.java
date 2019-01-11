@@ -17,6 +17,7 @@ import org.graphstream.graph.Node;
  * @author Rafael Casa
  */
 public class Ponto {
+
     private String nome;
     private double coordenadaX, coordenadaY;
     private TipoEquipamento tipoEquipamentoInstalado;
@@ -42,8 +43,6 @@ public class Ponto {
         this.icarga = 0;
     }
 
-    
-    
     public Ponto(String nome, double coordenadaX, double coordenadaY, TipoEquipamento tipoEquipamentoInstalado, double icc3f, double icc2f, double iccft, double iccftmin, double icarga) {
         this.nome = nome;
         this.coordenadaX = coordenadaX;
@@ -165,59 +164,56 @@ public class Ponto {
     public void setIcarga(double icarga) {
         this.icarga = icarga;
     }
-        
+
     public static void addAttribute(Node n, String key, Object o) {
         Object[] array = n.getArray(key);
         if (array == null) {
             Object o2 = n.getAttribute(key);
-            if(o2 == null) {
+            if (o2 == null) {
                 n.setAttribute(key, o);
             } else {
                 array = new Object[2];
                 array[0] = o2;
                 array[1] = o;
                 n.setAttribute(key, array);
-            }  
+            }
         } else {
             Object[] copyOf = Arrays.copyOf(array, array.length + 1);
             copyOf[array.length] = o;
             n.setAttribute(key, copyOf);
         }
     }
-    
+
     public static void removeAttribute(Node n, String key, Object o) {
         Object[] array = n.getArray(key);
         if (array == null) {
             Object o2 = n.getAttribute(key);
-            if(o2 != null) {
-                if(o2.equals(o)) {
+            if (o2 != null) {
+                if (o2.equals(o)) {
                     n.removeAttribute(key);
                 }
             }
         } else {
-            Object[] copyOf = new Object[array.length - 1];
-            int i = 0;
-            for (Object object : array) {
-                if(!o.equals(object)) {
-                    copyOf[i] = object;
-                    i++;
-                }
+            List<Object> lista = new ArrayList<>(Arrays.asList(array));
+            if (lista.contains(o)) {
+                lista.remove(o);
             }
+            Object[] copyOf = lista.toArray();
             n.setAttribute(key, copyOf);
         }
     }
-    
+
     public double getMaxICC(int i) {
         List<Double> corr = new ArrayList<>();
         corr.add(icc3f);
         corr.add(icc2f);
         corr.add(iccft);
-        if(i == 1) {
+        if (i == 1) {
             return Collections.max(corr);
         } else {
             corr.remove(Collections.max(corr));
             return Collections.max(corr);
         }
     }
-       
+
 }
