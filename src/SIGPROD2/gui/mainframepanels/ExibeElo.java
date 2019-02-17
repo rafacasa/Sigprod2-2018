@@ -116,6 +116,6 @@ public class ExibeElo extends JPanel {
         this.ponto.resetAtributos();
         this.listener.buttonPushed(this.node.getId());
         this.listener.setSalvo(false);
-
+        System.out.println(evt.getWhen() + " - " + evt.getActionCommand() + " - " + evt.paramString() + " - REMOVER ACTION PERFORMED");
     }
 }
