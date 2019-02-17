@@ -6,8 +6,6 @@ import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
@@ -25,7 +23,7 @@ import sigprod2.modelo.TipoEquipamento;
 
 /**
  *
- * @author Rafael Casa
+ * @author Rafael Luiz Casa
  */
 public class AjusteFrame extends JDialog {
 
@@ -67,10 +65,9 @@ public class AjusteFrame extends JDialog {
 
     private void limparPanel() {
         Ponto pontoAtual = this.navegacao.getPontoAtual();
-        Ponto.removeAttribute(this.rede.getMapa().getNode(pontoAtual.getNome()), "ui.class", "equipamentoSendoAjustado");
+        pontoAtual.resetAtributos();
         this.panelAjuste.removeAll();
         this.panelAjuste.add(Box.createRigidArea(new Dimension(400, 400)));
-
     }
 
     public boolean ajustar(Ponto ponto, boolean inicioRede) {
@@ -82,12 +79,11 @@ public class AjusteFrame extends JDialog {
         if (inicioRede) {
             switch (equip) {
                 case ELO:
-                    //Ponto.addAttribute(this.rede.getMapa().getNode(ponto.getNome()), "ui.class", "equipamentoSendoAjustado");
                     Elo ajuste;
                     try {
                         ajuste = Criterios_Elo.criterio_elo(this.rede.getElosDisponiveis(), ponto, this.rede);
                         ponto.setEquipamentoInstalado(ajuste);
-                        Ponto.addAttribute(this.rede.getMapa().getNode(ponto.getNome()), "ui.class", "equipamentoSelecionado");
+                        ponto.resetAtributos(true);
                     } catch (AjusteImpossivelException ex) {
                         ex.printStackTrace();
                         return false;
@@ -110,8 +106,7 @@ public class AjusteFrame extends JDialog {
                             try {
                                 System.out.println("PONTO SENDO AJUSTADO: " + ponto.getNome());
                                 metricas = criteriosEloElo.ajuste();
-                                Ponto.removeAttribute(this.rede.getMapa().getNode(ponto.getNome()), "ui.class", "equipamentoSelecionado");
-                                Ponto.addAttribute(this.rede.getMapa().getNode(ponto.getNome()), "ui.class", "equipamentoSendoAjustado");
+                                ponto.resetAtributos(true);
                                 this.panelAjuste.removeAll();
                                 this.panelAjuste.add(new PanelAjusteEloElo(metricas, this));
                                 this.revalidate();
@@ -156,13 +151,12 @@ public class AjusteFrame extends JDialog {
                     break;
             }
         }
-
         return true;
     }
 
     public void selecionaEquipamento(Ponto p, Equipamento equipamento) {
         p.setEquipamentoInstalado(equipamento);
-        Ponto.addAttribute(this.rede.getMapa().getNode(p.getNome()), "ui.class", "equipamentoSelecionado");
+        p.resetAtributos(true);
     }
 
     public static void main(String[] args) {

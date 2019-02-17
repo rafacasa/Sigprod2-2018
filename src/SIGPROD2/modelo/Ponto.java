@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sigprod2.modelo;
 
 import java.util.ArrayList;
@@ -14,7 +9,7 @@ import org.graphstream.graph.Node;
 
 /**
  *
- * @author Rafael Casa
+ * @author Rafael Luiz Casa
  */
 public class Ponto {
 
@@ -226,6 +221,20 @@ public class Ponto {
     }
 
     public void resetAtributos() {
+        this.node.removeAttribute("ui.class");
+        if (this.equipamentoInstalado != null) {
+            this.node.setAttribute("ui.class", this.tipoEquipamentoInstalado.toString(), "equipamentoSelecionado");
+        } else {
+            this.node.setAttribute("ui.class", this.tipoEquipamentoInstalado.toString());
+        }
+    }
 
+    public void resetAtributos(boolean b) {
+        this.node.removeAttribute("ui.class");
+        if (this.equipamentoInstalado != null) {
+            this.node.setAttribute("ui.class", this.tipoEquipamentoInstalado.toString(), "equipamentoSelecionado", "equipamentoSendoAjustado");
+        } else {
+            this.node.setAttribute("ui.class", this.tipoEquipamentoInstalado.toString(), "equipamentoSendoAjustado");
+        }
     }
 }
