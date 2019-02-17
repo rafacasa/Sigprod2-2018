@@ -122,6 +122,7 @@ public class Rede {
         n.setAttribute("xyz", p.getCoordenadaX(), p.getCoordenadaY(), 0);
         n.setAttribute("ui.class", p.getTipoEquipamentoInstalado().toString());
         n.setAttribute("classe", p);
+        p.setNode(n);
     }
 
     private void insereTrechoMapa(Trecho t) {
@@ -195,7 +196,7 @@ public class Rede {
     public Graph getMapa() {
         return mapa;
     }
-    
+
     public List<Elo> getElosDisponiveis() {
         return this.elosDisponiveis;
     }

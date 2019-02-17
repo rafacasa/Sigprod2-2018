@@ -24,6 +24,7 @@ public class Ponto {
     private Equipamento equipamentoInstalado;
     private boolean fimdeTrecho;
     private double icc3f, icc2f, iccft, iccftmin, icarga;
+    private Node node;
 
     public Ponto(String nome) {
         this.nome = nome;
@@ -165,6 +166,14 @@ public class Ponto {
         this.icarga = icarga;
     }
 
+    public Node getNode() {
+        return node;
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
+    }
+
     public static void addAttribute(Node n, String key, Object o) {
         Object[] array = n.getArray(key);
         if (array == null) {
@@ -216,4 +225,7 @@ public class Ponto {
         }
     }
 
+    public void resetAtributos() {
+
+    }
 }
