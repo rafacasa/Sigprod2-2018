@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sigprod2.gui.mainframepanels;
 
 import sigprod2.auxiliar.Erro;
@@ -25,28 +20,28 @@ import org.graphstream.graph.Node;
 
 /**
  *
- * @author Rafael Casa
+ * @author Rafael Luiz Casa
  */
-public class SelecaoElo extends JPanel{
+public class SelecaoElo extends JPanel {
 
     private Ponto ponto;
     private Node node;
     private NodeClickDefaultListener listener;
-    
+
     private JPanel panelTipo, panelCorrente, panelNomeNo;
-    
+
     private JLabel labelTitle, labelTipoElo, labelCorrente, labelNomeNoFixa, labelNomeNo;
     private JComboBox<String> listaTipoElo;
     private JComboBox<Elo> listaCorrentes;
     private JButton botaoGravar;
-    
+
     public SelecaoElo(Node n, NodeClickDefaultListener listener) {
         this.listener = listener;
         this.node = n;
         this.ponto = n.getAttribute("classe", Ponto.class);
         initComponents();
     }
-    
+
     private void initComponents() {
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         initItens();
@@ -55,28 +50,28 @@ public class SelecaoElo extends JPanel{
         setPreferredSize(new Dimension(11000, height));
         height = getMaximumSize().height;
         setMaximumSize(new Dimension(11000, height));
-        
+
     }
-    
+
     private void initItens() {
         this.labelTitle = new JLabel("Elo Fusível");
         this.labelTitle.setFont(new Font("Tahoma", 0, 40));
         this.labelTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
+
         this.labelTipoElo = new JLabel("Tipo do Elo:");
         this.labelTipoElo.setFont(new Font("Tahoma", 0, 16));
-        
+
         this.labelCorrente = new JLabel("Corrente:");
         this.labelCorrente.setFont(new Font("Tahoma", 0, 16));
-        
+
         this.labelNomeNoFixa = new JLabel("Nó:");
         this.labelNomeNoFixa.setFont(new Font("Tahoma", 0, 16));
-        
+
         this.labelNomeNo = new JLabel(this.ponto.getNome());
         this.labelNomeNo.setFont(new Font("Tahoma", 0, 16));
-        
+
         String[] tiposElo = {"K", "T"};
-        this.listaTipoElo = new JComboBox<>(tiposElo){
+        this.listaTipoElo = new JComboBox<>(tiposElo) {
             @Override
             public Dimension getMaximumSize() {
                 Dimension max = super.getMaximumSize();
@@ -86,8 +81,8 @@ public class SelecaoElo extends JPanel{
         };
         this.listaTipoElo.setSelectedIndex(-1);
         this.listaTipoElo.addActionListener(this::listaTipoEloActionPerformed);
-        
-        this.listaCorrentes = new JComboBox<>(){
+
+        this.listaCorrentes = new JComboBox<>() {
             @Override
             public Dimension getMaximumSize() {
                 Dimension max = super.getMaximumSize();
@@ -95,12 +90,12 @@ public class SelecaoElo extends JPanel{
                 return max;
             }
         };
-        
+
         this.botaoGravar = new JButton("Gravar");
         this.botaoGravar.addActionListener(this::botaoGravarActionPerformed);
         this.botaoGravar.setAlignmentX(Component.CENTER_ALIGNMENT);
     }
-    
+
     private void initPanels() {
         panelTipo = new JPanel();
         panelTipo.setLayout(new BoxLayout(panelTipo, BoxLayout.LINE_AXIS));
@@ -108,21 +103,21 @@ public class SelecaoElo extends JPanel{
         panelTipo.add(Box.createRigidArea(new Dimension(5, 0)));
         panelTipo.add(listaTipoElo);
         panelTipo.add(Box.createRigidArea(new Dimension(20, 0)));
-        
+
         panelCorrente = new JPanel();
         panelCorrente.setLayout(new BoxLayout(panelCorrente, BoxLayout.LINE_AXIS));
         panelCorrente.add(labelCorrente);
         panelCorrente.add(Box.createRigidArea(new Dimension(5, 0)));
         panelCorrente.add(listaCorrentes);
         panelCorrente.add(Box.createRigidArea(new Dimension(20, 0)));
-        
+
         panelNomeNo = new JPanel();
         panelNomeNo.setLayout(new BoxLayout(panelNomeNo, BoxLayout.LINE_AXIS));
         panelNomeNo.add(labelNomeNoFixa);
         panelNomeNo.add(Box.createRigidArea(new Dimension(5, 0)));
         panelNomeNo.add(labelNomeNo);
         panelNomeNo.add(Box.createRigidArea(new Dimension(20, 0)));
-        
+
         add(labelTitle);
         add(Box.createRigidArea(new Dimension(0, 10)));
         add(panelTipo);
@@ -134,26 +129,24 @@ public class SelecaoElo extends JPanel{
         add(panelNomeNo);
         add(Box.createVerticalGlue());
     }
-    
+
     private void listaTipoEloActionPerformed(java.awt.event.ActionEvent evt) {
         this.listaCorrentes.removeAllItems();
-        if("K".equals(this.listaTipoElo.getSelectedItem())) {
+        if ("K".equals(this.listaTipoElo.getSelectedItem())) {
             this.carregarCorrentesEloK();
         } else {
-            this.carregarCorrentesEloT();
+            //this.carregarCorrentesEloT();
         }
     }
-    
+
     private void botaoGravarActionPerformed(java.awt.event.ActionEvent evt) {
         Elo elo = this.listaCorrentes.getItemAt(this.listaCorrentes.getSelectedIndex());
         this.ponto.setEquipamentoInstalado(elo);
-        
-        Ponto.addAttribute(node, "ui.class", "equipamentoSelecionado");
-        
+        this.ponto.resetAtributos();
         this.listener.buttonPushed(this.node.getId());
         this.listener.setSalvo(false);
     }
-    
+
     private void carregarCorrentesEloK() {
         List<Elo> correntes;
         try {
@@ -166,8 +159,7 @@ public class SelecaoElo extends JPanel{
             Erro.mostraMensagemSQL(this);
         }
     }
-    
-    private void carregarCorrentesEloT() {
-        
-    }
+
+    //private void carregarCorrentesEloT() {
+    //}
 }
