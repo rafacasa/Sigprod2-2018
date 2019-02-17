@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sigprod2.auxiliar;
 
 import sigprod2.gui.mainframepanels.ExibeElo;
@@ -18,7 +13,7 @@ import org.graphstream.ui.view.ViewerListener;
 
 /**
  *
- * @author Rafael Casa
+ * @author Rafael Luiz Casa
  */
 public class NodeClickDefaultListener implements ViewerListener {
 
@@ -62,7 +57,7 @@ public class NodeClickDefaultListener implements ViewerListener {
                         panel = new SelecaoElo(n, this);
                         this.frame.setDataPanel(panel);
                     } else {
-                        panel = new ExibeElo(n);
+                        panel = new ExibeElo(n, this);
                         this.frame.setDataPanel(panel);
                     }
                     break;
