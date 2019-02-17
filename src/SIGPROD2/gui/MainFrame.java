@@ -2,7 +2,6 @@ package sigprod2.gui;
 
 import sigprod2.gui.mainframepanels.Menu;
 import sigprod2.Auxiliar.Arquivo;
-import sigprod2.auxiliar.AjusteImpossivelException;
 import sigprod2.auxiliar.Erro;
 import sigprod2.auxiliar.LoopPumpThread;
 import sigprod2.auxiliar.NodeClickGraficoListener;
@@ -32,7 +31,7 @@ import org.graphstream.graph.Node;
 
 /**
  *
- * @author Rafael Casa
+ * @author Rafael Luiz Casa
  */
 public class MainFrame extends JFrame {
 
@@ -84,6 +83,7 @@ public class MainFrame extends JFrame {
 
         this.botaoGrafico = new JButton();
         this.botaoGrafico.setText("Coordenograma");
+        this.botaoGrafico.setEnabled(false);//NAO TA PRONTO O GRAFICO
         this.modoSelecionar = false;
         botaoGrafico.addActionListener(this::botaoGraficoActionPerformed);
     }
