@@ -3,11 +3,11 @@ package SIGPROD2.gui.ajustepanels;
 import SIGPROD2.auxiliar.ArrowButton;
 import SIGPROD2.gui.AjusteFrame;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.plaf.basic.BasicArrowButton;
 import sigprod2.modelo.Ponto;
@@ -139,9 +139,14 @@ public class PanelNavegacao extends JPanel {
         Ponto atual = this.getPontoAtual();
         Ponto target = rede.getParentRedeReduzida(atual);
         boolean inicioRede = this.camadaAtual == 2;
-        if (this.ajusteFrame.ajustar(target, inicioRede)) {
-            this.camadaAtual--;
-            this.pontoAtual = this.camadasRedeReduzida.get(this.camadaAtual).indexOf(target);
+        try {
+            if (this.ajusteFrame.ajustar(target, inicioRede)) {
+                this.camadaAtual--;
+                this.pontoAtual = this.camadasRedeReduzida.get(this.camadaAtual).indexOf(target);
+                this.atualizarPontoAtual();
+            }
+        } catch (java.lang.NullPointerException ex) {
+            JOptionPane.showMessageDialog(this.ajusteFrame, "O equipamento superior não foi definido antecipadamente", "ERRO", JOptionPane.ERROR_MESSAGE);
             this.atualizarPontoAtual();
         }
     }
@@ -150,9 +155,14 @@ public class PanelNavegacao extends JPanel {
         this.desabilitarBotoes();
         Ponto atual = this.getPontoAtual();
         Ponto target = rede.getDestinosRedeReduzida(atual).get(0);
-        if (this.ajusteFrame.ajustar(target, false)) {
-            this.camadaAtual++;
-            this.pontoAtual = this.camadasRedeReduzida.get(this.camadaAtual).indexOf(target);
+        try {
+            if (this.ajusteFrame.ajustar(target, false)) {
+                this.camadaAtual++;
+                this.pontoAtual = this.camadasRedeReduzida.get(this.camadaAtual).indexOf(target);
+                this.atualizarPontoAtual();
+            }
+        } catch (java.lang.NullPointerException ex) {
+            JOptionPane.showMessageDialog(this.ajusteFrame, "O equipamento superior não foi definido antecipadamente", "ERRO", JOptionPane.ERROR_MESSAGE);
             this.atualizarPontoAtual();
         }
     }
@@ -161,8 +171,13 @@ public class PanelNavegacao extends JPanel {
         this.desabilitarBotoes();
         Ponto target = this.camadasRedeReduzida.get(this.camadaAtual).get(this.pontoAtual + 1);
         boolean inicioRede = this.camadaAtual == 1;
-        if (this.ajusteFrame.ajustar(target, inicioRede)) {
-            this.pontoAtual++;
+        try {
+            if (this.ajusteFrame.ajustar(target, inicioRede)) {
+                this.pontoAtual++;
+                this.atualizarPontoAtual();
+            }
+        } catch (java.lang.NullPointerException ex) {
+            JOptionPane.showMessageDialog(this.ajusteFrame, "O equipamento superior não foi definido antecipadamente", "ERRO", JOptionPane.ERROR_MESSAGE);
             this.atualizarPontoAtual();
         }
     }
@@ -171,10 +186,14 @@ public class PanelNavegacao extends JPanel {
         this.desabilitarBotoes();
         Ponto target = this.camadasRedeReduzida.get(this.camadaAtual).get(this.pontoAtual - 1);
         boolean inicioRede = this.camadaAtual == 1;
-        if (this.ajusteFrame.ajustar(target, inicioRede)) {
-            this.pontoAtual--;
+        try {
+            if (this.ajusteFrame.ajustar(target, inicioRede)) {
+                this.pontoAtual--;
+                this.atualizarPontoAtual();
+            }
+        } catch (java.lang.NullPointerException ex) {
+            JOptionPane.showMessageDialog(this.ajusteFrame, "O equipamento superior não foi definido antecipadamente", "ERRO", JOptionPane.ERROR_MESSAGE);
             this.atualizarPontoAtual();
         }
     }
-
 }
