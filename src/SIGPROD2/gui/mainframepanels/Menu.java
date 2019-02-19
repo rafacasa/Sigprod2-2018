@@ -5,7 +5,7 @@
  */
 package sigprod2.gui.mainframepanels;
 
-import sigprod2.Auxiliar.Arquivo;
+import sigprod2.auxiliar.Arquivo;
 import java.awt.event.ActionEvent;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;

@@ -1,7 +1,7 @@
 package sigprod2.dao;
 
 import sigprod2.bd.Conexao;
-import sigprod2.BD.Tables.Elo.EloBD;
+import sigprod2.bd.tables.elo.EloBD;
 import sigprod2.modelo.Elo;
 import sigprod2.modelo.PontoCurva;
 import java.sql.Connection;

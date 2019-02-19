@@ -1,7 +1,7 @@
 package sigprod2.modelo;
 
 import sigprod2.criterios.Criterios_Elo_Elo;
-import sigprod2.Auxiliar.Arquivo;
+import sigprod2.auxiliar.Arquivo;
 import sigprod2.auxiliar.AjusteImpossivelException;
 import sigprod2.auxiliar.NodeClickDefaultListener;
 import sigprod2.auxiliar.NodeClickMouseManager;
