@@ -3,6 +3,7 @@ package SIGPROD2.gui.ajustepanels;
 import SIGPROD2.auxiliar.ArrowButton;
 import SIGPROD2.gui.AjusteFrame;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -75,19 +76,19 @@ public class PanelNavegacao extends JPanel {
         panel1.setLayout(new BoxLayout(panel1, BoxLayout.LINE_AXIS));
         panel2.setLayout(new BoxLayout(panel2, BoxLayout.LINE_AXIS));
 
-        panel1.add(Box.createHorizontalStrut(10));
+        panel1.add(Box.createRigidArea(new Dimension(10, 0)));
         panel1.add(this.labelCamadas);
-        panel1.add(Box.createHorizontalStrut(10));
+        panel1.add(Box.createRigidArea(new Dimension(10, 0)));
         panel1.add(this.up);
-        panel1.add(Box.createHorizontalStrut(10));
+        panel1.add(Box.createRigidArea(new Dimension(10, 0)));
         panel1.add(this.down);
         panel1.add(Box.createHorizontalGlue());
 
-        panel2.add(Box.createHorizontalStrut(10));
+        panel2.add(Box.createRigidArea(new Dimension(10, 0)));
         panel2.add(this.labelPontos);
-        panel2.add(Box.createHorizontalStrut(10));
+        panel2.add(Box.createRigidArea(new Dimension(10, 0)));
         panel2.add(this.left);
-        panel2.add(Box.createHorizontalStrut(10));
+        panel2.add(Box.createRigidArea(new Dimension(10, 0)));
         panel2.add(this.right);
         panel2.add(Box.createHorizontalGlue());
 
@@ -95,9 +96,9 @@ public class PanelNavegacao extends JPanel {
 
         this.add(Box.createVerticalGlue());
         this.add(panel1);
-        this.add(Box.createVerticalStrut(20));
+        this.add(Box.createRigidArea(new Dimension(0, 20)));
         this.add(panel2);
-        this.add(Box.createVerticalStrut(20));
+        this.add(Box.createRigidArea(new Dimension(0, 20)));
     }
 
     public Ponto getPontoAtual() {
