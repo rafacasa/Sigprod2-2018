@@ -139,17 +139,11 @@ public class PanelNavegacao extends JPanel {
         Ponto atual = this.getPontoAtual();
         Ponto target = rede.getParentRedeReduzida(atual);
         boolean inicioRede = this.camadaAtual == 2;
-        try {
-            if (this.ajusteFrame.ajustar(target, inicioRede)) {
-                this.camadaAtual--;
-                this.pontoAtual = this.camadasRedeReduzida.get(this.camadaAtual).indexOf(target);
-                this.atualizarPontoAtual();
-                atual.resetAtributos();
-            }
-        } catch (java.lang.NullPointerException ex) {
-            JOptionPane.showMessageDialog(this.ajusteFrame, "O equipamento superior não foi definido antecipadamente", "ERRO", JOptionPane.ERROR_MESSAGE);
+        if (this.ajusteFrame.ajustar(target, inicioRede)) {
+            this.camadaAtual--;
+            this.pontoAtual = this.camadasRedeReduzida.get(this.camadaAtual).indexOf(target);
             this.atualizarPontoAtual();
-            atual.resetAtributos(true);
+            atual.resetAtributos();
         }
     }
 
@@ -166,6 +160,7 @@ public class PanelNavegacao extends JPanel {
             }
         } catch (java.lang.NullPointerException ex) {
             JOptionPane.showMessageDialog(this.ajusteFrame, "O equipamento superior não foi definido antecipadamente", "ERRO", JOptionPane.ERROR_MESSAGE);
+            this.ajusteFrame.ajustar(atual, this.camadaAtual == 1);
             this.atualizarPontoAtual();
             atual.resetAtributos(true);
         }
@@ -184,6 +179,7 @@ public class PanelNavegacao extends JPanel {
             }
         } catch (java.lang.NullPointerException ex) {
             JOptionPane.showMessageDialog(this.ajusteFrame, "O equipamento superior não foi definido antecipadamente", "ERRO", JOptionPane.ERROR_MESSAGE);
+            this.ajusteFrame.ajustar(atual, inicioRede);
             this.atualizarPontoAtual();
             atual.resetAtributos(true);
         }
@@ -202,6 +198,7 @@ public class PanelNavegacao extends JPanel {
             }
         } catch (java.lang.NullPointerException ex) {
             JOptionPane.showMessageDialog(this.ajusteFrame, "O equipamento superior não foi definido antecipadamente", "ERRO", JOptionPane.ERROR_MESSAGE);
+            this.ajusteFrame.ajustar(atual, inicioRede);
             this.atualizarPontoAtual();
             atual.resetAtributos(true);
         }
