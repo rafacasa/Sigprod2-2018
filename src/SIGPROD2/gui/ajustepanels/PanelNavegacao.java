@@ -1,15 +1,15 @@
 package SIGPROD2.gui.ajustepanels;
 
-import SIGPROD2.auxiliar.ArrowButton;
 import SIGPROD2.gui.AjusteFrame;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.plaf.basic.BasicArrowButton;
 import sigprod2.modelo.Ponto;
 import sigprod2.modelo.Rede;
 
@@ -24,7 +24,7 @@ public class PanelNavegacao extends JPanel {
     private int camadaAtual, pontoAtual;
     private AjusteFrame ajusteFrame;
 
-    private ArrowButton up, down, left, right;
+    private JButton up, down, left, right;
     private JLabel labelCamadas, labelPontos;
 
     public PanelNavegacao(Rede rede, AjusteFrame ajusteFrame) {
@@ -38,10 +38,10 @@ public class PanelNavegacao extends JPanel {
     }
 
     private void initComponents() {
-        this.up = new ArrowButton(BasicArrowButton.NORTH);
-        this.down = new ArrowButton(BasicArrowButton.SOUTH);
-        this.left = new ArrowButton(BasicArrowButton.WEST);
-        this.right = new ArrowButton(BasicArrowButton.EAST);
+        this.up = new JButton("↑");
+        this.down = new JButton("↓");
+        this.left = new JButton("←");
+        this.right = new JButton("→");
 
         this.up.addActionListener(this::subirCamada);
         this.down.addActionListener(this::descerCamada);
@@ -52,6 +52,11 @@ public class PanelNavegacao extends JPanel {
         this.down.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.left.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.right.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        this.up.setAlignmentY(Component.CENTER_ALIGNMENT);
+        this.down.setAlignmentY(Component.CENTER_ALIGNMENT);
+        this.left.setAlignmentY(Component.CENTER_ALIGNMENT);
+        this.right.setAlignmentY(Component.CENTER_ALIGNMENT);
 
         this.up.setEnabled(false);
         this.down.setEnabled(false);
@@ -69,19 +74,19 @@ public class PanelNavegacao extends JPanel {
         panel1.setLayout(new BoxLayout(panel1, BoxLayout.LINE_AXIS));
         panel2.setLayout(new BoxLayout(panel2, BoxLayout.LINE_AXIS));
 
-        panel1.add(Box.createHorizontalStrut(10));
+        panel1.add(Box.createRigidArea(new Dimension(10, 0)));
         panel1.add(this.labelCamadas);
-        panel1.add(Box.createHorizontalStrut(10));
+        panel1.add(Box.createRigidArea(new Dimension(10, 0)));
         panel1.add(this.up);
-        panel1.add(Box.createHorizontalStrut(10));
+        panel1.add(Box.createRigidArea(new Dimension(10, 0)));
         panel1.add(this.down);
         panel1.add(Box.createHorizontalGlue());
 
-        panel2.add(Box.createHorizontalStrut(10));
+        panel2.add(Box.createRigidArea(new Dimension(10, 0)));
         panel2.add(this.labelPontos);
-        panel2.add(Box.createHorizontalStrut(10));
+        panel2.add(Box.createRigidArea(new Dimension(10, 0)));
         panel2.add(this.left);
-        panel2.add(Box.createHorizontalStrut(10));
+        panel2.add(Box.createRigidArea(new Dimension(10, 0)));
         panel2.add(this.right);
         panel2.add(Box.createHorizontalGlue());
 
@@ -89,9 +94,9 @@ public class PanelNavegacao extends JPanel {
 
         this.add(Box.createVerticalGlue());
         this.add(panel1);
-        this.add(Box.createVerticalStrut(20));
+        this.add(Box.createRigidArea(new Dimension(0, 20)));
         this.add(panel2);
-        this.add(Box.createVerticalStrut(20));
+        this.add(Box.createRigidArea(new Dimension(0, 20)));
     }
 
     public Ponto getPontoAtual() {
