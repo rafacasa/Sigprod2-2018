@@ -1,6 +1,5 @@
 package SIGPROD2.gui.ajustepanels;
 
-import SIGPROD2.auxiliar.ArrowButton;
 import SIGPROD2.gui.AjusteFrame;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -11,7 +10,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.plaf.basic.BasicArrowButton;
 import sigprod2.modelo.Ponto;
 import sigprod2.modelo.Rede;
 
