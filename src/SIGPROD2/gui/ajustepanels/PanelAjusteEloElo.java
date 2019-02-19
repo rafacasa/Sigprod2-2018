@@ -132,6 +132,7 @@ public class PanelAjusteEloElo extends JPanel {
         this.labelIFTMin.setText(metrica.getiFTMinI300() + "");
         this.labelIFTMinSel.setText(metrica.getiFTMinSelI300() + "");
         this.labelPorcentagem.setText((metrica.getPorcentagemProtegida() * 100) + "%");
+        this.ajusteFrame.pack();
     }
 
     private void botaoSelecionarActionPerformed(java.awt.event.ActionEvent evt) {

@@ -42,11 +42,11 @@ public class AjusteFrame extends JDialog {
     }
 
     private void initComponents() {
-        this.panelAjuste = new JPanel();
-        this.panelAjuste.add(Box.createRigidArea(new Dimension(400, 400)));
-
         this.navegacao = new PanelNavegacao(this.rede, this);
         this.navegacao.atualizarPontoAtual();
+
+        this.panelAjuste = new JPanel();
+        this.panelAjuste.add(Box.createRigidArea(this.navegacao.getPreferredSize()));
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent evt) {
@@ -109,7 +109,7 @@ public class AjusteFrame extends JDialog {
                                 ponto.resetAtributos(true);
                                 this.panelAjuste.removeAll();
                                 this.panelAjuste.add(new PanelAjusteEloElo(metricas, this));
-                                this.revalidate();
+                                this.pack();
                             } catch (AjusteImpossivelException ex) {
                                 ex.printStackTrace();
                                 return false;
