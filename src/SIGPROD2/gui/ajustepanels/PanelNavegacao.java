@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -24,7 +25,7 @@ public class PanelNavegacao extends JPanel {
     private int camadaAtual, pontoAtual;
     private AjusteFrame ajusteFrame;
 
-    private ArrowButton up, down, left, right;
+    private JButton up, down, left, right;
     private JLabel labelCamadas, labelPontos;
 
     public PanelNavegacao(Rede rede, AjusteFrame ajusteFrame) {
@@ -38,10 +39,10 @@ public class PanelNavegacao extends JPanel {
     }
 
     private void initComponents() {
-        this.up = new ArrowButton(BasicArrowButton.NORTH);
-        this.down = new ArrowButton(BasicArrowButton.SOUTH);
-        this.left = new ArrowButton(BasicArrowButton.WEST);
-        this.right = new ArrowButton(BasicArrowButton.EAST);
+        this.up = new JButton("↑");
+        this.down = new JButton("↓");
+        this.left = new JButton("←");
+        this.right = new JButton("→");
 
         this.up.addActionListener(this::subirCamada);
         this.down.addActionListener(this::descerCamada);
@@ -52,6 +53,11 @@ public class PanelNavegacao extends JPanel {
         this.down.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.left.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.right.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        this.up.setAlignmentY(Component.CENTER_ALIGNMENT);
+        this.down.setAlignmentY(Component.CENTER_ALIGNMENT);
+        this.left.setAlignmentY(Component.CENTER_ALIGNMENT);
+        this.right.setAlignmentY(Component.CENTER_ALIGNMENT);
 
         this.up.setEnabled(false);
         this.down.setEnabled(false);
