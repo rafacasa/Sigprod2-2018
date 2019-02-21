@@ -1,7 +1,7 @@
-package SIGPROD2.gui;
+package sigprod2.gui;
 
-import SIGPROD2.gui.ajustepanels.PanelAjusteEloElo;
-import SIGPROD2.gui.ajustepanels.PanelNavegacao;
+import sigprod2.gui.ajustepanels.PanelAjusteEloElo;
+import sigprod2.gui.ajustepanels.PanelNavegacao;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;

@@ -1,7 +1,7 @@
 package sigprod2.gui;
 
 import sigprod2.gui.mainframepanels.Menu;
-import sigprod2.Auxiliar.Arquivo;
+import sigprod2.auxiliar.Arquivo;
 import sigprod2.auxiliar.Erro;
 import sigprod2.auxiliar.LoopPumpThread;
 import sigprod2.auxiliar.NodeClickGraficoListener;
@@ -200,7 +200,7 @@ public class MainFrame extends JFrame {
      */
     private void botaoExecutarEstudoActionPerformed(java.awt.event.ActionEvent evt) {
         SwingUtilities.invokeLater(() -> {
-            new SIGPROD2.gui.AjusteFrame(this).setVisible(true);
+            new sigprod2.gui.AjusteFrame(this).setVisible(true);
         });
     }
 

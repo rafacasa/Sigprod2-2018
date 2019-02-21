@@ -1,6 +1,6 @@
 package sigprod2.bd;
 
-import sigprod2.Auxiliar.Arquivo;
+import sigprod2.auxiliar.Arquivo;
 import com.google.gson.Gson;
 
 /**

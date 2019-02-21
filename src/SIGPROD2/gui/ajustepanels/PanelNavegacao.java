@@ -1,6 +1,6 @@
-package SIGPROD2.gui.ajustepanels;
+package sigprod2.gui.ajustepanels;
 
-import SIGPROD2.gui.AjusteFrame;
+import sigprod2.gui.AjusteFrame;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.List;

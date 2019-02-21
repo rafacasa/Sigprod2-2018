@@ -1,4 +1,4 @@
-package sigprod2.Auxiliar;
+package sigprod2.auxiliar;
 
 import java.io.*;
 

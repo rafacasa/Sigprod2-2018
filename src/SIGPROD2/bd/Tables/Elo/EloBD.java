@@ -1,4 +1,4 @@
-package sigprod2.BD.Tables.Elo;
+package sigprod2.bd.tables.elo;
 
 /**
  * Classe responsável por manter os nomes das colunas e da tabela de Elos tipo
