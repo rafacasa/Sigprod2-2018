@@ -9,9 +9,9 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 import sigprod2.metricas.Metricas_Elo_Elo;
 import sigprod2.modelo.Elo;
-import sigprod2.modelo.Ponto;
 
 /**
  *
@@ -24,10 +24,11 @@ public class PanelAjusteEloElo extends JPanel {
 
     private AjusteFrame ajusteFrame;
 
-    private JPanel panelTProtetor1, panelTProtetor2, panelIFTMin, panelIFTMinSel, panelPorcentagem;
+    private JPanel panelTProtetor1, panelTProtetor2, panelIFTMin, panelIFTMinSel, panelPorcentagem, panelBotoes;
     private JLabel nomeTProtetor1, nomeTProtetor2, nomeIFTMin, nomeIFTMinSel, nomePorcentagem, labelTProtetor1, labelTProtetor2, labelIFTMin, labelIFTMinSel, labelPorcentagem;
     private JComboBox<Metricas_Elo_Elo> lista;
     private JButton botaoSelecionar;
+    private JToggleButton botaoCoordenograma;
 
     public PanelAjusteEloElo(List<Metricas_Elo_Elo> metricas, AjusteFrame ajusteFrame) {
         this.metricas = metricas;
@@ -54,6 +55,9 @@ public class PanelAjusteEloElo extends JPanel {
 
         this.panelPorcentagem = new JPanel();
         this.panelPorcentagem.setLayout(new BoxLayout(this.panelPorcentagem, BoxLayout.LINE_AXIS));
+
+        this.panelBotoes = new JPanel();
+        this.panelBotoes.setLayout(new BoxLayout(this.panelBotoes, BoxLayout.LINE_AXIS));
     }
 
     private void initComponents() {
@@ -87,6 +91,9 @@ public class PanelAjusteEloElo extends JPanel {
 
         this.botaoSelecionar = new JButton("Selecionar Elo");
         this.botaoSelecionar.addActionListener(this::botaoSelecionarActionPerformed);
+
+        this.botaoCoordenograma = new JToggleButton("Exibir Coordenograma");
+        this.botaoCoordenograma.addActionListener(this::botaoCoordenogramaActionPerformed);
     }
 
     private void addItens() {
@@ -110,6 +117,12 @@ public class PanelAjusteEloElo extends JPanel {
         this.panelPorcentagem.add(Box.createHorizontalGlue());
         this.panelPorcentagem.add(this.labelPorcentagem);
 
+        this.panelBotoes.add(Box.createHorizontalGlue());
+        this.panelBotoes.add(this.botaoCoordenograma);
+        this.panelBotoes.add(Box.createRigidArea(new Dimension(20, 0)));
+        this.panelBotoes.add(this.botaoSelecionar);
+        this.panelBotoes.add(Box.createRigidArea(new Dimension(20, 0)));
+
         this.add(this.lista);
         this.add(Box.createRigidArea(new Dimension(0, 10)));
         this.add(this.panelTProtetor1);
@@ -122,7 +135,7 @@ public class PanelAjusteEloElo extends JPanel {
         this.add(Box.createRigidArea(new Dimension(0, 10)));
         this.add(this.panelPorcentagem);
         this.add(Box.createRigidArea(new Dimension(0, 10)));
-        this.add(this.botaoSelecionar);
+        this.add(this.panelBotoes);
     }
 
     private void listaActionPerformed(java.awt.event.ActionEvent evt) {
@@ -138,5 +151,9 @@ public class PanelAjusteEloElo extends JPanel {
     private void botaoSelecionarActionPerformed(java.awt.event.ActionEvent evt) {
         this.selecionado = this.lista.getItemAt(this.lista.getSelectedIndex()).getElo();
         this.ajusteFrame.selecionaEquipamento(this.metricas.get(0).getPonto(), this.selecionado);
+    }
+
+    private void botaoCoordenogramaActionPerformed(java.awt.event.ActionEvent evt) {
+
     }
 }
