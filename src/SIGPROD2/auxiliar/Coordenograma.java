@@ -1,4 +1,4 @@
-package SIGPROD2.auxiliar;
+package sigprod2.auxiliar;
 
 import java.util.List;
 import org.jfree.chart.ChartFactory;
