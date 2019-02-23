@@ -1,10 +1,16 @@
 package sigprod2.auxiliar;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.LogarithmicAxis;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import sigprod2.modelo.Curvas;
@@ -20,10 +26,12 @@ public class Coordenograma {
 
     private String titulo;
     private JFreeChart chart;
+    private List<Color> cores;
     private XYSeriesCollection dataset;
 
     public Coordenograma(String titulo) {
         this.titulo = titulo;
+        this.cores = new ArrayList<>();
         this.dataset = new XYSeriesCollection();
     }
 
@@ -39,35 +47,36 @@ public class Coordenograma {
         }
     }
 
-    public void add(Elo elo) {
+    public void add(Elo elo, Color cor) {
         // Curva mínima
-        this.add(elo, CurvasElo.MINIMA);
+        this.add(elo, CurvasElo.MINIMA, cor);
         //Curva maxima
-        this.add(elo, CurvasElo.MAXIMA);
+        this.add(elo, CurvasElo.MAXIMA, cor);
         //hachura
         this.addHachura(elo);
     }
 
-    public void add(Elo elo, CurvasElo curva) {
+    public void add(Elo elo, CurvasElo curva, Color cor) {
         XYSeries data = new XYSeries("elo" + elo.getCorrenteNominal() + curva.toString());
         List<PontoCurva> pontos = elo.getCurva(curva);
-        this.add(pontos, data);
+        this.add(pontos, data, cor);
     }
 
-    public void add(Elo elo, CurvasElo curva, double fator) {
+    public void add(Elo elo, CurvasElo curva, double fator, Color cor) {
         XYSeries data = new XYSeries("elo" + elo.getCorrenteNominal() + curva.toString() + "fator" + fator);
         List<PontoCurva> pontos = elo.getCurva(curva);
         pontos.forEach(ponto -> {
             ponto.setTempo(ponto.getTempo() * fator);
         });
-        this.add(pontos, data);
+        this.add(pontos, data, cor);
     }
 
-    private void add(List<PontoCurva> pontos, XYSeries data) {
+    private void add(List<PontoCurva> pontos, XYSeries data, Color cor) {
         pontos.forEach(ponto -> {
             data.add(ponto.getCorrente(), ponto.getTempo());
         });
         this.dataset.addSeries(data);
+        this.cores.add(cor);
     }
 
     private void addHachura(Elo elo) {
@@ -135,5 +144,24 @@ public class Coordenograma {
                 dataset,
                 PlotOrientation.VERTICAL,
                 true, true, false);
+        XYPlot plot = chart.getXYPlot();
+        NumberAxis domainAxis = new LogarithmicAxis("Corrente (A)");
+        NumberAxis rangeAxis = new LogarithmicAxis("Tempo (s)");
+        plot.setDomainAxis(domainAxis);
+        plot.setRangeAxis(rangeAxis);
+        chart.removeLegend();
+        chart.setBackgroundPaint(Color.white);
+        plot.setOutlinePaint(Color.black);
+        XYItemRenderer renderer = plot.getRenderer();
+        int nSeries = dataset.getSeriesCount();
+        for (int k = 0; k < nSeries; k++) {
+            renderer.setSeriesPaint(k, this.cores.get(k));
+        }
+    }
+
+    public ChartPanel getChartPanel() {
+        ChartPanel chartPanel = new ChartPanel(this.chart);
+        chartPanel.setPreferredSize(new java.awt.Dimension(560, 560));
+        return chartPanel;
     }
 }
