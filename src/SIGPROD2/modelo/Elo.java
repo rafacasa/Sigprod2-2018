@@ -132,16 +132,16 @@ public class Elo implements Curvas, Equipamento {
         double[][] array;
         switch (index) {
             case 0:
-                 lista = getCurvaDeMinimaFusao();
-                 array = new double[lista.size()][2];
-                 for (int i = 0; i < lista.size(); i++) {
+                lista = getCurvaDeMinimaFusao();
+                array = new double[lista.size()][2];
+                for (int i = 0; i < lista.size(); i++) {
                     array[i] = lista.get(i).getPontoArray();
                 }
                 return array;
             case 1:
                 lista = getCurvaDeMaximaInterrupcao();
-                 array = new double[lista.size()][2];
-                 for (int i = 0; i < lista.size(); i++) {
+                array = new double[lista.size()][2];
+                for (int i = 0; i < lista.size(); i++) {
                     array[i] = lista.get(i).getPontoArray();
                 }
                 return array;
@@ -149,9 +149,9 @@ public class Elo implements Curvas, Equipamento {
                 throw new ArrayIndexOutOfBoundsException(index);
         }
     }
-    
-    public double[][] getCurvaMatrix(CurvasElo curva) { 
-        if(curva == CurvasElo.MAXIMA) {
+
+    public double[][] getCurvaMatrix(CurvasElo curva) {
+        if (curva == CurvasElo.MAXIMA) {
             return getCurvaMatrix(1);
         } else {
             return getCurvaMatrix(0);
@@ -162,11 +162,11 @@ public class Elo implements Curvas, Equipamento {
     public TipoEquipamento getTipoEquipamento() {
         return TipoEquipamento.ELO;
     }
-    
-    public double correntedoTempo(double tempoEntrada, CurvasElo curva) {
+
+    public double correnteDoTempo(double tempoEntrada, CurvasElo curva) {
         return correnteDoTempo(getCurvaMatrix(curva), tempoEntrada);
     }
-    
+
     private double correnteDoTempo(double curva[][], double tempoEntrada) {
         double corrente1 = 0, corrente2 = 0, tempo1 = 0, tempo2 = 0;
         boolean sai = false;
@@ -197,7 +197,7 @@ public class Elo implements Curvas, Equipamento {
     public double tempoDaCorrente(double correnteEntrada, CurvasElo curva) {
         return tempoDaCorrente(getCurvaMatrix(curva), correnteEntrada);
     }
-    
+
     private double tempoDaCorrente(double curva[][], double correnteEntrada) {
         double corrente1 = 0, corrente2 = 0, tempo1 = 0, tempo2 = 0;
         boolean sai = false;
@@ -226,7 +226,7 @@ public class Elo implements Curvas, Equipamento {
     public double GetMenorCorrente(CurvasElo curva) {
         return GetMenorCorrente(getCurvaMatrix(curva));
     }
-    
+
     private double GetMenorCorrente(double curva[][]) {
         double menorValor = curva[0][0];
         for (int i = 1; i < curva.length; i++) {
@@ -240,7 +240,7 @@ public class Elo implements Curvas, Equipamento {
     public double GetMenorTempo(CurvasElo curva) {
         return GetMenorTempo(getCurvaMatrix(curva));
     }
-    
+
     private double GetMenorTempo(double curva[][]) {
         double menorValor = curva[0][1];
         for (int i = 1; i < curva.length; i++) {
@@ -254,7 +254,7 @@ public class Elo implements Curvas, Equipamento {
     public double GetMaiorCorrente(CurvasElo curva) {
         return GetMaiorCorrente(getCurvaMatrix(curva));
     }
-    
+
     private double GetMaiorCorrente(double curva[][]) {
         double maiorValor = curva[0][0];
         for (int i = 1; i < curva.length; i++) {
@@ -268,7 +268,7 @@ public class Elo implements Curvas, Equipamento {
     public double GetMaiorTempo(CurvasElo curva) {
         return GetMaiorTempo(getCurvaMatrix(curva));
     }
-    
+
     private double GetMaiorTempo(double curva[][]) {
         double maiorValor = curva[0][1];
         for (int i = 1; i < curva.length; i++) {
@@ -286,6 +286,5 @@ public class Elo implements Curvas, Equipamento {
     public void setDadosAjuste(String dadosAjuste) {
         this.dadosAjuste = dadosAjuste;
     }
-    
-    
+
 }
