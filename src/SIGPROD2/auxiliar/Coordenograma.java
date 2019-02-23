@@ -41,22 +41,23 @@ public class Coordenograma {
 
     public void add(Elo elo) {
         // Curva mínima
-        XYSeries dataMin = new XYSeries("elo" + elo.getCorrenteNominal() + "minima");
-        List<PontoCurva> pontos = elo.getCurvaDeMinimaFusao();
-        pontos.forEach(ponto -> {
-            dataMin.add(ponto.getCorrente(), ponto.getTempo());
-        });
-        this.dataset.addSeries(dataMin);
-
+        this.add(elo, CurvasElo.MINIMA);
         //Curva maxima
-        XYSeries dataMax = new XYSeries("elo" + elo.getCorrenteNominal() + "maxima");
-        pontos = elo.getCurvaDeMaximaInterrupcao();
-        pontos.forEach(ponto -> {
-            dataMax.add(ponto.getCorrente(), ponto.getTempo());
-        });
-        this.dataset.addSeries(dataMax);
-
+        this.add(elo, CurvasElo.MAXIMA);
         //hachura
+        this.addHachura(elo);
+    }
+
+    public void add(Elo elo, CurvasElo curva) {
+        XYSeries data = new XYSeries("elo" + elo.getCorrenteNominal() + curva.toString());
+        List<PontoCurva> pontos = elo.getCurva(curva);
+        pontos.forEach(ponto -> {
+            data.add(ponto.getCorrente(), ponto.getTempo());
+        });
+        this.dataset.addSeries(data);
+    }
+
+    private void addHachura(Elo elo) {
         List<XYSeries> hachura = new ArrayList<>();
         double tempoMM, tempoTC, tempoMenor, tempoMaior;
         tempoMM = elo.GetMaiorTempo(CurvasElo.MINIMA);
@@ -95,12 +96,6 @@ public class Coordenograma {
         });
     }
 
-//    public void add(Elo elo, CurvasElo curva) {
-//        
-//    }
-//    private void addHachura(Elo elo) {
-//
-//    }
     //inserir reta na corrente
 //    public void add(double corrente) {
 //

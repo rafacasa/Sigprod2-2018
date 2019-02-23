@@ -1,6 +1,7 @@
 package sigprod2.modelo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Esta clsse representa um Elo de Tipo K
@@ -59,7 +60,7 @@ public class Elo implements Curvas, Equipamento {
         this.preferencial = preferencial;
     }
 
-    public ArrayList<PontoCurva> getCurvaDeMinimaFusao() {
+    public List<PontoCurva> getCurvaDeMinimaFusao() {
         return curvaDeMinimaFusao;
     }
 
@@ -67,12 +68,20 @@ public class Elo implements Curvas, Equipamento {
         this.curvaDeMinimaFusao = curvaDeMinimaFusao;
     }
 
-    public ArrayList<PontoCurva> getCurvaDeMaximaInterrupcao() {
+    public List<PontoCurva> getCurvaDeMaximaInterrupcao() {
         return curvaDeMaximaInterrupcao;
     }
 
     public void setCurvaDeMaximaInterrupcao(ArrayList<PontoCurva> curvadeMaximaInterrupcao) {
         this.curvaDeMaximaInterrupcao = curvadeMaximaInterrupcao;
+    }
+
+    public List<PontoCurva> getCurva(CurvasElo curva) {
+        if (CurvasElo.MAXIMA.equals(curva)) {
+            return this.getCurvaDeMaximaInterrupcao();
+        } else {
+            return this.getCurvaDeMinimaFusao();
+        }
     }
 
     @Override
@@ -103,7 +112,7 @@ public class Elo implements Curvas, Equipamento {
     }
 
     @Override
-    public ArrayList<PontoCurva> getCurva(int index) {
+    public List<PontoCurva> getCurva(int index) {
         switch (index) {
             case 0:
                 return getCurvaDeMinimaFusao();
@@ -128,7 +137,7 @@ public class Elo implements Curvas, Equipamento {
 
     @Override
     public double[][] getCurvaMatrix(int index) {
-        ArrayList<PontoCurva> lista;
+        List<PontoCurva> lista;
         double[][] array;
         switch (index) {
             case 0:

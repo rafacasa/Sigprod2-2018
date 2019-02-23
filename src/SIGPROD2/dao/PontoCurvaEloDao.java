@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe responsável por interagir com o Banco de Dados para inserir, alterar e
@@ -60,7 +61,7 @@ public class PontoCurvaEloDao {
      * Método responsável por gerenciar a inclusão de uma grande quantidade de
      * Pontos de Curva no Banco de Dados
      *
-     * @param lista ArrayList com os pontos de curva a serem adicionados
+     * @param lista List com os pontos de curva a serem adicionados
      * @param ehCurvaMaxima Informa em qual curva está este ponto. Utilize as
      * constantes SIGPRO2.Modelo.PontoCurva.PONTODACURVAMAXIMA e
      * SIGPRO2.Modelo.PontoCurva.PONTODACURVAMINIMA.
@@ -69,7 +70,7 @@ public class PontoCurvaEloDao {
      * @throws SQLException Caso houver erro de acesso ao Banco de Dados, ou os
      * Dados forem inválidos
      */
-    public static void inserePontoCurva(ArrayList<PontoCurva> lista, boolean ehCurvaMaxima, int correnteElo) throws SQLException {
+    public static void inserePontoCurva(List<PontoCurva> lista, boolean ehCurvaMaxima, int correnteElo) throws SQLException {
         int qtd = lista.size();
         String comandoSql = INSERT;
         for (int i = 1; i < qtd; i++) {
