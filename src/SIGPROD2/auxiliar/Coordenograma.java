@@ -51,6 +51,19 @@ public class Coordenograma {
     public void add(Elo elo, CurvasElo curva) {
         XYSeries data = new XYSeries("elo" + elo.getCorrenteNominal() + curva.toString());
         List<PontoCurva> pontos = elo.getCurva(curva);
+        this.add(pontos, data);
+    }
+
+    public void add(Elo elo, CurvasElo curva, double fator) {
+        XYSeries data = new XYSeries("elo" + elo.getCorrenteNominal() + curva.toString() + "fator" + fator);
+        List<PontoCurva> pontos = elo.getCurva(curva);
+        pontos.forEach(ponto -> {
+            ponto.setTempo(ponto.getTempo() * fator);
+        });
+        this.add(pontos, data);
+    }
+
+    private void add(List<PontoCurva> pontos, XYSeries data) {
         pontos.forEach(ponto -> {
             data.add(ponto.getCorrente(), ponto.getTempo());
         });
