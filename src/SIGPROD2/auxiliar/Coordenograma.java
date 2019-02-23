@@ -85,21 +85,25 @@ public class Coordenograma {
             tempoAux = Math.pow(10, expAux);
             corrente1 = elo.correnteDoTempo(tempoAux, CurvasElo.MINIMA);
             corrente2 = elo.correnteDoTempo(tempoAux, CurvasElo.MINIMA);
-            XYSeries hachuraAux = new XYSeries(k);
+            XYSeries hachuraAux = new XYSeries(k + "Elo" + elo.getCorrenteNominal());
             hachuraAux.add(corrente1, tempoAux);
             hachuraAux.add(corrente2, tempoAux);
             hachura.add(hachuraAux);
             expAux -= expPasso;
         }
         hachura.forEach((series) -> {
-            dataset.addSeries(series);
+            this.dataset.addSeries(series);
         });
     }
 
     //inserir reta na corrente
-//    public void add(double corrente) {
-//
-//    }
+    public void add(double corrente, double tempo1, double tempo2) {
+        XYSeries retaCorrente = new XYSeries("retacorrente" + tempo1 + tempo2);
+        retaCorrente.add(corrente, tempo1);
+        retaCorrente.add(corrente, tempo2);
+        this.dataset.addSeries(retaCorrente);
+    }
+
     public String getTitulo() {
         return titulo;
     }
