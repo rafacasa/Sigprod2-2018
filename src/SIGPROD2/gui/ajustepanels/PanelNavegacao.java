@@ -24,7 +24,7 @@ public class PanelNavegacao extends JPanel {
     private Rede rede;
     private int camadaAtual, pontoAtual;
     private AjusteFrame ajusteFrame;
-
+    private boolean coordenograma;
     private JButton up, down, left, right;
     private JLabel labelCamadas, labelPontos;
     private JToggleButton botaoCoordenograma;
@@ -35,6 +35,7 @@ public class PanelNavegacao extends JPanel {
         this.ajusteFrame = ajusteFrame;
         this.camadaAtual = 1;
         this.pontoAtual = 0;
+        this.coordenograma = false;
         this.initComponents();
         this.placeComponents();
     }
@@ -223,6 +224,12 @@ public class PanelNavegacao extends JPanel {
     }
 
     private void botaoCoordenogramaActionPerformed(java.awt.event.ActionEvent evt) {
-
+        this.coordenograma = !this.coordenograma;
+        if (this.coordenograma) {
+            this.ajusteFrame.ativarCoordenograma();
+        } else {
+            this.ajusteFrame.desativarCoordenograma();
+        }
+        evt.toString();
     }
 }

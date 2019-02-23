@@ -53,7 +53,7 @@ public class Coordenograma {
         //Curva maxima
         this.add(elo, CurvasElo.MAXIMA, cor);
         //hachura
-        this.addHachura(elo);
+        this.addHachura(elo, cor);
     }
 
     public void add(Elo elo, CurvasElo curva, Color cor) {
@@ -79,7 +79,7 @@ public class Coordenograma {
         this.cores.add(cor);
     }
 
-    private void addHachura(Elo elo) {
+    private void addHachura(Elo elo, Color cor) {
         List<XYSeries> hachura = new ArrayList<>();
         double tempoMM, tempoTC, tempoMenor, tempoMaior;
         tempoMM = elo.GetMaiorTempo(CurvasElo.MINIMA);
@@ -115,6 +115,7 @@ public class Coordenograma {
         }
         hachura.forEach((series) -> {
             this.dataset.addSeries(series);
+            this.cores.add(cor);
         });
     }
 

@@ -1,5 +1,6 @@
 package sigprod2.gui;
 
+import SIGPROD2.gui.ajustepanels.PanelAjuste;
 import sigprod2.gui.ajustepanels.PanelAjusteEloElo;
 import sigprod2.gui.ajustepanels.PanelNavegacao;
 import java.awt.Dimension;
@@ -28,12 +29,15 @@ import sigprod2.modelo.TipoEquipamento;
 public class AjusteFrame extends JDialog {
 
     private PanelNavegacao navegacao;
-    private JPanel panelAjuste;
+    private JPanel panelCoordenograma, panelAjuste;
+    private PanelAjuste ajuste;
     private sigprod2.gui.MainFrame mainFrame;
     private Rede rede;
+    private boolean coordenograma;
 
     public AjusteFrame(sigprod2.gui.MainFrame frame) {
         super(frame);
+        this.coordenograma = false;
         this.mainFrame = frame;
         this.rede = this.mainFrame.getRede();
         initComponents();
@@ -48,7 +52,10 @@ public class AjusteFrame extends JDialog {
         this.panelAjuste = new JPanel();
         this.panelAjuste.add(Box.createRigidArea(this.navegacao.getPreferredSize()));
 
+        this.panelCoordenograma = new JPanel();
+
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent evt) {
                 limparPanel();
                 dispose();
@@ -60,6 +67,7 @@ public class AjusteFrame extends JDialog {
         this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.LINE_AXIS));
         this.add(this.navegacao);
         this.add(this.panelAjuste);
+        this.add(this.panelCoordenograma);
         this.pack();
     }
 
@@ -68,6 +76,8 @@ public class AjusteFrame extends JDialog {
         pontoAtual.resetAtributos();
         this.panelAjuste.removeAll();
         this.panelAjuste.add(Box.createRigidArea(new Dimension(400, 400)));
+        this.panelCoordenograma.removeAll();
+        this.pack();
     }
 
     public boolean ajustar(Ponto ponto, boolean inicioRede) {
@@ -108,7 +118,12 @@ public class AjusteFrame extends JDialog {
                                 metricas = criteriosEloElo.ajuste();
                                 ponto.resetAtributos(true);
                                 this.panelAjuste.removeAll();
-                                this.panelAjuste.add(new PanelAjusteEloElo(metricas, this));
+                                this.ajuste = new PanelAjusteEloElo(metricas, this, (Elo) pOrigem.getEquipamentoInstalado());
+                                this.panelAjuste.add(this.ajuste);
+                                if (this.coordenograma) {
+                                    this.panelCoordenograma.removeAll();
+                                    this.panelCoordenograma.add(this.ajuste.geraCoordenograma());
+                                }
                                 this.pack();
                             } catch (AjusteImpossivelException ex) {
                                 ex.printStackTrace();
@@ -176,5 +191,24 @@ public class AjusteFrame extends JDialog {
         SwingUtilities.invokeLater(() -> {
             new AjusteFrame(sigprod2.gui.MainFrame.frame).setVisible(true);
         });
+    }
+
+    public void ativarCoordenograma() {
+        this.coordenograma = true;
+        this.panelCoordenograma.add(this.ajuste.geraCoordenograma());
+        this.pack();
+    }
+
+    public void desativarCoordenograma() {
+        this.coordenograma = false;
+        this.panelCoordenograma.removeAll();
+    }
+
+    public void atualizaCoordenograma(JPanel chart) {
+        if (this.coordenograma) {
+            this.panelCoordenograma.removeAll();
+            this.panelCoordenograma.add(chart);
+            this.pack();
+        }
     }
 }
