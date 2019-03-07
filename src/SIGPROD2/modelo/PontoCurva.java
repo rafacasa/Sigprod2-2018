@@ -35,9 +35,7 @@ public class PontoCurva {
     }
 
     public double getCorrente() {
-        String str = String.format("%.2f",this.corrente);
-        str = str.replace(',','.');
-        return Double.parseDouble(str);
+        return this.corrente;
     }
 
     public void setCorrente(double corrente) {
@@ -45,11 +43,7 @@ public class PontoCurva {
     }
 
     public double getTempo() {
-        String str = String.format("%,.2f",this.tempo);
-        if(str.contains(",")){
-            str = str.replace(',','.');
-        }
-        return Double.parseDouble(str);
+        return this.tempo;
     }
 
     public void setTempo(double tempo) {
@@ -63,8 +57,8 @@ public class PontoCurva {
     public void setId(int id) {
         this.id = id;
     }
-    
-    public double[] getPontoArray(){
+
+    public double[] getPontoArray() {
         double[] array = new double[2];
         array[0] = this.corrente;
         array[1] = this.tempo;
