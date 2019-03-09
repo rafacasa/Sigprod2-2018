@@ -68,7 +68,7 @@ public class Criterios_Elo_Elo {
         while (it.hasNext()) {
             Elo elo = it.next();
             iElo = elo.getCorrenteNominal();
-            iInrushMax = elo.correntedoTempo(0.1, CurvasElo.MINIMA);
+            iInrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
             if (iElo <= iCargaMax || iInrushMax <= iInrush) {
                 it.remove();
             }
@@ -103,7 +103,7 @@ public class Criterios_Elo_Elo {
             tProtetor = elo.tempoDaCorrente(iCCMax, CurvasElo.MAXIMA);
             tProtetorProtegido1 = (tProtegido - tProtetor) / tProtegido;
 
-            i300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
+            i300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
             iFTMinI300 = (iFTMin - i300) / iFTMin;
 
             metrica = this.metricas.get(i);
@@ -122,7 +122,7 @@ public class Criterios_Elo_Elo {
         for (int i = 0; i < this.elos.size(); i++) {
             elo = this.elos.get(i);
 
-            i300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
+            i300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
             iFTMinSelI300 = (iFTMinSel - i300) / iFTMinSel;
 
             metrica = this.metricas.get(i);
@@ -161,7 +161,7 @@ public class Criterios_Elo_Elo {
 
         for (int i = 0; i < this.elos.size(); i++) {
             elo = this.elos.get(i);
-            i300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
+            i300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
             porcentagem = this.calculaPorcentagemCobertura(iFTMinProximo, iFTMin2Camadas, i300);
 
             metrica = this.metricas.get(i);

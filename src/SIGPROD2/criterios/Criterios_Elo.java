@@ -34,9 +34,9 @@ public class Criterios_Elo {
 
         for (int contador = 0; contador < limite; contador++) {
             elo = elos.get(contador);
-            I300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
+            I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
             Ielo = elo.getCorrenteNominal();
-            IinrushMax = elo.correntedoTempo(0.1, CurvasElo.MINIMA);
+            IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
             IFTmin = rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN);
             IcargaMax = pontoRede.getIcarga();
             Iinrush = 0;
@@ -54,7 +54,7 @@ public class Criterios_Elo {
         elos.sort((o1, o2) -> {
             return -Integer.compare(o1.getCorrenteNominal(), o2.getCorrenteNominal());
         });
-        
+
         System.out.println(elos);
 
         double fatorMult = 0.75;
@@ -83,8 +83,8 @@ public class Criterios_Elo {
             IccMax = pontoRede.getMaxICC(1);
             Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
             Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
-            IinrushMax = elo.correntedoTempo(0.1, CurvasElo.MINIMA);
-            I300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
+            IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
+            I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
             IFTmin = rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN);
             Iinrush = 0;
 
@@ -103,8 +103,8 @@ public class Criterios_Elo {
             IccMax = pontoRede.getMaxICC(1);
             Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
             Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
-            IinrushMax = elo.correntedoTempo(0.1, CurvasElo.MINIMA);
-            I300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
+            IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
+            I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
             iFTminSel = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
             Iinrush = 0;
 
@@ -123,8 +123,8 @@ public class Criterios_Elo {
             IcargaMax = pontoRede.getIcarga();
             Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
             Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
-            IinrushMax = elo.correntedoTempo(0.1, CurvasElo.MINIMA);
-            I300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
+            IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
+            I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
             IFTmin = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
             Iinrush = 0;
 
@@ -136,12 +136,12 @@ public class Criterios_Elo {
         }
         throw new AjusteImpossivelException();
     }
-    
+
     public static Elo criterio_elo_elo_1(List<Elo> elos, Ponto pontoRede, Rede rede, Ponto pontoOrigem) throws AjusteImpossivelException {
         elos.sort((o1, o2) -> {
             return -Integer.compare(o1.getCorrenteNominal(), o2.getCorrenteNominal());
         });
-        
+
         double fatorMult = 0.75;
         double I300;
         double Ielo;
@@ -154,7 +154,7 @@ public class Criterios_Elo {
         double IccMax;
         String dadosAjuste;
         Elo elo;
-        
+
         for (int contador = 0; contador < elos.size(); contador++) {
             elo = elos.get(contador);
 
@@ -163,8 +163,8 @@ public class Criterios_Elo {
             IccMax = pontoRede.getMaxICC(1);
             Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
             Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA);
-            IinrushMax = elo.correntedoTempo(0.1, CurvasElo.MINIMA);
-            I300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
+            IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
+            I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
             IFTmin = rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN);
             Iinrush = 0;
 
@@ -176,7 +176,7 @@ public class Criterios_Elo {
         }
         throw new AjusteImpossivelException();
     }
-    
+
     public static Elo criterio_elo_elo_2(List<Elo> elos, Ponto pontoRede, Rede rede, Ponto pontoOrigem) throws AjusteImpossivelException {
         double fatorMult = 0.75;
         double I300;
@@ -190,7 +190,7 @@ public class Criterios_Elo {
         double iFTminSel;
         String dadosAjuste;
         Elo elo;
-        
+
         for (int contador = 0; contador < elos.size(); contador++) {
             elo = elos.get(contador);
             Ielo = elo.getCorrenteNominal();
@@ -198,8 +198,8 @@ public class Criterios_Elo {
             IccMax = pontoRede.getMaxICC(1);
             Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
             Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
-            IinrushMax = elo.correntedoTempo(0.1, CurvasElo.MINIMA);
-            I300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
+            IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
+            I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
             iFTminSel = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
             Iinrush = 0;
 
@@ -211,8 +211,8 @@ public class Criterios_Elo {
         }
         throw new AjusteImpossivelException();
     }
-    
-    public static Elo criterio_elo_elo_3(List<Elo> elos, Ponto pontoRede, Rede rede, Ponto pontoOrigem) throws AjusteImpossivelException {        
+
+    public static Elo criterio_elo_elo_3(List<Elo> elos, Ponto pontoRede, Rede rede, Ponto pontoOrigem) throws AjusteImpossivelException {
         double fatorMult = 0.75;
         double I300;
         double Ielo;
@@ -225,7 +225,7 @@ public class Criterios_Elo {
         double IccMax;
         String dadosAjuste;
         Elo elo;
-        
+
         for (int contador = 0; contador < elos.size(); contador++) {
             elo = elos.get(contador);
             Ielo = elo.getCorrenteNominal();
@@ -233,8 +233,8 @@ public class Criterios_Elo {
             IcargaMax = pontoRede.getIcarga();
             Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
             Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
-            IinrushMax = elo.correntedoTempo(0.1, CurvasElo.MINIMA);
-            I300 = elo.correntedoTempo(300, CurvasElo.MAXIMA);
+            IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
+            I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
             IFTmin = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
             Iinrush = 0;
 

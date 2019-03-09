@@ -1,6 +1,6 @@
 package sigprod2.modelo;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Esta interface deve ser implementada pelas classes que contenham curvas que
@@ -43,9 +43,9 @@ public interface Curvas {
      * 0 e qtdCurvas - 1.
      * @return Um ArrayList com todos os pontos da curva selecionada.
      */
-    ArrayList<PontoCurva> getCurva(int index);
+    List<PontoCurva> getCurva(int index);
+
     double[][] getCurvaMatrix(int index);
-    
 
     /**
      * Este método retorna a cor desejada da curva informada pelo indice no

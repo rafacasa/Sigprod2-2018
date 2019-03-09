@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 import sigprod2.modelo.Ponto;
 import sigprod2.modelo.Rede;
 
@@ -23,9 +24,10 @@ public class PanelNavegacao extends JPanel {
     private Rede rede;
     private int camadaAtual, pontoAtual;
     private AjusteFrame ajusteFrame;
-
+    private boolean coordenograma;
     private JButton up, down, left, right;
     private JLabel labelCamadas, labelPontos;
+    private JToggleButton botaoCoordenograma;
 
     public PanelNavegacao(Rede rede, AjusteFrame ajusteFrame) {
         this.rede = rede;
@@ -33,6 +35,7 @@ public class PanelNavegacao extends JPanel {
         this.ajusteFrame = ajusteFrame;
         this.camadaAtual = 1;
         this.pontoAtual = 0;
+        this.coordenograma = false;
         this.initComponents();
         this.placeComponents();
     }
@@ -65,14 +68,19 @@ public class PanelNavegacao extends JPanel {
 
         this.labelCamadas = new JLabel("Camadas: ");
         this.labelPontos = new JLabel("Pontos: ");
+
+        this.botaoCoordenograma = new JToggleButton("Exibir Coordenograma");
+        this.botaoCoordenograma.addActionListener(this::botaoCoordenogramaActionPerformed);
     }
 
     private void placeComponents() {
         JPanel panel1 = new JPanel();
         JPanel panel2 = new JPanel();
+        JPanel panel3 = new JPanel();
 
         panel1.setLayout(new BoxLayout(panel1, BoxLayout.LINE_AXIS));
         panel2.setLayout(new BoxLayout(panel2, BoxLayout.LINE_AXIS));
+        panel3.setLayout(new BoxLayout(panel3, BoxLayout.LINE_AXIS));
 
         panel1.add(Box.createRigidArea(new Dimension(10, 0)));
         panel1.add(this.labelCamadas);
@@ -90,9 +98,15 @@ public class PanelNavegacao extends JPanel {
         panel2.add(this.right);
         panel2.add(Box.createHorizontalGlue());
 
+        panel3.add(Box.createRigidArea(new Dimension(10, 0)));
+        panel3.add(this.botaoCoordenograma);
+        panel3.add(Box.createHorizontalGlue());
+
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
         this.add(Box.createVerticalGlue());
+        this.add(panel3);
+        this.add(Box.createRigidArea(new Dimension(0, 20)));
         this.add(panel1);
         this.add(Box.createRigidArea(new Dimension(0, 20)));
         this.add(panel2);
@@ -207,5 +221,15 @@ public class PanelNavegacao extends JPanel {
             this.atualizarPontoAtual();
             atual.resetAtributos(true);
         }
+    }
+
+    private void botaoCoordenogramaActionPerformed(java.awt.event.ActionEvent evt) {
+        this.coordenograma = !this.coordenograma;
+        if (this.coordenograma) {
+            this.ajusteFrame.ativarCoordenograma();
+        } else {
+            this.ajusteFrame.desativarCoordenograma();
+        }
+        evt.toString();
     }
 }
