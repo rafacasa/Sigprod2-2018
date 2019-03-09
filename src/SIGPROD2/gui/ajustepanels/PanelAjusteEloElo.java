@@ -10,18 +10,16 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import org.jfree.chart.ChartPanel;
 import sigprod2.auxiliar.Coordenograma;
 import sigprod2.metricas.Metricas_Elo_Elo;
 import sigprod2.modelo.CurvasElo;
 import sigprod2.modelo.Elo;
-import sigprod2.modelo.Equipamento;
 
 /**
  *
  * @author Rafael Casa
  */
-public class PanelAjusteEloElo extends SIGPROD2.gui.ajustepanels.PanelAjuste {
+public class PanelAjusteEloElo extends sigprod2.gui.ajustepanels.PanelAjuste {
 
     private List<Metricas_Elo_Elo> metricas;
     private Elo selecionado, pai;
@@ -150,6 +148,10 @@ public class PanelAjusteEloElo extends SIGPROD2.gui.ajustepanels.PanelAjuste {
     private void botaoSelecionarActionPerformed(java.awt.event.ActionEvent evt) {
         this.selecionado = this.lista.getItemAt(this.lista.getSelectedIndex()).getElo();
         this.ajusteFrame.selecionaEquipamento(this.metricas.get(0).getPonto(), this.selecionado);
+    }
+
+    public Elo getSelecionado() {
+        return this.selecionado;
     }
 
     @Override

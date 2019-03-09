@@ -81,7 +81,10 @@ public class Coordenograma {
 
     private void addHachura(Elo elo, Color cor) {
         List<XYSeries> hachura = new ArrayList<>();
-        double tempoMM, tempoTC, tempoMenor, tempoMaior;
+        double tempoMM;
+        double tempoTC;
+        double tempoMenor;
+        double tempoMaior;
         tempoMM = elo.GetMaiorTempo(CurvasElo.MINIMA);
         tempoTC = elo.GetMaiorTempo(CurvasElo.MAXIMA);
         if (tempoMM <= tempoTC) {
@@ -100,7 +103,8 @@ public class Coordenograma {
         double expTempoMenor = Math.log10(tempoMenor * 1.01);
         double expTempoMaior = Math.log10(tempoMaior / 1.01);
         double expPasso = (expTempoMaior - expTempoMenor) / (div - 1);
-        double corrente1, corrente2;
+        double corrente1;
+        double corrente2;
         double expAux = expTempoMaior;
         double tempoAux;
         for (int k = 0; k < div; k++) {

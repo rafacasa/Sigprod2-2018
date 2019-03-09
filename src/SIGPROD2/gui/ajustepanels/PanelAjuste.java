@@ -1,4 +1,4 @@
-package SIGPROD2.gui.ajustepanels;
+package sigprod2.gui.ajustepanels;
 
 import javax.swing.JPanel;
 

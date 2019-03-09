@@ -1,6 +1,6 @@
 package sigprod2.gui;
 
-import SIGPROD2.gui.ajustepanels.PanelAjuste;
+import sigprod2.gui.ajustepanels.PanelAjuste;
 import sigprod2.gui.ajustepanels.PanelAjusteEloElo;
 import sigprod2.gui.ajustepanels.PanelNavegacao;
 import java.awt.Dimension;
