@@ -26,6 +26,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 
@@ -35,6 +37,7 @@ import org.graphstream.graph.Node;
  */
 public class MainFrame extends JFrame {
 
+    private static final Logger LOGGER = LogManager.getLogger(MainFrame.class.getName());
     public static MainFrame frame;
     //private JPanel contentPane;
     private JPanel panelSuperior;
@@ -183,8 +186,8 @@ public class MainFrame extends JFrame {
     public void setInfoPanel(Component component) {
         this.panelInferior.removeAll();
         this.panelInferior.add(component);
-        System.out.println("PRE - " + component.getPreferredSize());
-        System.out.println("MAX - " + component.getMaximumSize());
+        LOGGER.info("PRE - " + component.getPreferredSize());
+        LOGGER.debug("MAX - " + component.getMaximumSize());
         this.revalidate();
         this.repaint();
     }
