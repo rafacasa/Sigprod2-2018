@@ -18,7 +18,7 @@ public class Arquivo {
 
     public Arquivo(String nomeArquivo) {
         setNome(nomeArquivo);
-        this.file = new File(nome);
+        this.file = new File(this.getClass().getResource("/" + nomeArquivo).getFile());
     }
 
     public Arquivo(String nomeArquivo, String texto) {
