@@ -111,7 +111,7 @@ public class Rede {
 
         this.trechosRede.forEach(this::insereTrechoMapa);
 
-        File f = new File("estilo.css");
+        File f = new File(this.getClass().getResource("/estilo.css").getFile());
         String uri = "url(" + f.toURI().toString() + ")";
         this.mapa.setAttribute("ui.stylesheet", uri);
 
