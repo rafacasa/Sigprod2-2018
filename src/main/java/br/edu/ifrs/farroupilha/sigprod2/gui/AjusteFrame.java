@@ -15,12 +15,17 @@ import javax.swing.SwingUtilities;
 import br.edu.ifrs.farroupilha.sigprod2.auxiliar.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Elo_Elo;
+import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Rele;
 import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Elo_Elo;
+import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Rele;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Equipamento;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Rede;
+import br.edu.ifrs.farroupilha.sigprod2.modelo.Rele;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.TipoEquipamento;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -28,6 +33,7 @@ import br.edu.ifrs.farroupilha.sigprod2.modelo.TipoEquipamento;
  */
 public class AjusteFrame extends JDialog {
 
+    private static final Logger LOGGER = LogManager.getLogger(AjusteFrame.class.getName());
     private PanelNavegacao navegacao;
     private JPanel panelCoordenograma, panelAjuste;
     private PanelAjuste ajuste;
@@ -100,7 +106,15 @@ public class AjusteFrame extends JDialog {
                     }
                     break;
                 case RELE:
-
+                    LOGGER.traceEntry();
+                    Rele rele = Criterios_Rele.getReleTeste(); //COMO DEFINIR QUAL EQUIPAMENTO ESTA INSTALADO NO PONTO
+                    Criterios_Rele criteriosRele = new Criterios_Rele(this.rede, ponto, rele);
+                    List<Metricas_Rele> ajustesPossiveis = criteriosRele.ajustaFase();
+                    Metricas_Rele menorFm = ajustesPossiveis.get(0);
+                    LOGGER.debug("MENOR FM - " + menorFm.getFm());
+                    LOGGER.debug("AC - " + menorFm.getAc());
+                    LOGGER.debug("AT - " + menorFm.getAt());
+                    LOGGER.debug("CURVA a/b/p - " + menorFm.getCurva().getA() + " / " + menorFm.getCurva().getB() + " / " + menorFm.getCurva().getP());
                     break;
                 case RELIGADOR:
 

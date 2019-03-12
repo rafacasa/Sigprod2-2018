@@ -27,6 +27,7 @@ import org.graphstream.ui.view.ViewerPipe;
 import br.edu.ifrs.farroupilha.sigprod2.gui.dialogs.EscolheEloElo;
 import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.Informacoes;
 import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Elo_Elo;
+import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Rele;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -657,7 +658,15 @@ public class Rede {
     }
 
     public void ajusteRele(Ponto pontoRede) {
+        LOGGER.traceEntry();
         Rele rele = Criterios_Rele.getReleTeste(); //COMO DEFINIR QUAL EQUIPAMENTO ESTA INSTALADO NO PONTO
         Criterios_Rele criteriosRele = new Criterios_Rele(this, pontoRede, rele);
+        List<Metricas_Rele> ajustesPossiveis = criteriosRele.ajustaFase();
+        Metricas_Rele menorFm = ajustesPossiveis.get(0);
+        LOGGER.debug("MENOR FM - " + menorFm.getFm());
+        LOGGER.debug("AC - " + menorFm.getAc());
+        LOGGER.debug("AT - " + menorFm.getAt());
+        LOGGER.debug("CURVA a/b/p - " + menorFm.getCurva().getA() + " / " + menorFm.getCurva().getB() + " / " + menorFm.getCurva().getP());
+        LOGGER.debug("MENOR FM - " + menorFm.getFm());
     }
 }
