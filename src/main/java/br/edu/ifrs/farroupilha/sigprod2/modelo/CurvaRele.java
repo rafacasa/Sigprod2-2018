@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Classe responsável por armazenar as informações da curva de um Relé
  *
+ * @see br.edu.ifrs.farroupilha.sigprod2.modelo.Rele
  * @author Rafael Luiz Casa
  */
 public class CurvaRele {
@@ -103,7 +105,7 @@ public class CurvaRele {
         this.passoAT = passoAT;
     }
 
-    public List<Double> gerarTempos() {
+    public List<Double> gerarAT() {
         List<Double> tempos = new ArrayList<>();
         for (double i = this.menorAT; i <= this.maiorAT; i += this.passoAT) {
             tempos.add(i);
@@ -111,7 +113,7 @@ public class CurvaRele {
         return tempos;
     }
 
-    public List<Double> gerarCorrentes() {
+    public List<Double> gerarAC() {
         List<Double> correntes = new ArrayList<>();
         for (double i = this.menorAC; i <= this.maiorAC; i += this.passoAC) {
             correntes.add(i);
