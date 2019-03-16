@@ -7,6 +7,7 @@ import br.edu.ifrs.farroupilha.sigprod2.auxiliar.NodeClickDefaultListener;
 import br.edu.ifrs.farroupilha.sigprod2.auxiliar.NodeClickMouseManager;
 import br.edu.ifrs.farroupilha.sigprod2.auxiliar.RedeNaoRadialException;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Elo;
+import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Rele;
 import br.edu.ifrs.farroupilha.sigprod2.dao.EloKDao;
 import br.edu.ifrs.farroupilha.sigprod2.gui.MainFrame;
 import com.google.gson.Gson;
@@ -26,13 +27,17 @@ import org.graphstream.ui.view.ViewerPipe;
 import br.edu.ifrs.farroupilha.sigprod2.gui.dialogs.EscolheEloElo;
 import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.Informacoes;
 import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Elo_Elo;
+import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Rele;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
- * @author Rafael Casa
+ * @author Rafael Luiz Casa
  */
 public class Rede {
 
+    private static final Logger LOGGER = LogManager.getLogger(Rede.class.getName());
     private List<Elo> elosDisponiveis;
     private List<Trecho> redeReduzida;
     private List<Trecho> trechosRede;
@@ -542,10 +547,10 @@ public class Rede {
             if (i == 0) {
                 switch (equip) {
                     case ELO:
-                        ajusteElo(pAjuste);
+                        this.ajusteElo(pAjuste);
                         break;
                     case RELE:
-
+                        this.ajusteRele(pAjuste);
                         break;
                     case RELIGADOR:
 
@@ -650,5 +655,18 @@ public class Rede {
 
     public void reajusteEloElo() {
 
+    }
+
+    public void ajusteRele(Ponto pontoRede) {
+        LOGGER.traceEntry();
+        Rele rele = Criterios_Rele.getReleTeste(); //COMO DEFINIR QUAL EQUIPAMENTO ESTA INSTALADO NO PONTO
+        Criterios_Rele criteriosRele = new Criterios_Rele(this, pontoRede, rele);
+        List<Metricas_Rele> ajustesPossiveis = criteriosRele.ajustaFase();
+        Metricas_Rele menorFm = ajustesPossiveis.get(0);
+        LOGGER.debug("MENOR FM - " + menorFm.getFm());
+        LOGGER.debug("AC - " + menorFm.getAc());
+        LOGGER.debug("AT - " + menorFm.getAt());
+        LOGGER.debug("CURVA a/b/p - " + menorFm.getCurva().getA() + " / " + menorFm.getCurva().getB() + " / " + menorFm.getCurva().getP());
+        LOGGER.debug("MENOR FM - " + menorFm.getFm());
     }
 }

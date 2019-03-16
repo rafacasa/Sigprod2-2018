@@ -15,12 +15,17 @@ import javax.swing.SwingUtilities;
 import br.edu.ifrs.farroupilha.sigprod2.auxiliar.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Elo_Elo;
+import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Rele;
 import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Elo_Elo;
+import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Rele;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Equipamento;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Rede;
+import br.edu.ifrs.farroupilha.sigprod2.modelo.Rele;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.TipoEquipamento;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -28,6 +33,7 @@ import br.edu.ifrs.farroupilha.sigprod2.modelo.TipoEquipamento;
  */
 public class AjusteFrame extends JDialog {
 
+    private static final Logger LOGGER = LogManager.getLogger(AjusteFrame.class.getName());
     private PanelNavegacao navegacao;
     private JPanel panelCoordenograma, panelAjuste;
     private PanelAjuste ajuste;
@@ -100,7 +106,22 @@ public class AjusteFrame extends JDialog {
                     }
                     break;
                 case RELE:
-
+                    LOGGER.traceEntry();
+                    Rele rele = Criterios_Rele.getReleTeste(); //COMO DEFINIR QUAL EQUIPAMENTO ESTA INSTALADO NO PONTO
+                    Criterios_Rele criteriosRele = new Criterios_Rele(this.rede, ponto, rele);
+                    criteriosRele.ajuste();
+                    Metricas_Rele fase = rele.getAjusteFase();
+                    Metricas_Rele neutro = rele.getAjusteNeutro();
+                    LOGGER.debug("AJUSTE DE FASE");
+                    LOGGER.debug("MENOR FM - " + fase.getFm());
+                    LOGGER.debug("AC - " + fase.getAc());
+                    LOGGER.debug("AT - " + fase.getAt());
+                    LOGGER.debug("CURVA a/b/p - " + fase.getCurva().getA() + " / " + fase.getCurva().getB() + " / " + fase.getCurva().getP());
+                    LOGGER.debug("AJUSTE DE NEUTRO");
+                    LOGGER.debug("MENOR FM - " + neutro.getFm());
+                    LOGGER.debug("AC - " + neutro.getAc());
+                    LOGGER.debug("AT - " + neutro.getAt());
+                    LOGGER.debug("CURVA a/b/p - " + neutro.getCurva().getA() + " / " + neutro.getCurva().getB() + " / " + neutro.getCurva().getP());
                     break;
                 case RELIGADOR:
 
