@@ -7,6 +7,7 @@ import br.edu.ifrs.farroupilha.sigprod2.modelo.CurvaRele;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Rele;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,10 +26,11 @@ public class Criterios_Rele {
     private Rede rede;
     private Ponto ponto;
     private Rele rele;
-    private double tempoMaxPPFase = 5;
-    private double tempoMaxPRFase = 10;
-    private double tempoMaxPPNeutro = 5;
-    private double tempoMaxPRNeutro = 10;
+    private BigDecimal tempoMaxPPFase = new BigDecimal("5");
+    private BigDecimal tempoMaxPRFase = new BigDecimal("10");
+    private BigDecimal tempoMaxPPNeutro = new BigDecimal("2.5");
+    private BigDecimal tempoMaxPRNeutro = new BigDecimal("5");
+    private BigDecimal fatorDesbalanco = new BigDecimal("0.3");
 
     public Criterios_Rele(Rede rede, Ponto ponto, Rele rele) {
         this.rede = rede;
@@ -36,51 +38,76 @@ public class Criterios_Rele {
         this.rele = rele;
     }
 
+    public void ajuste() {
+        List<Metricas_Rele> ajustesFase = ajustaFase();
+        List<Metricas_Rele> ajustesNeutro = ajustaNeutro();
+
+        this.rele.setAjusteFase(ajustesFase.get(0));
+        this.rele.setAjusteNeutro(ajustesNeutro.get(0));
+    }
+
     public List<Metricas_Rele> ajustaFase() {
         LOGGER.traceEntry();
-        double iMinFFPP = this.rede.buscaCorrenteMinimaProximoPonto(this.ponto, Corrente.ICC2F);
-        double iMinFFPR = this.rede.buscaCorrenteMinima2Camadas(this.ponto, Corrente.ICC2F);
+        BigDecimal iMinFFPP = BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.ponto, Corrente.ICC2F));
+        BigDecimal iMinFFPR = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(this.ponto, Corrente.ICC2F));
+        BigDecimal limiteMaximo = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(ponto, Corrente.ICC2F));
+        BigDecimal limiteMinimo = BigDecimal.valueOf(this.rede.buscaCorrentePonto(ponto, Corrente.ICARGA));
         CurvaRele ni = this.rele.getnIFase();
         CurvaRele mi = this.rele.getmIFase();
         CurvaRele ei = this.rele.geteIFase();
         List<Metricas_Rele> ajustesPossiveis = new ArrayList<>();
-        ajustesPossiveis.addAll(calculaAcerto(ni, iMinFFPP, iMinFFPR, true));
-        ajustesPossiveis.addAll(calculaAcerto(mi, iMinFFPP, iMinFFPR, true));
-        ajustesPossiveis.addAll(calculaAcerto(ei, iMinFFPP, iMinFFPR, true));
+        ajustesPossiveis.addAll(calculaAcerto(ni, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
+        ajustesPossiveis.addAll(calculaAcerto(mi, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
+        ajustesPossiveis.addAll(calculaAcerto(ei, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
         ajustesPossiveis.sort(null);
         return LOGGER.traceExit(ajustesPossiveis);
     }
 
-    private List<Metricas_Rele> calculaAcerto(CurvaRele curva, double iMinFFPP, double iMinFFPR, boolean fase) {
+    public List<Metricas_Rele> ajustaNeutro() {
+        LOGGER.traceEntry();
+        BigDecimal iMinFFPP = BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.ponto, Corrente.ICCFTMIN));
+        BigDecimal iMinFFPR = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(this.ponto, Corrente.ICCFTMIN));
+        BigDecimal limiteMaximo = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(ponto, Corrente.ICCFTMIN));
+        BigDecimal limiteMinimo = this.fatorDesbalanco.multiply(BigDecimal.valueOf(this.rede.buscaCorrentePonto(ponto, Corrente.ICARGA)));
+        CurvaRele ni = this.rele.getnINeutro();
+        CurvaRele mi = this.rele.getmINeutro();
+        CurvaRele ei = this.rele.geteINeutro();
+        List<Metricas_Rele> ajustesPossiveis = new ArrayList<>();
+        ajustesPossiveis.addAll(calculaAcerto(ni, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
+        ajustesPossiveis.addAll(calculaAcerto(mi, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
+        ajustesPossiveis.addAll(calculaAcerto(ei, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
+        ajustesPossiveis.sort(null);
+        return LOGGER.traceExit(ajustesPossiveis);
+    }
+
+    private List<Metricas_Rele> calculaAcerto(CurvaRele curva, BigDecimal iMinFFPP, BigDecimal iMinFFPR, BigDecimal limiteMaximo, BigDecimal limiteMinimo, boolean fase) {
         LOGGER.traceEntry();
         List<Metricas_Rele> ajustesPossiveis = new ArrayList<>();
-        List<Double> ac = restringeAC(curva);
+        List<BigDecimal> ac = restringeAC(curva, limiteMaximo, limiteMinimo);
         LOGGER.trace("RESTRINGIU OS ACS DISPONÍVEIS");
         LOGGER.info("QTD AC - " + ac.size());
         for (int i = 0; i < ac.size(); i++) {
-            double d = ac.get(i);
-            double at = this.calculaAT(curva, d, iMinFFPP, iMinFFPR, fase);
+            BigDecimal d = ac.get(i);
+            BigDecimal at = this.calculaAT(curva, d, iMinFFPP, iMinFFPR, fase);
             try {
                 at = this.verificaAT(curva, at);
             } catch (ValorATImposivelException ex) {
                 LOGGER.catching(Level.TRACE, ex);
                 continue;
             }
-            double fm = this.calcularFM(curva, d, at, iMinFFPP, iMinFFPR, fase);
+            BigDecimal fm = this.calcularFM(curva, d, at, iMinFFPP, iMinFFPR, fase);
             Metricas_Rele metrica = new Metricas_Rele(fm, at, d, curva);
             ajustesPossiveis.add(metrica);
         }
         return LOGGER.traceExit(ajustesPossiveis);
     }
 
-    private List<Double> restringeAC(CurvaRele curva) {
+    private List<BigDecimal> restringeAC(CurvaRele curva, BigDecimal limiteMaximo, BigDecimal limiteMinimo) {
         LOGGER.traceEntry();
 
-        List<Double> ac = curva.gerarAC();
-        double limiteMaximo = this.rede.buscaCorrenteMinima2Camadas(ponto, Corrente.ICC2F);
-        double limiteMinimo = this.rede.buscaCorrentePonto(ponto, Corrente.ICARGA);
-        double primeiroAc = ac.get(0);
-        double ultimoAc = ac.get(ac.size() - 1);
+        List<BigDecimal> ac = curva.gerarAC();
+        BigDecimal primeiroAc = ac.get(0);
+        BigDecimal ultimoAc = ac.get(ac.size() - 1);
 
         LOGGER.debug("QUANTIDADE DE ACS DA CURVA - " + ac.size());
         LOGGER.debug("LIMITE MAXIMO DO AC (CORRENTE MINIMA BIFASICA 2 CAMADAS) - " + limiteMaximo);
@@ -88,18 +115,18 @@ public class Criterios_Rele {
         LOGGER.debug("PRIMEIRO AC DA LISTA - " + primeiroAc);
         LOGGER.debug("ULTIMO AC DA LISTA - " + ultimoAc);
 
-        if (primeiroAc <= limiteMinimo) {
+        if (primeiroAc.compareTo(limiteMinimo) <= 0) {
             ac = restringeMinAC(ac, limiteMinimo);
         }
 
-        if (limiteMaximo <= ultimoAc) {
+        if (limiteMaximo.compareTo(ultimoAc) <= 0) {
             ac = restringeMaxAC(ac, limiteMaximo);
         }
 
         return LOGGER.traceExit(ac);
     }
 
-    private List<Double> restringeMinAC(List<Double> ac, double limiteMinimo) {
+    private List<BigDecimal> restringeMinAC(List<BigDecimal> ac, BigDecimal limiteMinimo) {
         LOGGER.traceEntry();
         int indice = 0;
         double atualAc = ac.get(0);
@@ -117,7 +144,7 @@ public class Criterios_Rele {
         return LOGGER.traceExit(ac);
     }
 
-    private List<Double> restringeMaxAC(List<Double> ac, double limiteMaximo) {
+    private List<BigDecimal> restringeMaxAC(List<BigDecimal> ac, BigDecimal limiteMaximo) {
         LOGGER.traceEntry();
         int indice = ac.size() - 1;
         double atualAc = ac.get(indice);
@@ -185,7 +212,7 @@ public class Criterios_Rele {
             int indice = (int) razao;
             LOGGER.debug("RAZÃO - " + razao);
             LOGGER.debug("INDICE - " + indice);
-            return LOGGER.traceExit(curva.gerarAT().get(indice-1));
+            return LOGGER.traceExit(curva.gerarAT().get(indice - 1));
         }
     }
 
@@ -221,6 +248,9 @@ public class Criterios_Rele {
         teste.setnIFase(ni);
         teste.setmIFase(mi);
         teste.seteIFase(ei);
+        teste.setnINeutro(ni);
+        teste.setmINeutro(mi);
+        teste.seteINeutro(ei);
         return teste;
     }
 }

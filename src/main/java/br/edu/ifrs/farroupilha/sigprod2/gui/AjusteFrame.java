@@ -109,12 +109,19 @@ public class AjusteFrame extends JDialog {
                     LOGGER.traceEntry();
                     Rele rele = Criterios_Rele.getReleTeste(); //COMO DEFINIR QUAL EQUIPAMENTO ESTA INSTALADO NO PONTO
                     Criterios_Rele criteriosRele = new Criterios_Rele(this.rede, ponto, rele);
-                    List<Metricas_Rele> ajustesPossiveis = criteriosRele.ajustaFase();
-                    Metricas_Rele menorFm = ajustesPossiveis.get(0);
-                    LOGGER.debug("MENOR FM - " + menorFm.getFm());
-                    LOGGER.debug("AC - " + menorFm.getAc());
-                    LOGGER.debug("AT - " + menorFm.getAt());
-                    LOGGER.debug("CURVA a/b/p - " + menorFm.getCurva().getA() + " / " + menorFm.getCurva().getB() + " / " + menorFm.getCurva().getP());
+                    criteriosRele.ajuste();
+                    Metricas_Rele fase = rele.getAjusteFase();
+                    Metricas_Rele neutro = rele.getAjusteNeutro();
+                    LOGGER.debug("AJUSTE DE FASE");
+                    LOGGER.debug("MENOR FM - " + fase.getFm());
+                    LOGGER.debug("AC - " + fase.getAc());
+                    LOGGER.debug("AT - " + fase.getAt());
+                    LOGGER.debug("CURVA a/b/p - " + fase.getCurva().getA() + " / " + fase.getCurva().getB() + " / " + fase.getCurva().getP());
+                    LOGGER.debug("AJUSTE DE NEUTRO");
+                    LOGGER.debug("MENOR FM - " + neutro.getFm());
+                    LOGGER.debug("AC - " + neutro.getAc());
+                    LOGGER.debug("AT - " + neutro.getAt());
+                    LOGGER.debug("CURVA a/b/p - " + neutro.getCurva().getA() + " / " + neutro.getCurva().getB() + " / " + neutro.getCurva().getP());
                     break;
                 case RELIGADOR:
 

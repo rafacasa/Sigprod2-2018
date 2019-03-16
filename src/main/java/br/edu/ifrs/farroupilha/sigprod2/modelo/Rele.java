@@ -1,5 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.modelo;
 
+import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Rele;
+
 /**
  *
  * @author Rafael Luiz Casa
@@ -12,6 +14,8 @@ public class Rele {
     private CurvaRele nINeutro;
     private CurvaRele mINeutro;
     private CurvaRele eINeutro;
+    private Metricas_Rele ajusteNeutro;
+    private Metricas_Rele ajusteFase;
     private String modelo;
     private String fabricante;
 
@@ -84,4 +88,19 @@ public class Rele {
         this.fabricante = fabricante;
     }
 
+    public Metricas_Rele getAjusteNeutro() {
+        return ajusteNeutro;
+    }
+
+    public void setAjusteNeutro(Metricas_Rele ajusteNeutro) {
+        this.ajusteNeutro = ajusteNeutro;
+    }
+
+    public Metricas_Rele getAjusteFase() {
+        return ajusteFase;
+    }
+
+    public void setAjusteFase(Metricas_Rele ajusteFase) {
+        this.ajusteFase = ajusteFase;
+    }
 }
