@@ -1,5 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.modelo;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,17 +12,17 @@ import java.util.List;
  */
 public class CurvaRele {
 
-    private double a;
-    private double b;
-    private double p;
-    private double menorAC;
-    private double maiorAC;
-    private double passoAC;
-    private double menorAT;
-    private double maiorAT;
-    private double passoAT;
+    private BigDecimal a;
+    private BigDecimal b;
+    private BigDecimal p;
+    private BigDecimal menorAC;
+    private BigDecimal maiorAC;
+    private BigDecimal passoAC;
+    private BigDecimal menorAT;
+    private BigDecimal maiorAT;
+    private BigDecimal passoAT;
 
-    public CurvaRele(double a, double b, double p, double menorAC, double maiorAC, double passoAC, double menorAT, double maiorAT, double passoAT) {
+    public CurvaRele(BigDecimal a, BigDecimal b, BigDecimal p, BigDecimal menorAC, BigDecimal maiorAC, BigDecimal passoAC, BigDecimal menorAT, BigDecimal maiorAT, BigDecimal passoAT) {
         this.a = a;
         this.b = b;
         this.p = p;
@@ -33,89 +34,101 @@ public class CurvaRele {
         this.passoAT = passoAT;
     }
 
-    public double getA() {
+    public CurvaRele(String a, String b, String p, String menorAC, String maiorAC, String passoAC, String menorAT, String maiorAT, String passoAT) {
+        this.a = new BigDecimal(a);
+        this.b = new BigDecimal(b);
+        this.p = new BigDecimal(p);
+        this.menorAC = new BigDecimal(menorAC);
+        this.maiorAC = new BigDecimal(maiorAC);
+        this.passoAC = new BigDecimal(passoAC);
+        this.menorAT = new BigDecimal(menorAT);
+        this.maiorAT = new BigDecimal(maiorAT);
+        this.passoAT = new BigDecimal(passoAT);
+    }
+
+    public BigDecimal getA() {
         return a;
     }
 
-    public void setA(double a) {
+    public void setA(BigDecimal a) {
         this.a = a;
     }
 
-    public double getB() {
+    public BigDecimal getB() {
         return b;
     }
 
-    public void setB(double b) {
+    public void setB(BigDecimal b) {
         this.b = b;
     }
 
-    public double getP() {
+    public BigDecimal getP() {
         return p;
     }
 
-    public void setP(double p) {
+    public void setP(BigDecimal p) {
         this.p = p;
     }
 
-    public double getMenorAC() {
+    public BigDecimal getMenorAC() {
         return menorAC;
     }
 
-    public void setMenorAC(double menorAC) {
+    public void setMenorAC(BigDecimal menorAC) {
         this.menorAC = menorAC;
     }
 
-    public double getMaiorAC() {
+    public BigDecimal getMaiorAC() {
         return maiorAC;
     }
 
-    public void setMaiorAC(double maiorAC) {
+    public void setMaiorAC(BigDecimal maiorAC) {
         this.maiorAC = maiorAC;
     }
 
-    public double getPassoAC() {
+    public BigDecimal getPassoAC() {
         return passoAC;
     }
 
-    public void setPassoAC(double passoAC) {
+    public void setPassoAC(BigDecimal passoAC) {
         this.passoAC = passoAC;
     }
 
-    public double getMenorAT() {
+    public BigDecimal getMenorAT() {
         return menorAT;
     }
 
-    public void setMenorAT(double menorAT) {
+    public void setMenorAT(BigDecimal menorAT) {
         this.menorAT = menorAT;
     }
 
-    public double getMaiorAT() {
+    public BigDecimal getMaiorAT() {
         return maiorAT;
     }
 
-    public void setMaiorAT(double maiorAT) {
+    public void setMaiorAT(BigDecimal maiorAT) {
         this.maiorAT = maiorAT;
     }
 
-    public double getPassoAT() {
+    public BigDecimal getPassoAT() {
         return passoAT;
     }
 
-    public void setPassoAT(double passoAT) {
+    public void setPassoAT(BigDecimal passoAT) {
         this.passoAT = passoAT;
     }
 
-    public List<Double> gerarAT() {
-        List<Double> tempos = new ArrayList<>();
-        for (double i = this.menorAT; i <= this.maiorAT; i += this.passoAT) {
+    public List<BigDecimal> gerarAT() {
+        List<BigDecimal> tempos = new ArrayList<>();
+        for (BigDecimal i = this.menorAT; i.compareTo(this.maiorAT) <= 0; i = i.add(this.passoAT)) {
             tempos.add(i);
         }
         return tempos;
     }
 
-    public List<Double> gerarAC() {
-        List<Double> correntes = new ArrayList<>();
-        for (double i = this.menorAC; i <= this.maiorAC; i += this.passoAC) {
+    public List<BigDecimal> gerarAC() {
+        List<BigDecimal> correntes = new ArrayList<>();
+        for (BigDecimal i = this.menorAC; i.compareTo(this.maiorAC) <= 0; i = i.add(this.passoAC)) {
             correntes.add(i);
         }
         return correntes;

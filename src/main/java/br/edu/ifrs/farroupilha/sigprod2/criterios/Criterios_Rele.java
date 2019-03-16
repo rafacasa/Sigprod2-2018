@@ -7,7 +7,9 @@ import br.edu.ifrs.farroupilha.sigprod2.modelo.CurvaRele;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Rele;
+import ch.obermuhlner.math.big.BigDecimalMath;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -73,9 +75,9 @@ public class Criterios_Rele {
         CurvaRele mi = this.rele.getmINeutro();
         CurvaRele ei = this.rele.geteINeutro();
         List<Metricas_Rele> ajustesPossiveis = new ArrayList<>();
-        ajustesPossiveis.addAll(calculaAcerto(ni, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
-        ajustesPossiveis.addAll(calculaAcerto(mi, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
-        ajustesPossiveis.addAll(calculaAcerto(ei, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
+        ajustesPossiveis.addAll(calculaAcerto(ni, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, false));
+        ajustesPossiveis.addAll(calculaAcerto(mi, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, false));
+        ajustesPossiveis.addAll(calculaAcerto(ei, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, false));
         ajustesPossiveis.sort(null);
         return LOGGER.traceExit(ajustesPossiveis);
     }
@@ -129,9 +131,9 @@ public class Criterios_Rele {
     private List<BigDecimal> restringeMinAC(List<BigDecimal> ac, BigDecimal limiteMinimo) {
         LOGGER.traceEntry();
         int indice = 0;
-        double atualAc = ac.get(0);
+        BigDecimal atualAc = ac.get(0);
 
-        while (atualAc <= limiteMinimo) {
+        while (atualAc.compareTo(limiteMinimo) <= 0) {
             LOGGER.trace("REPETIÇÃO DO LAÇO WHILE");
             indice++;
             atualAc = ac.get(indice);
@@ -147,9 +149,9 @@ public class Criterios_Rele {
     private List<BigDecimal> restringeMaxAC(List<BigDecimal> ac, BigDecimal limiteMaximo) {
         LOGGER.traceEntry();
         int indice = ac.size() - 1;
-        double atualAc = ac.get(indice);
+        BigDecimal atualAc = ac.get(indice);
 
-        while (limiteMaximo <= atualAc) {
+        while (limiteMaximo.compareTo(atualAc) <= 0) {
             LOGGER.trace("REPETIÇÃO DO LAÇO WHILE");
             indice--;
             atualAc = ac.get(indice);
@@ -162,13 +164,13 @@ public class Criterios_Rele {
         return LOGGER.traceExit(ac);
     }
 
-    private double calculaAT(CurvaRele curva, double ac, double iMinFFPP, double iMinFFPR, boolean fase) {
+    private BigDecimal calculaAT(CurvaRele curva, BigDecimal ac, BigDecimal iMinFFPP, BigDecimal iMinFFPR, boolean fase) {
         LOGGER.traceEntry();
-        double a = curva.getA();
-        double b = curva.getB();
-        double p = curva.getP();
-        double tempoMaxPP;
-        double tempoMaxPR;
+        BigDecimal a = curva.getA();
+        BigDecimal b = curva.getB();
+        BigDecimal p = curva.getP();
+        BigDecimal tempoMaxPP;
+        BigDecimal tempoMaxPR;
 
         if (fase) {
             tempoMaxPP = tempoMaxPPFase;
@@ -180,71 +182,91 @@ public class Criterios_Rele {
 
         LOGGER.trace("ENTROU NO MÉTODO CALCULA AT");
 
-        double at1 = (tempoMaxPP / (a / ((Math.pow((iMinFFPP) / (ac), p) - 1) + b)));
-        double at2 = (tempoMaxPR / (a / ((Math.pow((iMinFFPR) / (ac), p) - 1) + b)));
+        BigDecimal at1 = iMinFFPP.divide(ac, MathContext.DECIMAL128);
+        at1 = BigDecimalMath.pow(at1, p, MathContext.DECIMAL128);
+        at1 = at1.subtract(BigDecimal.ONE);
+        at1 = a.divide(at1, MathContext.DECIMAL128);
+        at1 = at1.add(b);
+        at1 = tempoMaxPP.divide(at1, MathContext.DECIMAL128);
+
+        BigDecimal at2 = iMinFFPR.divide(ac, MathContext.DECIMAL128);
+        at2 = BigDecimalMath.pow(at2, p, MathContext.DECIMAL128);
+        at2 = at2.subtract(BigDecimal.ONE);
+        at2 = a.divide(at2, MathContext.DECIMAL128);
+        at2 = at2.add(b);
+        at2 = tempoMaxPR.divide(at2, MathContext.DECIMAL128);
 
         LOGGER.debug("VALOR DE AT1 - " + at1);
         LOGGER.debug("VALOR DE AT2 - " + at2);
 
-        double at = Collections.min(Arrays.asList(at1, at2));
+        BigDecimal at = Collections.min(Arrays.asList(at1, at2));
         LOGGER.debug("MENOR AT - " + at);
 
         return LOGGER.traceExit(at);
     }
 
-    private double verificaAT(CurvaRele curva, double at) throws ValorATImposivelException {
+    private BigDecimal verificaAT(CurvaRele curva, BigDecimal at) throws ValorATImposivelException {
         LOGGER.traceEntry();
-        double minAT = curva.getMenorAT();
-        double maxAT = curva.getMaiorAT();
-        double passoAT = curva.getPassoAT();
-        if (at < minAT) {
+        BigDecimal minAT = curva.getMenorAT();
+        BigDecimal maxAT = curva.getMaiorAT();
+        BigDecimal passoAT = curva.getPassoAT();
+        if (at.compareTo(minAT) < 0) {
             throw LOGGER.throwing(Level.TRACE, new ValorATImposivelException("Menor que mínimo"));
         }
 
-        if (at > maxAT) {
+        if (at.compareTo(maxAT) > 0) {
             throw LOGGER.throwing(Level.TRACE, new ValorATImposivelException("Maior que máximo"));
         }
 
-        if (at % passoAT == 0) {
+        if (at.remainder(passoAT).compareTo(BigDecimal.ZERO) == 0) {
             return LOGGER.traceExit(at);
         } else {
-            double razao = at / passoAT;
-            int indice = (int) razao;
+            BigDecimal razao = at.divide(passoAT, MathContext.DECIMAL128);
+            int indice = razao.intValue();
             LOGGER.debug("RAZÃO - " + razao);
             LOGGER.debug("INDICE - " + indice);
             return LOGGER.traceExit(curva.gerarAT().get(indice - 1));
         }
     }
 
-    private double calcularFM(CurvaRele curva, double ac, double at, double iMinFFPP, double iMinFFPR, boolean fase) {
+    private BigDecimal calcularFM(CurvaRele curva, BigDecimal ac, BigDecimal at, BigDecimal iMinFFPP, BigDecimal iMinFFPR, boolean fase) {
         LOGGER.traceEntry();
-        double t0 = calculaTempo(curva, ac, at, iMinFFPR);
-        double t1 = fase ? this.tempoMaxPRFase : this.tempoMaxPRNeutro;
-        double t2 = calculaTempo(curva, ac, at, iMinFFPP);
-        double t3 = fase ? this.tempoMaxPPFase : this.tempoMaxPPNeutro;
+        BigDecimal t0 = calculaTempo(curva, ac, at, iMinFFPR);
+        BigDecimal t1 = fase ? this.tempoMaxPRFase : this.tempoMaxPRNeutro;
+        BigDecimal t2 = calculaTempo(curva, ac, at, iMinFFPP);
+        BigDecimal t3 = fase ? this.tempoMaxPPFase : this.tempoMaxPPNeutro;
         LOGGER.debug("t0 (tempo da curva iMinFFPR) - " + t0);
         LOGGER.debug("t1 - (tolerância máxima aceitável)" + t1);
         LOGGER.debug("t2 (tempo da curva iMinFFPP)- " + t2);
         LOGGER.debug("t3 - (tolerância máxima aceitável)" + t3);
-        double fm = Math.pow(t1 - t0, 2) + Math.pow(t3 - t2, 2);
+        BigDecimal diff1 = t1.subtract(t0);
+        BigDecimal diff2 = t3.subtract(t2);
+        diff1 = diff1.pow(2);
+        diff2 = diff2.pow(2);
+        BigDecimal fm = diff1.add(diff2);
         return LOGGER.traceExit(fm);
     }
 
-    private double calculaTempo(CurvaRele curva, double ac, double at, double corrente) {
+    private BigDecimal calculaTempo(CurvaRele curva, BigDecimal ac, BigDecimal at, BigDecimal corrente) {
         LOGGER.traceEntry();
-        double a = curva.getA();
-        double b = curva.getB();
-        double p = curva.getP();
+        BigDecimal a = curva.getA();
+        BigDecimal b = curva.getB();
+        BigDecimal p = curva.getP();
 
-        double tempo = at * ((a / ((Math.pow(corrente / ac, p)) - 1)) + b);
+        BigDecimal temp = corrente.divide(ac, MathContext.DECIMAL128);
+        temp = BigDecimalMath.pow(temp, p, MathContext.DECIMAL128);
+        temp = temp.subtract(BigDecimal.ONE);
+        temp = a.divide(temp, MathContext.DECIMAL128);
+        temp = temp.add(b);
+        BigDecimal tempo = at.multiply(temp);
         return LOGGER.traceExit(tempo);
     }
 
     public static Rele getReleTeste() {
         Rele teste = new Rele("modelo1", "fabricante1");
-        CurvaRele ni = new CurvaRele(0.14, 0, 0.02, 1, 1000, 1, 0.01, 1, 0.01);
-        CurvaRele mi = new CurvaRele(13.5, 0, 1, 1, 1000, 1, 0.01, 1, 0.01);
-        CurvaRele ei = new CurvaRele(80, 0, 2, 1, 1000, 1, 0.01, 1, 0.01);
+        CurvaRele ni = new CurvaRele("0.14", "0", "0.02", "1", "1000", "1", "0.01", "1", "0.01");
+        CurvaRele mi = new CurvaRele("13.5", "0", "1", "1", "1000", "1", "0.01", "1", "0.01");
+        CurvaRele ei = new CurvaRele("80", "0", "2", "1", "1000", "1", "0.01", "1", "0.01");
         teste.setnIFase(ni);
         teste.setmIFase(mi);
         teste.seteIFase(ei);

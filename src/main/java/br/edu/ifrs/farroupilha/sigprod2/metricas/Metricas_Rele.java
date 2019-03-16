@@ -1,6 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.metricas;
 
 import br.edu.ifrs.farroupilha.sigprod2.modelo.CurvaRele;
+import java.math.BigDecimal;
 
 /**
  *
@@ -8,27 +9,27 @@ import br.edu.ifrs.farroupilha.sigprod2.modelo.CurvaRele;
  */
 public class Metricas_Rele implements Comparable<Metricas_Rele> {
 
-    double fm;
-    double at;
-    double ac;
+    BigDecimal fm;
+    BigDecimal at;
+    BigDecimal ac;
     CurvaRele curva;
 
-    public Metricas_Rele(double fm, double at, double ac, CurvaRele curva) {
+    public Metricas_Rele(BigDecimal fm, BigDecimal at, BigDecimal ac, CurvaRele curva) {
         this.fm = fm;
         this.at = at;
         this.ac = ac;
         this.curva = curva;
     }
 
-    public double getFm() {
+    public BigDecimal getFm() {
         return fm;
     }
 
-    public double getAt() {
+    public BigDecimal getAt() {
         return at;
     }
 
-    public double getAc() {
+    public BigDecimal getAc() {
         return ac;
     }
 
@@ -38,7 +39,7 @@ public class Metricas_Rele implements Comparable<Metricas_Rele> {
 
     @Override
     public int compareTo(Metricas_Rele o) {
-        return Double.compare(this.fm, o.fm);
+        return this.fm.compareTo(o.fm);
     }
 
 }
