@@ -141,9 +141,9 @@ public class Criterios_Rele {
             LOGGER.debug("AC ATUAL - " + atualAc);
         }
         LOGGER.debug("INDICE MINIMO ESCOLHIDO - " + indice);
-        ac = ac.subList(indice, ac.size());
-        LOGGER.debug("NOVA QUANTIDADE DE ACS - " + ac.size());
-        return LOGGER.traceExit(ac);
+        List<BigDecimal> novoAC = ac.subList(indice, ac.size());
+        LOGGER.debug("NOVA QUANTIDADE DE ACS - " + novoAC.size());
+        return LOGGER.traceExit(novoAC);
     }
 
     private List<BigDecimal> restringeMaxAC(List<BigDecimal> ac, BigDecimal limiteMaximo) {
@@ -159,9 +159,9 @@ public class Criterios_Rele {
             LOGGER.trace("AC ATUAL - " + atualAc);
         }
         LOGGER.debug("INDICE MÁXIMO ESCOLHIDO - " + indice);
-        ac = ac.subList(0, indice + 1);
-        LOGGER.debug("NOVA QUANTIDADE DE ACS - " + ac.size());
-        return LOGGER.traceExit(ac);
+        List<BigDecimal> novoAC = ac.subList(0, indice + 1);
+        LOGGER.debug("NOVA QUANTIDADE DE ACS - " + novoAC.size());
+        return LOGGER.traceExit(novoAC);
     }
 
     private BigDecimal calculaAT(CurvaRele curva, BigDecimal ac, BigDecimal iMinFFPP, BigDecimal iMinFFPR, boolean fase) {

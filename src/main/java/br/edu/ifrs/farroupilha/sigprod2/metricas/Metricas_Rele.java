@@ -9,10 +9,10 @@ import java.math.BigDecimal;
  */
 public class Metricas_Rele implements Comparable<Metricas_Rele> {
 
-    BigDecimal fm;
-    BigDecimal at;
-    BigDecimal ac;
-    CurvaRele curva;
+    private BigDecimal fm;
+    private BigDecimal at;
+    private BigDecimal ac;
+    private CurvaRele curva;
 
     public Metricas_Rele(BigDecimal fm, BigDecimal at, BigDecimal ac, CurvaRele curva) {
         this.fm = fm;
