@@ -1,6 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.modelo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -81,6 +82,36 @@ public class Elo implements Curvas, Equipamento {
             return this.getCurvaDeMaximaInterrupcao();
         } else {
             return this.getCurvaDeMinimaFusao();
+        }
+    }
+
+    private List<List<Double>> getDadosCurvaMaxima() {
+        List<PontoCurva> curva = this.getCurvaDeMaximaInterrupcao();
+        List<Double> correntes = new ArrayList<>();
+        List<Double> tempo = new ArrayList<>();
+        curva.forEach(pc -> {
+            correntes.add(pc.getCorrente());
+            tempo.add(pc.getTempo());
+        });
+        return Arrays.asList(correntes, tempo);
+    }
+
+    private List<List<Double>> getDadosCurvaMinima() {
+        List<PontoCurva> curva = this.getCurvaDeMinimaFusao();
+        List<Double> correntes = new ArrayList<>();
+        List<Double> tempo = new ArrayList<>();
+        curva.forEach(pc -> {
+            correntes.add(pc.getCorrente());
+            tempo.add(pc.getTempo());
+        });
+        return Arrays.asList(correntes, tempo);
+    }
+
+    public List<List<Double>> getDadosCurva(CurvasElo curva) {
+        if (CurvasElo.MAXIMA.equals(curva)) {
+            return this.getDadosCurvaMaxima();
+        } else {
+            return this.getDadosCurvaMinima();
         }
     }
 
