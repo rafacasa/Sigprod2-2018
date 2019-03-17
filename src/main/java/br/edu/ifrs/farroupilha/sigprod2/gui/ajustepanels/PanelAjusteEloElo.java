@@ -11,7 +11,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import br.edu.ifrs.farroupilha.sigprod2.auxiliar.Coordenograma;
-import br.edu.ifrs.farroupilha.sigprod2.auxiliar.Coordenograma2;
 import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.CurvasElo;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Elo;
@@ -160,7 +159,7 @@ public class PanelAjusteEloElo extends br.edu.ifrs.farroupilha.sigprod2.gui.ajus
         int index = this.lista.getSelectedIndex();
         if (index >= 0) {
             Elo atual = this.lista.getItemAt(index).getElo();
-            Coordenograma2 coordenograma = new Coordenograma2("Coordenograma");
+            Coordenograma coordenograma = new Coordenograma("Coordenograma");
             coordenograma.add(this.pai, "Elo superior", Color.RED);
             coordenograma.add(atual, "Elo sendo Ajustado", Color.BLUE);
             coordenograma.add(this.pai, CurvasElo.MINIMA, 0.75, "Curva Mínima * Fator", Color.DARK_GRAY);
