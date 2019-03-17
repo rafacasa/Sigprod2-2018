@@ -161,8 +161,8 @@ public class PanelAjusteEloElo extends br.edu.ifrs.farroupilha.sigprod2.gui.ajus
             Elo atual = this.lista.getItemAt(index).getElo();
             Coordenograma coordenograma = new Coordenograma("Coordenograma");
             coordenograma.add(this.pai, "Elo superior", Color.RED);
-            coordenograma.add(atual, "Elo sendo Ajustado", Color.BLUE);
             coordenograma.add(this.pai, CurvasElo.MINIMA, 0.75, "Curva Mínima * Fator", Color.DARK_GRAY);
+            coordenograma.add(atual, "Elo sendo Ajustado", Color.BLUE);
             return coordenograma.getChartPanel();
         } else {
             return new JPanel();
