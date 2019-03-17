@@ -1,11 +1,17 @@
 package br.edu.ifrs.farroupilha.sigprod2.auxiliar;
 
+import br.edu.ifrs.farroupilha.sigprod2.modelo.CurvasElo;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Elo;
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JPanel;
+import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.XYSeries;
 import org.knowm.xchart.style.Styler;
+import org.knowm.xchart.style.markers.SeriesMarkers;
 
 /**
  *
@@ -28,11 +34,31 @@ public class Coordenograma2 {
         this.chart.getStyler().setLegendPosition(Styler.LegendPosition.OutsideE);
     }
 
-    private void add(Elo elo) {
-
+    public void add(Elo elo, String nomeCurva, Color cor) {
+        this.addCurvaElo(elo.getDadosCurva(CurvasElo.MAXIMA), nomeCurva, cor, true);
+        this.addCurvaElo(elo.getDadosCurva(CurvasElo.MINIMA), nomeCurva + "2", cor, false);
     }
 
-    private void addElo(List<List<Double>> pontos, String nomeCurva) {
+    public void add(Elo elo, CurvasElo curva, double fator, String nomeCurva, Color cor) {
+        List<List<Double>> dados = elo.getDadosCurva(curva);
+        List<Double> tempo = dados.get(1);
+        List<Double> novoTempos = new ArrayList<>();
+        tempo.forEach(t -> {
+            novoTempos.add(t * fator);
+        });
+        dados.set(1, novoTempos);
+        this.addCurvaElo(dados, nomeCurva, cor, true);
+    }
+
+    private void addCurvaElo(List<List<Double>> pontos, String nomeCurva, Color cor, boolean showInLegend) {
         XYSeries serie = this.chart.addSeries(nomeCurva, pontos.get(0), pontos.get(1));
+        serie.setLineColor(cor);
+        serie.setMarker(SeriesMarkers.NONE);
+        serie.setShowInLegend(showInLegend);
+    }
+
+    public JPanel getChartPanel() {
+        this.chart.getStyler().setChartBackgroundColor(Color.WHITE);
+        return new XChartPanel(this.chart);
     }
 }
