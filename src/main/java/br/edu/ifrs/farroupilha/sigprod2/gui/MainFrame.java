@@ -160,7 +160,7 @@ public class MainFrame extends JFrame {
     private void initRede() {
         MainFrame.frame = this;
         System.setProperty("org.graphstream.ui", "org.graphstream.ui.swing.util.Display");
-        Arquivo arquivoRede = new Arquivo("redeRele.ABCEEE");
+        Arquivo arquivoRede = new Arquivo("redeElo.ABCEEE");
         try {
             this.rede = new Rede(arquivoRede);
         } catch (SQLException ex) {
