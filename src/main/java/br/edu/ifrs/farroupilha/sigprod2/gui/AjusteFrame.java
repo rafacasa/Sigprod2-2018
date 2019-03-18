@@ -13,9 +13,11 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import br.edu.ifrs.farroupilha.sigprod2.auxiliar.AjusteImpossivelException;
+import br.edu.ifrs.farroupilha.sigprod2.auxiliar.Coordenograma;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Rele;
+import br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels.PanelAjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Rele;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Elo;
@@ -24,6 +26,7 @@ import br.edu.ifrs.farroupilha.sigprod2.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Rele;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.TipoEquipamento;
+import java.awt.Color;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -122,6 +125,7 @@ public class AjusteFrame extends JDialog {
                     LOGGER.debug("AC - " + neutro.getAc());
                     LOGGER.debug("AT - " + neutro.getAt());
                     LOGGER.debug("CURVA a/b/p - " + neutro.getCurva().getA() + " / " + neutro.getCurva().getB() + " / " + neutro.getCurva().getP());
+                    this.ajuste = new PanelAjusteRele(rele);
                     break;
                 case RELIGADOR:
 
