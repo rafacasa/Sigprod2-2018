@@ -13,7 +13,6 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import br.edu.ifrs.farroupilha.sigprod2.auxiliar.AjusteImpossivelException;
-import br.edu.ifrs.farroupilha.sigprod2.auxiliar.Coordenograma;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Rele;
@@ -26,7 +25,6 @@ import br.edu.ifrs.farroupilha.sigprod2.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Rele;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.TipoEquipamento;
-import java.awt.Color;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

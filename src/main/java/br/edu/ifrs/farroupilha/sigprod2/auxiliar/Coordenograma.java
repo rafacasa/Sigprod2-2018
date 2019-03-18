@@ -3,7 +3,6 @@ package br.edu.ifrs.farroupilha.sigprod2.auxiliar;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.CurvasElo;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Rele;
-import ch.obermuhlner.math.big.stream.BigDecimalStream;
 import java.awt.Color;
 import java.math.BigDecimal;
 import java.util.ArrayList;
