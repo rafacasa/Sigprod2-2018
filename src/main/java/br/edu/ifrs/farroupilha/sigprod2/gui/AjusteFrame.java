@@ -36,7 +36,7 @@ public class AjusteFrame extends JDialog {
 
     private static final Logger LOGGER = LogManager.getLogger(AjusteFrame.class.getName());
     private PanelNavegacao navegacao;
-    private JPanel panelCoordenograma, panelAjuste;
+    private JPanel panelCoordenograma, panelAjuste, panelEsquerda;
     private PanelAjuste ajuste;
     private br.edu.ifrs.farroupilha.sigprod2.gui.MainFrame mainFrame;
     private Rede rede;
@@ -59,6 +59,9 @@ public class AjusteFrame extends JDialog {
         this.panelAjuste = new JPanel();
         this.panelAjuste.add(Box.createRigidArea(this.navegacao.getPreferredSize()));
 
+        this.panelEsquerda = new JPanel();
+        this.panelEsquerda.setLayout(new BoxLayout(this.panelEsquerda, BoxLayout.PAGE_AXIS));
+
         this.panelCoordenograma = new JPanel();
 
         addWindowListener(new WindowAdapter() {
@@ -72,8 +75,9 @@ public class AjusteFrame extends JDialog {
 
     private void addComponents() {
         this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.LINE_AXIS));
-        this.add(this.navegacao);
-        this.add(this.panelAjuste);
+        this.panelEsquerda.add(this.panelAjuste);
+        this.panelEsquerda.add(this.navegacao);
+        this.add(this.panelEsquerda);
         this.add(this.panelCoordenograma);
         this.pack();
     }
