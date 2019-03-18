@@ -53,7 +53,7 @@ public class Metricas_Rele implements Comparable<Metricas_Rele> {
         List<BigDecimal> correntes = new ArrayList<>();
         BigDecimal minimaCorrente = this.ac.multiply(new BigDecimal("1.1"));
         BigDecimal maximaCorrente = this.ac.multiply(new BigDecimal("40"));
-        BigDecimal qtdPassos = new BigDecimal("100");
+        BigDecimal qtdPassos = new BigDecimal("1000");
         BigDecimal passo = maximaCorrente.subtract(minimaCorrente).divide(qtdPassos, MathContext.DECIMAL128);
         BigDecimalStream.rangeClosed(minimaCorrente, maximaCorrente, passo, MathContext.DECIMAL128).forEach(i -> {
             correntes.add(i);
