@@ -2,7 +2,9 @@ package br.edu.ifrs.farroupilha.sigprod2.auxiliar;
 
 import br.edu.ifrs.farroupilha.sigprod2.modelo.CurvasElo;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Elo;
+import br.edu.ifrs.farroupilha.sigprod2.modelo.Rele;
 import java.awt.Color;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
@@ -35,8 +37,8 @@ public class Coordenograma {
     }
 
     public void add(Elo elo, String nomeCurva, Color cor) {
-        this.addCurvaElo(elo.getDadosCurva(CurvasElo.MAXIMA), nomeCurva, cor, true);
-        this.addCurvaElo(elo.getDadosCurva(CurvasElo.MINIMA), nomeCurva + "2", cor, false);
+        this.addCurva(elo.getDadosCurva(CurvasElo.MAXIMA), nomeCurva, cor, true);
+        this.addCurva(elo.getDadosCurva(CurvasElo.MINIMA), nomeCurva + "2", cor, false);
     }
 
     public void add(Elo elo, CurvasElo curva, double fator, String nomeCurva, Color cor) {
@@ -47,18 +49,42 @@ public class Coordenograma {
             novoTempos.add(t * fator);
         });
         dados.set(1, novoTempos);
-        this.addCurvaElo(dados, nomeCurva, cor, true);
+        this.addCurva(dados, nomeCurva, cor, true);
     }
 
-    private void addCurvaElo(List<List<Double>> pontos, String nomeCurva, Color cor, boolean showInLegend) {
+    private void addCurva(List<List<Double>> pontos, String nomeCurva, Color cor, boolean showInLegend) {
         XYSeries serie = this.chart.addSeries(nomeCurva, pontos.get(0), pontos.get(1));
         serie.setLineColor(cor);
         serie.setMarker(SeriesMarkers.NONE);
         serie.setShowInLegend(showInLegend);
     }
 
+    public void add(Rele rele, Color corFase, Color corNeutro) {
+        if (rele.ajustado()) {
+            List<List<BigDecimal>> dadosFase = rele.getDadosAjuste(true);
+            List<List<Double>> dadosFaseDouble = new ArrayList<>();
+            dadosFaseDouble.add(this.convertToDouble(dadosFase.get(0)));
+            dadosFaseDouble.add(this.convertToDouble(dadosFase.get(1)));
+            this.addCurva(dadosFaseDouble, "Curva de Fase", corFase, true);
+
+            List<List<BigDecimal>> dadosNeutro = rele.getDadosAjuste(false);
+            List<List<Double>> dadosNeutroDouble = new ArrayList<>();
+            dadosNeutroDouble.add(this.convertToDouble(dadosNeutro.get(0)));
+            dadosNeutroDouble.add(this.convertToDouble(dadosNeutro.get(1)));
+            this.addCurva(dadosNeutroDouble, "Curva de Neutro", corNeutro, true);
+        }
+    }
+
     public JPanel getChartPanel() {
         this.chart.getStyler().setChartBackgroundColor(Color.WHITE);
         return new XChartPanel(this.chart);
+    }
+
+    private List<Double> convertToDouble(List<BigDecimal> list) {
+        List<Double> novaLista = new ArrayList<>();
+        list.forEach(n -> {
+            novaLista.add(n.doubleValue());
+        });
+        return novaLista;
     }
 }

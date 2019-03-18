@@ -1,6 +1,8 @@
 package br.edu.ifrs.farroupilha.sigprod2.modelo;
 
 import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Rele;
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  *
@@ -102,5 +104,17 @@ public class Rele {
 
     public void setAjusteFase(Metricas_Rele ajusteFase) {
         this.ajusteFase = ajusteFase;
+    }
+
+    public boolean ajustado() {
+        return (this.ajusteFase != null) && (this.ajusteNeutro != null);
+    }
+
+    public List<List<BigDecimal>> getDadosAjuste(boolean fase) {
+        if (fase) {
+            return this.ajusteFase.getPontosCurva();
+        } else {
+            return this.ajusteNeutro.getPontosCurva();
+        }
     }
 }
