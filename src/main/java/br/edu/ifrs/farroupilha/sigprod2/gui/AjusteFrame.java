@@ -76,6 +76,7 @@ public class AjusteFrame extends JDialog {
     private void addComponents() {
         this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.LINE_AXIS));
         this.panelEsquerda.add(this.panelAjuste);
+        this.panelAjuste.add(Box.createVerticalGlue());
         this.panelEsquerda.add(this.navegacao);
         this.add(this.panelEsquerda);
         this.add(this.panelCoordenograma);
