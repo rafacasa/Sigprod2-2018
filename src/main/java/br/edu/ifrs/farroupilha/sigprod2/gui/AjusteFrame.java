@@ -128,7 +128,9 @@ public class AjusteFrame extends JDialog {
                     LOGGER.debug("AC - " + neutro.getAc());
                     LOGGER.debug("AT - " + neutro.getAt());
                     LOGGER.debug("CURVA a/b/p - " + neutro.getCurva().getA() + " / " + neutro.getCurva().getB() + " / " + neutro.getCurva().getP());
+                    this.panelAjuste.removeAll();
                     this.ajuste = new PanelAjusteRele(rele);
+                    this.panelAjuste.add(this.ajuste);
                     break;
                 case RELIGADOR:
 
