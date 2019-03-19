@@ -1,0 +1,46 @@
+package br.edu.ifrs.farroupilha.sigprod2.metricas;
+
+import br.edu.ifrs.farroupilha.sigprod2.modelo.Elo;
+import br.edu.ifrs.farroupilha.sigprod2.modelo.Ponto;
+import java.math.BigDecimal;
+
+/**
+ *
+ * @author Rafael Luiz Casa
+ */
+public class MetricasReleElo {
+
+    private BigDecimal alcance;
+    private boolean seletividade;
+    private Elo elo;
+
+    public MetricasReleElo(BigDecimal alcance, boolean seletividade, Elo elo) {
+        this.alcance = alcance;
+        this.seletividade = seletividade;
+        this.elo = elo;
+    }
+
+    public BigDecimal getAlcance() {
+        return alcance;
+    }
+
+    public void setAlcance(BigDecimal alcance) {
+        this.alcance = alcance;
+    }
+
+    public boolean isSeletividade() {
+        return seletividade;
+    }
+
+    public void setSeletividade(boolean seletividade) {
+        this.seletividade = seletividade;
+    }
+
+    public Elo getElo() {
+        return elo;
+    }
+
+    public void setElo(Elo elo) {
+        this.elo = elo;
+    }
+}
