@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
@@ -37,7 +38,7 @@ public class Coordenograma {
         this.chart.getStyler().setLegendPosition(Styler.LegendPosition.OutsideE);
         this.chart.getStyler().setToolTipsEnabled(true);
         this.chart.getStyler().setToolTipsAlwaysVisible(true);
-        this.chart.getStyler().setChartBackgroundColor(Color.WHITE);
+        this.chart.getStyler().setChartBackgroundColor(UIManager.getColor("Panel.background"));
         this.chartPanel = new XChartPanel(this.chart);
     }
 
