@@ -1,7 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.criterios;
 
 import br.edu.ifrs.farroupilha.sigprod2.exceptions.ValorATImposivelException;
-import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Rele;
+import br.edu.ifrs.farroupilha.sigprod2.modelo.AjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Corrente;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.CurvaRele;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Ponto;
@@ -41,14 +41,14 @@ public class Criterios_Rele {
     }
 
     public void ajuste() {
-        List<Metricas_Rele> ajustesFase = ajustaFase();
-        List<Metricas_Rele> ajustesNeutro = ajustaNeutro();
+        List<AjusteRele> ajustesFase = ajustaFase();
+        List<AjusteRele> ajustesNeutro = ajustaNeutro();
 
         this.rele.setAjusteFase(ajustesFase.get(0));
         this.rele.setAjusteNeutro(ajustesNeutro.get(0));
     }
 
-    public List<Metricas_Rele> ajustaFase() {
+    public List<AjusteRele> ajustaFase() {
         LOGGER.traceEntry();
         BigDecimal iMinFFPP = BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.ponto, Corrente.ICC2F));
         BigDecimal iMinFFPR = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(this.ponto, Corrente.ICC2F));
@@ -57,7 +57,7 @@ public class Criterios_Rele {
         CurvaRele ni = this.rele.getnIFase();
         CurvaRele mi = this.rele.getmIFase();
         CurvaRele ei = this.rele.geteIFase();
-        List<Metricas_Rele> ajustesPossiveis = new ArrayList<>();
+        List<AjusteRele> ajustesPossiveis = new ArrayList<>();
         ajustesPossiveis.addAll(calculaAcerto(ni, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
         ajustesPossiveis.addAll(calculaAcerto(mi, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
         ajustesPossiveis.addAll(calculaAcerto(ei, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
@@ -65,7 +65,7 @@ public class Criterios_Rele {
         return LOGGER.traceExit(ajustesPossiveis);
     }
 
-    public List<Metricas_Rele> ajustaNeutro() {
+    public List<AjusteRele> ajustaNeutro() {
         LOGGER.traceEntry();
         BigDecimal iMinFFPP = BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.ponto, Corrente.ICCFTMIN));
         BigDecimal iMinFFPR = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(this.ponto, Corrente.ICCFTMIN));
@@ -74,7 +74,7 @@ public class Criterios_Rele {
         CurvaRele ni = this.rele.getnINeutro();
         CurvaRele mi = this.rele.getmINeutro();
         CurvaRele ei = this.rele.geteINeutro();
-        List<Metricas_Rele> ajustesPossiveis = new ArrayList<>();
+        List<AjusteRele> ajustesPossiveis = new ArrayList<>();
         ajustesPossiveis.addAll(calculaAcerto(ni, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, false));
         ajustesPossiveis.addAll(calculaAcerto(mi, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, false));
         ajustesPossiveis.addAll(calculaAcerto(ei, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, false));
@@ -82,9 +82,9 @@ public class Criterios_Rele {
         return LOGGER.traceExit(ajustesPossiveis);
     }
 
-    private List<Metricas_Rele> calculaAcerto(CurvaRele curva, BigDecimal iMinFFPP, BigDecimal iMinFFPR, BigDecimal limiteMaximo, BigDecimal limiteMinimo, boolean fase) {
+    private List<AjusteRele> calculaAcerto(CurvaRele curva, BigDecimal iMinFFPP, BigDecimal iMinFFPR, BigDecimal limiteMaximo, BigDecimal limiteMinimo, boolean fase) {
         LOGGER.traceEntry();
-        List<Metricas_Rele> ajustesPossiveis = new ArrayList<>();
+        List<AjusteRele> ajustesPossiveis = new ArrayList<>();
         List<BigDecimal> ac = restringeAC(curva, limiteMaximo, limiteMinimo);
         LOGGER.trace("RESTRINGIU OS ACS DISPONÍVEIS");
         LOGGER.info("QTD AC - " + ac.size());
@@ -98,7 +98,7 @@ public class Criterios_Rele {
                 continue;
             }
             BigDecimal fm = this.calcularFM(curva, d, at, iMinFFPP, iMinFFPR, fase);
-            Metricas_Rele metrica = new Metricas_Rele(fm, at, d, curva);
+            AjusteRele metrica = new AjusteRele(fm, at, d, curva);
             ajustesPossiveis.add(metrica);
         }
         return LOGGER.traceExit(ajustesPossiveis);

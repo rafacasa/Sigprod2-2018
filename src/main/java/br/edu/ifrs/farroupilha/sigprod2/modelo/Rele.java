@@ -1,6 +1,5 @@
 package br.edu.ifrs.farroupilha.sigprod2.modelo;
 
-import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Rele;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -8,7 +7,7 @@ import java.util.List;
  *
  * @author Rafael Luiz Casa
  */
-public class Rele {
+public class Rele implements Equipamento {
 
     private CurvaRele nIFase;
     private CurvaRele mIFase;
@@ -16,8 +15,8 @@ public class Rele {
     private CurvaRele nINeutro;
     private CurvaRele mINeutro;
     private CurvaRele eINeutro;
-    private Metricas_Rele ajusteNeutro;
-    private Metricas_Rele ajusteFase;
+    private AjusteRele ajusteNeutro;
+    private AjusteRele ajusteFase;
     private String modelo;
     private String fabricante;
 
@@ -90,19 +89,19 @@ public class Rele {
         this.fabricante = fabricante;
     }
 
-    public Metricas_Rele getAjusteNeutro() {
+    public AjusteRele getAjusteNeutro() {
         return ajusteNeutro;
     }
 
-    public void setAjusteNeutro(Metricas_Rele ajusteNeutro) {
+    public void setAjusteNeutro(AjusteRele ajusteNeutro) {
         this.ajusteNeutro = ajusteNeutro;
     }
 
-    public Metricas_Rele getAjusteFase() {
+    public AjusteRele getAjusteFase() {
         return ajusteFase;
     }
 
-    public void setAjusteFase(Metricas_Rele ajusteFase) {
+    public void setAjusteFase(AjusteRele ajusteFase) {
         this.ajusteFase = ajusteFase;
     }
 
@@ -116,5 +115,10 @@ public class Rele {
         } else {
             return this.ajusteNeutro.getPontosCurva();
         }
+    }
+
+    @Override
+    public TipoEquipamento getTipoEquipamento() {
+        return TipoEquipamento.RELE;
     }
 }

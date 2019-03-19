@@ -17,8 +17,9 @@ import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Rele;
 import br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels.PanelAjusteRele;
+import br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels.PanelAjusteReleElo;
 import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Elo_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Rele;
+import br.edu.ifrs.farroupilha.sigprod2.modelo.AjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Equipamento;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Ponto;
@@ -116,8 +117,8 @@ public class AjusteFrame extends JDialog {
                     Rele rele = Criterios_Rele.getReleTeste(); //COMO DEFINIR QUAL EQUIPAMENTO ESTA INSTALADO NO PONTO
                     Criterios_Rele criteriosRele = new Criterios_Rele(this.rede, ponto, rele);
                     criteriosRele.ajuste();
-                    Metricas_Rele fase = rele.getAjusteFase();
-                    Metricas_Rele neutro = rele.getAjusteNeutro();
+                    AjusteRele fase = rele.getAjusteFase();
+                    AjusteRele neutro = rele.getAjusteNeutro();
                     LOGGER.debug("AJUSTE DE FASE");
                     LOGGER.debug("MENOR FM - " + fase.getFm());
                     LOGGER.debug("AC - " + fase.getAc());
@@ -131,9 +132,13 @@ public class AjusteFrame extends JDialog {
                     this.panelAjuste.removeAll();
                     this.ajuste = new PanelAjusteRele(rele);
                     this.panelAjuste.add(this.ajuste);
+                    this.selecionaEquipamento(ponto, rele);
                     break;
                 case RELIGADOR:
 
+                    break;
+                default: 
+                    LOGGER.debug("DEFAULT NO PRIMEIRO SWITCH");
                     break;
             }
         } else {
@@ -171,7 +176,7 @@ public class AjusteFrame extends JDialog {
                 case RELE:
                     switch (pOrigem.getTipoEquipamentoInstalado()) {
                         case ELO:
-
+                            this.setPanelAjuste(new PanelAjusteReleElo(this, ponto, rede, pOrigem));
                             break;
                         case RELE:
 
@@ -194,6 +199,9 @@ public class AjusteFrame extends JDialog {
                             break;
                     }
                     break;
+                default: 
+                    LOGGER.debug("DEFAULT NO SEGUNDO SWITCH");
+                    break;
             }
         }
         return true;
@@ -202,6 +210,19 @@ public class AjusteFrame extends JDialog {
     public void selecionaEquipamento(Ponto p, Equipamento equipamento) {
         p.setEquipamentoInstalado(equipamento);
         p.resetAtributos(true);
+    }
+
+    private void setPanelAjuste(PanelAjuste panel) {
+        this.ajuste = panel;
+        this.panelAjuste.removeAll();
+        this.panelAjuste.add(this.ajuste);
+        if (this.coordenograma) {
+            this.panelCoordenograma.removeAll();
+            this.panelCoordenograma.add(this.ajuste.geraCoordenograma());
+        }
+        this.revalidate();
+        this.repaint();
+        this.pack();
     }
 
     public static void main(String[] args) {

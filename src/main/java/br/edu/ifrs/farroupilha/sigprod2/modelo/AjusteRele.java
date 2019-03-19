@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.metricas;
+package br.edu.ifrs.farroupilha.sigprod2.modelo;
 
 import br.edu.ifrs.farroupilha.sigprod2.modelo.CurvaRele;
 import ch.obermuhlner.math.big.BigDecimalMath;
@@ -13,14 +13,14 @@ import java.util.List;
  *
  * @author Rafael Luiz Casa
  */
-public class Metricas_Rele implements Comparable<Metricas_Rele> {
+public class AjusteRele implements Comparable<AjusteRele> {
 
     private BigDecimal fm;
     private BigDecimal at;
     private BigDecimal ac;
     private CurvaRele curva;
 
-    public Metricas_Rele(BigDecimal fm, BigDecimal at, BigDecimal ac, CurvaRele curva) {
+    public AjusteRele(BigDecimal fm, BigDecimal at, BigDecimal ac, CurvaRele curva) {
         this.fm = fm;
         this.at = at;
         this.ac = ac;
@@ -44,7 +44,7 @@ public class Metricas_Rele implements Comparable<Metricas_Rele> {
     }
 
     @Override
-    public int compareTo(Metricas_Rele o) {
+    public int compareTo(AjusteRele o) {
         return this.fm.compareTo(o.fm);
     }
 
