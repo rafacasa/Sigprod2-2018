@@ -28,6 +28,7 @@ import br.edu.ifrs.farroupilha.sigprod2.gui.dialogs.EscolheEloElo;
 import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.Informacoes;
 import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Rele;
+import javax.swing.UIManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -120,6 +121,12 @@ public class Rede {
         String uri = "url(" + f.toURI().toString() + ")";
         this.mapa.setAttribute("ui.stylesheet", uri);
 
+//        int red = UIManager.getColor("Panel.background").getRed();
+//        int green = UIManager.getColor("Panel.background").getGreen();
+//        int blue = UIManager.getColor("Panel.background").getBlue();
+//        String rgb = "rgb(" + red + "," + green + "," + blue + ");}";
+//        LOGGER.debug(rgb);
+//        this.mapa.setAttribute("ui.stylesheet", "graph {fill-color: " + rgb);
     }
 
     private void inserePontoMapa(Ponto p) {
