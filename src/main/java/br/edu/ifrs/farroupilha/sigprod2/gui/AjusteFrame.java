@@ -98,6 +98,8 @@ public class AjusteFrame extends JDialog {
 
         Ponto pOrigem = this.rede.getParentRedeReduzida(ponto);
         TipoEquipamento equip = ponto.getTipoEquipamentoInstalado();
+        LOGGER.debug("AJUSTE PONTO - " + ponto.getNome());
+        LOGGER.debug("EQUIPAMENTO NO PONTO " + ponto.getTipoEquipamentoInstalado());
 
         if (inicioRede) {
             switch (equip) {
@@ -137,7 +139,7 @@ public class AjusteFrame extends JDialog {
                 case RELIGADOR:
 
                     break;
-                default: 
+                default:
                     LOGGER.debug("DEFAULT NO PRIMEIRO SWITCH");
                     break;
             }
@@ -149,7 +151,6 @@ public class AjusteFrame extends JDialog {
                             Criterios_Elo_Elo criteriosEloElo = new Criterios_Elo_Elo(this.rede, pOrigem, ponto);
                             List<Metricas_Elo_Elo> metricas;
                             try {
-                                System.out.println("PONTO SENDO AJUSTADO: " + ponto.getNome());
                                 metricas = criteriosEloElo.ajuste();
                                 ponto.resetAtributos(true);
                                 this.panelAjuste.removeAll();
@@ -166,7 +167,8 @@ public class AjusteFrame extends JDialog {
                             }
                             break;
                         case RELE:
-
+                            LOGGER.trace("AJUSTE RELE ELO");
+                            this.setPanelAjuste(new PanelAjusteReleElo(this, ponto, rede, pOrigem));
                             break;
                         case RELIGADOR:
 
@@ -176,7 +178,7 @@ public class AjusteFrame extends JDialog {
                 case RELE:
                     switch (pOrigem.getTipoEquipamentoInstalado()) {
                         case ELO:
-                            this.setPanelAjuste(new PanelAjusteReleElo(this, ponto, rede, pOrigem));
+
                             break;
                         case RELE:
 
@@ -199,7 +201,7 @@ public class AjusteFrame extends JDialog {
                             break;
                     }
                     break;
-                default: 
+                default:
                     LOGGER.debug("DEFAULT NO SEGUNDO SWITCH");
                     break;
             }
@@ -253,6 +255,10 @@ public class AjusteFrame extends JDialog {
     public void desativarCoordenograma() {
         this.coordenograma = false;
         this.panelCoordenograma.removeAll();
+        this.revalidate();
+        this.repaint();
+        this.pack();
+        LOGGER.debug("REMOVE COORDENOGRAMA");
     }
 
     public void atualizaCoordenograma(JPanel chart) {

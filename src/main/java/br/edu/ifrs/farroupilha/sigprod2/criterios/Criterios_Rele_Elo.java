@@ -14,6 +14,8 @@ import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -21,6 +23,7 @@ import java.util.List;
  */
 public class Criterios_Rele_Elo {
 
+    private static final Logger LOGGER = LogManager.getLogger(Criterios_Rele_Elo.class.getName());
     private Rele relePai;
     private List<Elo> elosDisponiveis;
     private Ponto pontoRede;
@@ -150,6 +153,7 @@ public class Criterios_Rele_Elo {
         BigDecimal diff1 = tempoRele1.subtract(tempoElo1);
         BigDecimal diff2 = tempoRele2.subtract(tempoElo2);
         BigDecimal cti = fase ? this.CTIFase : this.CTINeutro;
+        LOGGER.debug("calculaSeletividade - diff1 = " + diff1.toString() + " diff2 = " + diff2);
         return diff1.compareTo(cti) >= 0 && diff2.compareTo(cti) >= 0;
     }
 

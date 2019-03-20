@@ -45,6 +45,7 @@ public class PanelAjusteReleElo extends PanelAjuste {
     private JPanel panelSeletividade;
 
     public PanelAjusteReleElo(AjusteFrame ajusteFrame, Ponto p, Rede rede, Ponto pOrigem) {
+        LOGGER.trace("Cria Panel AjusteReleElo");
         this.ajusteFrame = ajusteFrame;
         this.relePai = (Rele) pOrigem.getEquipamentoInstalado();
         this.ponto = p;
@@ -141,10 +142,12 @@ public class PanelAjusteReleElo extends PanelAjuste {
 
     @Override
     public JPanel geraCoordenograma() {
-        if (this.selecionado != null) {
+        MetricasReleElo metricaselo = this.lista.getItemAt(this.lista.getSelectedIndex());
+        if (metricaselo != null) {
+            Elo elo  = metricaselo.getElo();
             this.coordenograma = new Coordenograma("Coordenograma");
             this.coordenograma.add(this.relePai, Color.RED, Color.RED);
-            this.coordenograma.add(this.selecionado, "Elo Selecionado", Color.BLUE);
+            this.coordenograma.add(elo, "Elo Selecionado", Color.BLUE);
             return this.coordenograma.getChartPanel();
         }
         return new JPanel();

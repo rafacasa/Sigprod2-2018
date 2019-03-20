@@ -1,7 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.metricas;
 
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Elo;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Ponto;
 import java.math.BigDecimal;
 
 /**
@@ -42,5 +41,10 @@ public class MetricasReleElo {
 
     public void setElo(Elo elo) {
         this.elo = elo;
+    }
+
+    @Override
+    public String toString() {
+        return "ELO " + this.elo.getCorrenteNominal();
     }
 }
