@@ -3,7 +3,7 @@ package br.edu.ifrs.farroupilha.sigprod2.gui;
 import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.Menu;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Arquivo;
 import br.edu.ifrs.farroupilha.sigprod2.auxiliar.Erro;
-import br.edu.ifrs.farroupilha.sigprod2.auxiliar.LoopPumpThread;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.threads.LoopPumpThread;
 import br.edu.ifrs.farroupilha.sigprod2.auxiliar.NodeClickGraficoListener;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Corrente;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
