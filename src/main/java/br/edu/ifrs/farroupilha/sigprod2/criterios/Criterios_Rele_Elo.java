@@ -143,18 +143,50 @@ public class Criterios_Rele_Elo {
     }
 
     private boolean calculaSeletividade(Elo elo, boolean fase) {
-        AjusteRele ajusteRele = fase ? this.relePai.getAjusteFase() : this.relePai.getAjusteNeutro();
-        BigDecimal i2 = fase ? BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pOrigem, Corrente.ICC3F)) : BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pOrigem, Corrente.ICCFT)); //PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
-        BigDecimal i1 = fase ? BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pOrigem, Corrente.ICC2F)) : BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pOrigem, Corrente.ICCFTMIN));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
+        AjusteRele ajusteRele = this.getAjusteReleSeletividade(fase);
+        BigDecimal i2 = this.getI2Seletividade(fase);
+        BigDecimal i1 = this.getI1Seletividade(fase);
         BigDecimal tempoRele1 = ajusteRele.calculaTempo(i1);
         BigDecimal tempoRele2 = ajusteRele.calculaTempo(i2);
         BigDecimal tempoElo1 = BigDecimal.valueOf(elo.tempoDaCorrente(i1.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
         BigDecimal tempoElo2 = BigDecimal.valueOf(elo.tempoDaCorrente(i2.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
         BigDecimal diff1 = tempoRele1.subtract(tempoElo1);
         BigDecimal diff2 = tempoRele2.subtract(tempoElo2);
-        BigDecimal cti = fase ? this.CTIFase : this.CTINeutro;
+        BigDecimal cti = this.getCTI(fase);
         LOGGER.debug("calculaSeletividade - diff1 = " + diff1.toString() + " diff2 = " + diff2);
         return diff1.compareTo(cti) >= 0 && diff2.compareTo(cti) >= 0;
+    }
+
+    private BigDecimal getCTI(boolean fase) {
+        if (fase) {
+            return this.CTIFase;
+        } else {
+            return this.CTINeutro;
+        }
+    }
+
+    private BigDecimal getI2Seletividade(boolean fase) {
+        if (fase) {
+            return BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pOrigem, Corrente.ICC3F));
+        } else {
+            return BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pOrigem, Corrente.ICCFT));
+        }
+    }
+
+    private BigDecimal getI1Seletividade(boolean fase) {
+        if (fase) {
+            return BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pOrigem, Corrente.ICC2F));
+        } else {
+            return BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pOrigem, Corrente.ICCFTMIN));
+        }
+    }
+
+    private AjusteRele getAjusteReleSeletividade(boolean fase) {
+        if (fase) {
+            return this.relePai.getAjusteFase();
+        } else {
+            return this.relePai.getAjusteNeutro();
+        }
     }
 
     public BigDecimal getCTIFase() {
