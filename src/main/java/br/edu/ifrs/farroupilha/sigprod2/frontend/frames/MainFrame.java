@@ -1,6 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.frames;
 
-import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.Menu;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Menu;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Arquivo;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.threads.LoopPumpThread;

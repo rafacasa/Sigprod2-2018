@@ -1,9 +1,9 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.listeners;
 
-import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.ExibeElo;
-import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.Informacoes;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.ExibeElo;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Informacoes;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
-import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.SelecaoElo;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.SelecaoElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import java.awt.Dimension;

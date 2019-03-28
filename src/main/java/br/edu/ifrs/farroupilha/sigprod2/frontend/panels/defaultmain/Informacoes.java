@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels;
+package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import java.awt.Component;

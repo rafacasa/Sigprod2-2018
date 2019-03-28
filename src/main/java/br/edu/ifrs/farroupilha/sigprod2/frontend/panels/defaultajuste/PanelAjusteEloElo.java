@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels;
+package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste;
 
 import java.awt.Color;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.AjusteFrame;
@@ -19,7 +19,7 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
  *
  * @author Rafael Casa
  */
-public class PanelAjusteEloElo extends br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels.PanelAjuste {
+public class PanelAjusteEloElo extends br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjuste {
 
     private List<Metricas_Elo_Elo> metricas;
     private Elo selecionado, pai;

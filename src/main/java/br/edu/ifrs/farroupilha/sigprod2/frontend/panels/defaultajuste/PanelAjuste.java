@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels;
+package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste;
 
 import javax.swing.JPanel;
 

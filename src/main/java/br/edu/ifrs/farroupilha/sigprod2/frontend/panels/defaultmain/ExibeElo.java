@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels;
+package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;

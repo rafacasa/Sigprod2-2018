@@ -1,8 +1,8 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.frames;
 
-import br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels.PanelAjuste;
-import br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels.PanelAjusteEloElo;
-import br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels.PanelNavegacao;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjuste;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteEloElo;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelNavegacao;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -16,8 +16,8 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossiv
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Rele;
-import br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels.PanelAjusteRele;
-import br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels.PanelAjusteReleElo;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteRele;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReleElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.AjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
