@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.auxiliar;
+package br.edu.ifrs.farroupilha.sigprod2.backend.modelo;
 
 import java.io.*;
 

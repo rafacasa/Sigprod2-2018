@@ -5,7 +5,7 @@
  */
 package br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels;
 
-import br.edu.ifrs.farroupilha.sigprod2.auxiliar.Arquivo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Arquivo;
 import java.awt.event.ActionEvent;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;

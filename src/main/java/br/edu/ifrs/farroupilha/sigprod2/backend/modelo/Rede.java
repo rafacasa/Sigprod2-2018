@@ -1,7 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.modelo;
 
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Elo_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.auxiliar.Arquivo;
 import br.edu.ifrs.farroupilha.sigprod2.auxiliar.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.auxiliar.NodeClickDefaultListener;
 import br.edu.ifrs.farroupilha.sigprod2.auxiliar.NodeClickMouseManager;

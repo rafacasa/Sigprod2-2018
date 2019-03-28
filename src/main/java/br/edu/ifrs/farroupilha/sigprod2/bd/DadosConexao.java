@@ -1,6 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.bd;
 
-import br.edu.ifrs.farroupilha.sigprod2.auxiliar.Arquivo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Arquivo;
 import com.google.gson.Gson;
 
 /**
