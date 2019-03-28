@@ -9,7 +9,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import br.edu.ifrs.farroupilha.sigprod2.gui.MainFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 

@@ -11,7 +11,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import br.edu.ifrs.farroupilha.sigprod2.gui.MainFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
 
 /**
  *

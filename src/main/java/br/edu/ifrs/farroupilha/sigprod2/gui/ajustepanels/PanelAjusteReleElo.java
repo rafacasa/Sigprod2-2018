@@ -3,7 +3,7 @@ package br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Rele_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.gui.AjusteFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.AjusteFrame;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.MetricasReleElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;

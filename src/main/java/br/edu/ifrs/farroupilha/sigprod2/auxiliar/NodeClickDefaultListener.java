@@ -2,7 +2,7 @@ package br.edu.ifrs.farroupilha.sigprod2.auxiliar;
 
 import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.ExibeElo;
 import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.Informacoes;
-import br.edu.ifrs.farroupilha.sigprod2.gui.MainFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.SelecaoElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;

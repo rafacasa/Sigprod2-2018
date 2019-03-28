@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.gui;
+package br.edu.ifrs.farroupilha.sigprod2.frontend.frames;
 
 import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.Menu;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Arquivo;
@@ -203,7 +203,7 @@ public class MainFrame extends JFrame {
      */
     private void botaoExecutarEstudoActionPerformed(java.awt.event.ActionEvent evt) {
         SwingUtilities.invokeLater(() -> {
-            new br.edu.ifrs.farroupilha.sigprod2.gui.AjusteFrame(this).setVisible(true);
+            new br.edu.ifrs.farroupilha.sigprod2.frontend.frames.AjusteFrame(this).setVisible(true);
         });
     }
 

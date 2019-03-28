@@ -8,7 +8,7 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.RedeNaoRadialE
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Rele;
 import br.edu.ifrs.farroupilha.sigprod2.backend.bd.dao.EloKDao;
-import br.edu.ifrs.farroupilha.sigprod2.gui.MainFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.io.File;

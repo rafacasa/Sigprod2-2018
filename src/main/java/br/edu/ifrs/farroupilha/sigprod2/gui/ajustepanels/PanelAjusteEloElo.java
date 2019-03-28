@@ -1,7 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels;
 
 import java.awt.Color;
-import br.edu.ifrs.farroupilha.sigprod2.gui.AjusteFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.AjusteFrame;
 import java.awt.Dimension;
 import java.util.List;
 import javax.swing.Box;

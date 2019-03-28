@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.gui;
+package br.edu.ifrs.farroupilha.sigprod2.frontend.frames;
 
 import br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels.PanelAjuste;
 import br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels.PanelAjusteEloElo;
@@ -39,11 +39,11 @@ public class AjusteFrame extends JDialog {
     private PanelNavegacao navegacao;
     private JPanel panelCoordenograma, panelAjuste, panelEsquerda;
     private PanelAjuste ajuste;
-    private br.edu.ifrs.farroupilha.sigprod2.gui.MainFrame mainFrame;
+    private br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame mainFrame;
     private Rede rede;
     private boolean coordenograma;
 
-    public AjusteFrame(br.edu.ifrs.farroupilha.sigprod2.gui.MainFrame frame) {
+    public AjusteFrame(br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame frame) {
         super(frame);
         this.coordenograma = false;
         this.mainFrame = frame;
@@ -239,10 +239,10 @@ public class AjusteFrame extends JDialog {
             java.util.logging.Logger.getLogger(AjusteFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         SwingUtilities.invokeLater(() -> {
-            new br.edu.ifrs.farroupilha.sigprod2.gui.MainFrame().setVisible(true);
+            new br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame().setVisible(true);
         });
         SwingUtilities.invokeLater(() -> {
-            new AjusteFrame(br.edu.ifrs.farroupilha.sigprod2.gui.MainFrame.frame).setVisible(true);
+            new AjusteFrame(br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame.frame).setVisible(true);
         });
     }
 

@@ -1,6 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels;
 
-import br.edu.ifrs.farroupilha.sigprod2.gui.AjusteFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.AjusteFrame;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.List;

@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.gui;
+package br.edu.ifrs.farroupilha.sigprod2.frontend.frames;
 
 import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.Menu;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
