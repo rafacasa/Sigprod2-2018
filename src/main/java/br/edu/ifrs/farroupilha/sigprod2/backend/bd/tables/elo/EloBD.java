@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.bd.tables.elo;
+package br.edu.ifrs.farroupilha.sigprod2.backend.bd.tables.elo;
 
 /**
  * Classe responsável por manter os nomes das colunas e da tabela de Elos tipo
