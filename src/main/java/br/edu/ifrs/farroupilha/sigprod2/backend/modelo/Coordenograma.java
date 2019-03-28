@@ -1,8 +1,5 @@
-package br.edu.ifrs.farroupilha.sigprod2.auxiliar;
+package br.edu.ifrs.farroupilha.sigprod2.backend.modelo;
 
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvasElo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
 import java.awt.Color;
 import java.math.BigDecimal;
 import java.util.ArrayList;
