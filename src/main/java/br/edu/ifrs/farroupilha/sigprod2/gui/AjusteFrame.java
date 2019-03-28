@@ -18,7 +18,7 @@ import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Rele;
 import br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels.PanelAjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels.PanelAjusteReleElo;
-import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Elo_Elo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.AjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Equipamento;

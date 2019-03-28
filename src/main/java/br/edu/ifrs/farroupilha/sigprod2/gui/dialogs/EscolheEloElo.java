@@ -10,7 +10,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import br.edu.ifrs.farroupilha.sigprod2.gui.MainFrame;
-import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Elo_Elo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 
 public class EscolheEloElo{

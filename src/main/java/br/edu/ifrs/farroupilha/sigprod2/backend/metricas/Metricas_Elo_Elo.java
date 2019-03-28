@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.metricas;
+package br.edu.ifrs.farroupilha.sigprod2.backend.metricas;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
