@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.bd;
+package br.edu.ifrs.farroupilha.sigprod2.exceptions;
 
 /**
  * Classe que representa uma excessão que acontece quando o usuário não

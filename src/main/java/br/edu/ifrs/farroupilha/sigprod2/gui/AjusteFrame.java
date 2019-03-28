@@ -12,7 +12,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import br.edu.ifrs.farroupilha.sigprod2.auxiliar.AjusteImpossivelException;
+import br.edu.ifrs.farroupilha.sigprod2.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Rele;

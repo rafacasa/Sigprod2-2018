@@ -1,6 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.criterios;
 
-import br.edu.ifrs.farroupilha.sigprod2.auxiliar.AjusteImpossivelException;
+import br.edu.ifrs.farroupilha.sigprod2.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.metricas.MetricasReleElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.AjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Corrente;
