@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.exceptions;
+package br.edu.ifrs.farroupilha.sigprod2.backend.exceptions;
 
 /**
  *

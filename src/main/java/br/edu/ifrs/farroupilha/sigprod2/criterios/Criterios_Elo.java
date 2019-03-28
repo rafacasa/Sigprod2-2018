@@ -5,7 +5,7 @@
  */
 package br.edu.ifrs.farroupilha.sigprod2.criterios;
 
-import br.edu.ifrs.farroupilha.sigprod2.exceptions.AjusteImpossivelException;
+import br.edu.ifrs.farroupilha.sigprod2.backend.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Corrente;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvasElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
