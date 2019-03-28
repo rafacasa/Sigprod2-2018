@@ -1,7 +1,5 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.frames;
 
-import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Menu;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
@@ -14,25 +12,22 @@ import org.apache.logging.log4j.Logger;
 public class RelativeMainFrame extends JFrame {
 
     private static final Logger LOGGER = LogManager.getLogger(RelativeMainFrame.class.getName());
-    private Rede rede;
+    //private Rede rede;
 
-    public RelativeMainFrame(Rede rede) {
-        this.rede = rede;
+    public RelativeMainFrame() {
+        //this.rede = rede;
         this.initComponents();
         this.addItens();
     }
-    
+
     private void initComponents() {
-        
+        LOGGER.error("AINDA NAO DESENVOLVIDO");
     }
-    
+
     private void addItens() {
-        
+        LOGGER.error("AINDA NAO DESENVOLVIDO");
         //this.setJMenuBar(new Menu);
     }
-    
-    
-    
 
     public static void main(String[] args) {
         try {
@@ -46,7 +41,7 @@ public class RelativeMainFrame extends JFrame {
             LOGGER.error("ERRO NA SELEÇÃO DE LOOKANDFELL - " + ex.getMessage());
         }
         SwingUtilities.invokeLater(() -> {
-            //new MainFrameRelative().setVisible(true);
+            new RelativeMainFrame().setVisible(true);
         });
     }
 }
