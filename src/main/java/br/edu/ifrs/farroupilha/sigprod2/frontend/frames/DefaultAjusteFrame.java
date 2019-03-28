@@ -39,15 +39,15 @@ public class DefaultAjusteFrame extends JDialog {
     private PanelNavegacao navegacao;
     private JPanel panelCoordenograma, panelAjuste, panelEsquerda;
     private PanelAjuste ajuste;
-    private br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame mainFrame;
+    //private DefaultMainFrame mainFrame;
     private Rede rede;
     private boolean coordenograma;
 
     public DefaultAjusteFrame(br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame frame) {
         super(frame);
         this.coordenograma = false;
-        this.mainFrame = frame;
-        this.rede = this.mainFrame.getRede();
+        //this.mainFrame = frame;
+        this.rede = frame.getRede();
         initComponents();
         addComponents();
         this.ajustar(this.navegacao.getPontoAtual(), true);

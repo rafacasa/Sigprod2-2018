@@ -17,40 +17,40 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame;
  *
  * @author Rafael Casa
  */
-public class Menu extends JMenuBar{
+public class Menu extends JMenuBar {
 
-    DefaultMainFrame frame;
-    Arquivo localSalvo = null;
-    
-    JMenu arquivo, sobre, config, dados;
-    JMenuItem sair, abrir, salvar, salvarComo, importar, exportar, novo, fechar;
-    JMenuItem sobreSigprod2;
-    JMenuItem bdConfig, limparAjustes;
-    JMenuItem elo;
-    JMenu rele, religador;
-    JMenuItem releSelect, releAdd, religadorSelect, religadorAdd;
-    
+    private DefaultMainFrame frame;
+    private Arquivo localSalvo = null;
+
+    private JMenu arquivo, sobre, config, dados;
+    private JMenuItem sair, abrir, salvar, salvarComo, importar, exportar, novo, fechar;
+    private JMenuItem sobreSigprod2;
+    private JMenuItem bdConfig, limparAjustes;
+    private JMenuItem elo;
+    private JMenu rele, religador;
+    private JMenuItem releSelect, releAdd, religadorSelect, religadorAdd;
+
     public Menu(DefaultMainFrame f) {
         super();
         this.frame = f;
         initComponents();
     }
-    
+
     private void initComponents() {
         this.sair = new JMenuItem("Sair");
-        this.sair.addActionListener(this::sairActionPerformed);        
+        this.sair.addActionListener(this::sairActionPerformed);
         this.abrir = new JMenuItem("Abrir Rede");
-        this.abrir.addActionListener(this::abrirActionPerformed);       
+        this.abrir.addActionListener(this::abrirActionPerformed);
         this.salvar = new JMenuItem("Salvar");
-        this.salvar.addActionListener(this::salvarActionPerformed);        
+        this.salvar.addActionListener(this::salvarActionPerformed);
         this.salvarComo = new JMenuItem("Salvar Como");
-        this.salvarComo.addActionListener(this::salvarComoActionPerformed); 
+        this.salvarComo.addActionListener(this::salvarComoActionPerformed);
         this.fechar = new JMenuItem("Fechar Rede");
         this.fechar.addActionListener(this::fecharActionPerformed);
         this.importar = new JMenuItem("Importar .ABCEEE");
-        this.importar.addActionListener(this::importarActionPerformed);       
+        this.importar.addActionListener(this::importarActionPerformed);
         this.exportar = new JMenuItem("Exportar");
-        this.exportar.addActionListener(this::exportarActionPerformed);       
+        this.exportar.addActionListener(this::exportarActionPerformed);
         this.novo = new JMenuItem("Nova Rede");
         this.novo.addActionListener(this::novoActionPerformed);
         this.arquivo = new JMenu("Arquivo");
@@ -62,12 +62,12 @@ public class Menu extends JMenuBar{
         this.arquivo.add(this.importar);
         this.arquivo.add(this.exportar);
         this.arquivo.add(this.sair);
-        
+
         this.sobreSigprod2 = new JMenuItem("Sobre o SIGPROD2..");
         this.sobreSigprod2.addActionListener(this::sobreSigprod2ActionPerformed);
         this.sobre = new JMenu("Sobre");
         this.sobre.add(this.sobreSigprod2);
-        
+
         this.bdConfig = new JMenuItem("Banco de Dados");
         this.bdConfig.addActionListener(this::bdConfigActionPerformed);
         this.limparAjustes = new JMenuItem("Limpar Ajustes");
@@ -75,7 +75,7 @@ public class Menu extends JMenuBar{
         this.config = new JMenu("Opções");
         this.config.add(this.limparAjustes);
         this.config.add(this.bdConfig);
-        
+
         this.releAdd = new JMenuItem("Adicionar Relé");
         this.releAdd.addActionListener(this::releAddActionPerformed);
         this.releSelect = new JMenuItem("Ver Relés");
@@ -96,21 +96,22 @@ public class Menu extends JMenuBar{
         this.dados.add(this.elo);
         this.dados.add(this.rele);
         this.dados.add(this.religador);
-        
+
         this.add(this.arquivo);
         this.add(this.dados);
         this.add(this.config);
         this.add(this.sobre);
     }
-    
+
     private void sairActionPerformed(ActionEvent e) {
         System.exit(0);
     }
+
     private void abrirActionPerformed(ActionEvent e) {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int i = chooser.showOpenDialog(this.frame);
-        switch(i) {
+        switch (i) {
             case JFileChooser.APPROVE_OPTION:
                 Arquivo arquivo = new Arquivo(chooser.getSelectedFile());
                 this.frame.abrirRede(arquivo);
@@ -120,19 +121,21 @@ public class Menu extends JMenuBar{
                 break;
         }
     }
+
     private void salvarActionPerformed(ActionEvent e) {
-        if(this.localSalvo == null) {
+        if (this.localSalvo == null) {
             this.salvarComoActionPerformed(e);
         } else {
             this.frame.getRede().salvarRede(this.localSalvo);
             this.frame.setSalvo(true);
         }
     }
+
     private void salvarComoActionPerformed(ActionEvent e) {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int i = chooser.showSaveDialog(this.frame);
-        switch(i) {
+        switch (i) {
             case JFileChooser.APPROVE_OPTION:
                 Arquivo arquivo = new Arquivo(chooser.getSelectedFile());
                 this.frame.getRede().salvarRede(arquivo);
@@ -145,44 +148,56 @@ public class Menu extends JMenuBar{
                 break;
         }
     }
+
     private void fecharActionPerformed(ActionEvent e) {
         this.frame.fecharRede();
     }
+
     private void importarActionPerformed(ActionEvent e) {
-        
+
     }
+
     private void exportarActionPerformed(ActionEvent e) {
-        
+
     }
+
     private void novoActionPerformed(ActionEvent e) {
         this.frame.fecharRede();
         this.importarActionPerformed(e);
     }
+
     private void sobreSigprod2ActionPerformed(ActionEvent e) {
-        
+
     }
+
     private void limparAjustesActionPerformed(ActionEvent e) {
         this.frame.getRede().limparAjustes();
         this.frame.limparDataPanel();
         this.frame.limparInfoPanel();
         this.frame.setSalvo(false);
     }
+
     private void bdConfigActionPerformed(ActionEvent e) {
-        
+
     }
+
     private void releAddActionPerformed(ActionEvent e) {
-        
+
     }
+
     private void releSelectActionPerformed(ActionEvent e) {
-        
+
     }
+
     private void religadorAddActionPerformed(ActionEvent e) {
-        
+
     }
+
     private void religadorSelectActionPerformed(ActionEvent e) {
-        
+
     }
+
     private void eloActionPerformed(ActionEvent e) {
-        
+
     }
 }

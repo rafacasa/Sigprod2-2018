@@ -2,6 +2,8 @@ package br.edu.ifrs.farroupilha.sigprod2.frontend.layout;
 
 import java.awt.*;
 import java.util.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The <code>RelativeLayout</code> class is a layout manager that lays out a
@@ -29,6 +31,8 @@ import java.util.*;
  * can be changed at the container or component level.
  */
 public class RelativeLayout implements LayoutManager2, java.io.Serializable {
+
+    private static final Logger LOGGER = LogManager.getLogger(RelativeLayout.class.getName());
     //  Used in the constructor
 
     public final static int X_AXIS = 0;
@@ -281,6 +285,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable {
      */
     @Override
     public void addLayoutComponent(String name, Component component) {
+        LOGGER.error("NOT SUPPORTED");
     }
 
     /*
@@ -302,6 +307,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable {
      */
     @Override
     public void removeLayoutComponent(Component comp) {
+        LOGGER.error("NOT SUPPORTED");
     }
 
     /**
@@ -632,6 +638,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable {
                 break;
             default:
                 adjustLargest(relativeSpace, spaceRemaining);
+                break;
         }
     }
 
@@ -670,11 +677,9 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable {
         for (int i = 0; i < relativeSpace.length; i++) {
             int space = relativeSpace[i];
 
-            if (space > 0) {
-                if (largestSpace <= space) {
-                    largestSpace = space;
-                    largest = i;
-                }
+            if (space > 0 && largestSpace <= space) {
+                largestSpace = space;
+                largest = i;
             }
         }
 
@@ -686,17 +691,18 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable {
 	 *  until all the space is used, starting with the first.
      */
     private void adjustEqual(int[] relativeSpace, int spaceRemaining) {
+        int space = spaceRemaining;
         for (int i = 0; i < relativeSpace.length; i++) {
             if (relativeSpace[i] > 0) {
-                if (spaceRemaining > 0) {
+                if (space > 0) {
                     relativeSpace[i]++;
-                    spaceRemaining--;
+                    space--;
                 } else {
                     relativeSpace[i]--;
-                    spaceRemaining++;
+                    space++;
                 }
 
-                if (spaceRemaining == 0) {
+                if (space == 0) {
                     break;
                 }
             }
