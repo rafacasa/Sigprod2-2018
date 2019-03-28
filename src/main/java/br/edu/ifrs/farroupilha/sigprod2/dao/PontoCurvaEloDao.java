@@ -2,8 +2,8 @@ package br.edu.ifrs.farroupilha.sigprod2.dao;
 
 import br.edu.ifrs.farroupilha.sigprod2.bd.Conexao;
 import br.edu.ifrs.farroupilha.sigprod2.bd.tables.elo.PontoDeCurvaBD;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Elo;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.PontoCurva;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.PontoCurva;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

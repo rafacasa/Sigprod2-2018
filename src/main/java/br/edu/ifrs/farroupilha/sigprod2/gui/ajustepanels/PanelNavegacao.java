@@ -11,8 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Ponto;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Rede;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 
 /**
  *

@@ -1,7 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.gui;
 
 import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.Menu;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Rede;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;

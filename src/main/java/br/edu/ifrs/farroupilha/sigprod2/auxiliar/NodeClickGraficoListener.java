@@ -6,8 +6,8 @@
 package br.edu.ifrs.farroupilha.sigprod2.auxiliar;
 
 import br.edu.ifrs.farroupilha.sigprod2.gui.MainFrame;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Ponto;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Rede;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import java.util.Objects;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.view.ViewerListener;

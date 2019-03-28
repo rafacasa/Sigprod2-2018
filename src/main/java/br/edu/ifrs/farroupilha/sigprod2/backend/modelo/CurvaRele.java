@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.modelo;
+package br.edu.ifrs.farroupilha.sigprod2.backend.modelo;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Classe responsável por armazenar as informações da curva de um Relé
  *
- * @see br.edu.ifrs.farroupilha.sigprod2.modelo.Rele
+ * @see br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele
  * @author Rafael Luiz Casa
  */
 public class CurvaRele {

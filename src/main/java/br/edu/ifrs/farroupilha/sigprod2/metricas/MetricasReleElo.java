@@ -1,6 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.metricas;
 
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Elo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import java.math.BigDecimal;
 
 /**

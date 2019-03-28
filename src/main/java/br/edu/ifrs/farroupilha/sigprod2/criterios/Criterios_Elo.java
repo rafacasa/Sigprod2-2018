@@ -6,11 +6,11 @@
 package br.edu.ifrs.farroupilha.sigprod2.criterios;
 
 import br.edu.ifrs.farroupilha.sigprod2.auxiliar.AjusteImpossivelException;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Corrente;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.CurvasElo;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Elo;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Ponto;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Rede;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Corrente;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvasElo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import java.util.List;
 
 /**

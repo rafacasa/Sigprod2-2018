@@ -12,8 +12,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import br.edu.ifrs.farroupilha.sigprod2.auxiliar.Coordenograma;
 import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Elo_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.CurvasElo;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Elo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvasElo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 
 /**
  *

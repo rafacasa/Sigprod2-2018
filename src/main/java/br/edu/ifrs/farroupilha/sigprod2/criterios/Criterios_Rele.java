@@ -1,12 +1,12 @@
 package br.edu.ifrs.farroupilha.sigprod2.criterios;
 
 import br.edu.ifrs.farroupilha.sigprod2.exceptions.ValorATImposivelException;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.AjusteRele;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Corrente;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.CurvaRele;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Ponto;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Rede;
-import br.edu.ifrs.farroupilha.sigprod2.modelo.Rele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.AjusteRele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Corrente;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvaRele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
 import ch.obermuhlner.math.big.BigDecimalMath;
 import java.math.BigDecimal;
 import java.math.MathContext;
