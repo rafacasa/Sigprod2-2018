@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.dao;
+package br.edu.ifrs.farroupilha.sigprod2.backend.bd.dao;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.bd.Conexao;
 import br.edu.ifrs.farroupilha.sigprod2.backend.bd.tables.elo.EloBD;

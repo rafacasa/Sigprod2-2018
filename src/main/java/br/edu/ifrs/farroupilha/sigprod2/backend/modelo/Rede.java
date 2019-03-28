@@ -7,7 +7,7 @@ import br.edu.ifrs.farroupilha.sigprod2.auxiliar.NodeClickMouseManager;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.RedeNaoRadialException;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Rele;
-import br.edu.ifrs.farroupilha.sigprod2.dao.EloKDao;
+import br.edu.ifrs.farroupilha.sigprod2.backend.bd.dao.EloKDao;
 import br.edu.ifrs.farroupilha.sigprod2.gui.MainFrame;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
