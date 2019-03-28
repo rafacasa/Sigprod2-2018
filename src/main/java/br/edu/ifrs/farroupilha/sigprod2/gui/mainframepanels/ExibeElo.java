@@ -11,7 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.graphstream.graph.Node;
-import br.edu.ifrs.farroupilha.sigprod2.auxiliar.NodeClickDefaultListener;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.listeners.NodeClickDefaultListener;
 
 /**
  *

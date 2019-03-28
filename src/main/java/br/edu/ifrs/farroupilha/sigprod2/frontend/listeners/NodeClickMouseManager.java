@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.edu.ifrs.farroupilha.sigprod2.auxiliar;
+package br.edu.ifrs.farroupilha.sigprod2.frontend.listeners;
 
 import java.awt.event.MouseEvent;
 import java.util.EnumSet;

@@ -4,7 +4,7 @@ import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.Menu;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Arquivo;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.threads.LoopPumpThread;
-import br.edu.ifrs.farroupilha.sigprod2.auxiliar.NodeClickGraficoListener;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.listeners.NodeClickGraficoListener;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Corrente;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Trecho;

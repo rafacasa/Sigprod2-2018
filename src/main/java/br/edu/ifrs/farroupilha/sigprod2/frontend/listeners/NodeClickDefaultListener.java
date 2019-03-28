@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.auxiliar;
+package br.edu.ifrs.farroupilha.sigprod2.frontend.listeners;
 
 import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.ExibeElo;
 import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.Informacoes;

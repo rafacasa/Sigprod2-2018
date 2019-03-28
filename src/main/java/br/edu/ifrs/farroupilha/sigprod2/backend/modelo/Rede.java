@@ -2,8 +2,8 @@ package br.edu.ifrs.farroupilha.sigprod2.backend.modelo;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
-import br.edu.ifrs.farroupilha.sigprod2.auxiliar.NodeClickDefaultListener;
-import br.edu.ifrs.farroupilha.sigprod2.auxiliar.NodeClickMouseManager;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.listeners.NodeClickDefaultListener;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.listeners.NodeClickMouseManager;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.RedeNaoRadialException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Rele;
