@@ -4,7 +4,7 @@ import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Elo_Elo;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import br.edu.ifrs.farroupilha.sigprod2.backend.exceptions.AjusteImpossivelException;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Corrente;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvasElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;

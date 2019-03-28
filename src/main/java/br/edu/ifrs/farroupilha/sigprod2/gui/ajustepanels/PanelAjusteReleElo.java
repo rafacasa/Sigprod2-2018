@@ -1,6 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels;
 
-import br.edu.ifrs.farroupilha.sigprod2.backend.exceptions.AjusteImpossivelException;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
 import br.edu.ifrs.farroupilha.sigprod2.criterios.Criterios_Rele_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.gui.AjusteFrame;
