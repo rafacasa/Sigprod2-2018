@@ -224,8 +224,7 @@ public class PanelNavegacao extends JPanel {
     }
 
     private void botaoCoordenogramaActionPerformed(java.awt.event.ActionEvent evt) {
-        this.coordenograma = !this.coordenograma;
-        if (this.coordenograma) {
+        if (this.botaoCoordenograma.getModel().isSelected()) {
             this.ajusteFrame.ativarCoordenograma();
         } else {
             this.ajusteFrame.desativarCoordenograma();

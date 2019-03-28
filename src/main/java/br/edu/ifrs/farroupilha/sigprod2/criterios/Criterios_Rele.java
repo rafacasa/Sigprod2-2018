@@ -1,7 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.criterios;
 
 import br.edu.ifrs.farroupilha.sigprod2.exceptions.ValorATImposivelException;
-import br.edu.ifrs.farroupilha.sigprod2.metricas.Metricas_Rele;
+import br.edu.ifrs.farroupilha.sigprod2.modelo.AjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Corrente;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.CurvaRele;
 import br.edu.ifrs.farroupilha.sigprod2.modelo.Ponto;
@@ -41,14 +41,14 @@ public class Criterios_Rele {
     }
 
     public void ajuste() {
-        List<Metricas_Rele> ajustesFase = ajustaFase();
-        List<Metricas_Rele> ajustesNeutro = ajustaNeutro();
+        List<AjusteRele> ajustesFase = ajustaFase();
+        List<AjusteRele> ajustesNeutro = ajustaNeutro();
 
         this.rele.setAjusteFase(ajustesFase.get(0));
         this.rele.setAjusteNeutro(ajustesNeutro.get(0));
     }
 
-    public List<Metricas_Rele> ajustaFase() {
+    public List<AjusteRele> ajustaFase() {
         LOGGER.traceEntry();
         BigDecimal iMinFFPP = BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.ponto, Corrente.ICC2F));
         BigDecimal iMinFFPR = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(this.ponto, Corrente.ICC2F));
@@ -57,7 +57,7 @@ public class Criterios_Rele {
         CurvaRele ni = this.rele.getnIFase();
         CurvaRele mi = this.rele.getmIFase();
         CurvaRele ei = this.rele.geteIFase();
-        List<Metricas_Rele> ajustesPossiveis = new ArrayList<>();
+        List<AjusteRele> ajustesPossiveis = new ArrayList<>();
         ajustesPossiveis.addAll(calculaAcerto(ni, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
         ajustesPossiveis.addAll(calculaAcerto(mi, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
         ajustesPossiveis.addAll(calculaAcerto(ei, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
@@ -65,7 +65,7 @@ public class Criterios_Rele {
         return LOGGER.traceExit(ajustesPossiveis);
     }
 
-    public List<Metricas_Rele> ajustaNeutro() {
+    public List<AjusteRele> ajustaNeutro() {
         LOGGER.traceEntry();
         BigDecimal iMinFFPP = BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.ponto, Corrente.ICCFTMIN));
         BigDecimal iMinFFPR = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(this.ponto, Corrente.ICCFTMIN));
@@ -74,7 +74,7 @@ public class Criterios_Rele {
         CurvaRele ni = this.rele.getnINeutro();
         CurvaRele mi = this.rele.getmINeutro();
         CurvaRele ei = this.rele.geteINeutro();
-        List<Metricas_Rele> ajustesPossiveis = new ArrayList<>();
+        List<AjusteRele> ajustesPossiveis = new ArrayList<>();
         ajustesPossiveis.addAll(calculaAcerto(ni, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, false));
         ajustesPossiveis.addAll(calculaAcerto(mi, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, false));
         ajustesPossiveis.addAll(calculaAcerto(ei, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, false));
@@ -82,9 +82,9 @@ public class Criterios_Rele {
         return LOGGER.traceExit(ajustesPossiveis);
     }
 
-    private List<Metricas_Rele> calculaAcerto(CurvaRele curva, BigDecimal iMinFFPP, BigDecimal iMinFFPR, BigDecimal limiteMaximo, BigDecimal limiteMinimo, boolean fase) {
+    private List<AjusteRele> calculaAcerto(CurvaRele curva, BigDecimal iMinFFPP, BigDecimal iMinFFPR, BigDecimal limiteMaximo, BigDecimal limiteMinimo, boolean fase) {
         LOGGER.traceEntry();
-        List<Metricas_Rele> ajustesPossiveis = new ArrayList<>();
+        List<AjusteRele> ajustesPossiveis = new ArrayList<>();
         List<BigDecimal> ac = restringeAC(curva, limiteMaximo, limiteMinimo);
         LOGGER.trace("RESTRINGIU OS ACS DISPONÍVEIS");
         LOGGER.info("QTD AC - " + ac.size());
@@ -98,7 +98,7 @@ public class Criterios_Rele {
                 continue;
             }
             BigDecimal fm = this.calcularFM(curva, d, at, iMinFFPP, iMinFFPR, fase);
-            Metricas_Rele metrica = new Metricas_Rele(fm, at, d, curva);
+            AjusteRele metrica = new AjusteRele(fm, at, d, curva);
             ajustesPossiveis.add(metrica);
         }
         return LOGGER.traceExit(ajustesPossiveis);
@@ -111,11 +111,11 @@ public class Criterios_Rele {
         BigDecimal primeiroAc = ac.get(0);
         BigDecimal ultimoAc = ac.get(ac.size() - 1);
 
-        LOGGER.debug("QUANTIDADE DE ACS DA CURVA - " + ac.size());
-        LOGGER.debug("LIMITE MAXIMO DO AC (CORRENTE MINIMA BIFASICA 2 CAMADAS) - " + limiteMaximo);
-        LOGGER.debug("LIMITE MINIMO DO AC (CORRENTE DE CARGA NO PONTO) - " + limiteMinimo);
-        LOGGER.debug("PRIMEIRO AC DA LISTA - " + primeiroAc);
-        LOGGER.debug("ULTIMO AC DA LISTA - " + ultimoAc);
+        LOGGER.trace("QUANTIDADE DE ACS DA CURVA - " + ac.size());
+        LOGGER.trace("LIMITE MAXIMO DO AC (CORRENTE MINIMA BIFASICA 2 CAMADAS) - " + limiteMaximo);
+        LOGGER.trace("LIMITE MINIMO DO AC (CORRENTE DE CARGA NO PONTO) - " + limiteMinimo);
+        LOGGER.trace("PRIMEIRO AC DA LISTA - " + primeiroAc);
+        LOGGER.trace("ULTIMO AC DA LISTA - " + ultimoAc);
 
         if (primeiroAc.compareTo(limiteMinimo) <= 0) {
             ac = restringeMinAC(ac, limiteMinimo);
@@ -137,12 +137,12 @@ public class Criterios_Rele {
             LOGGER.trace("REPETIÇÃO DO LAÇO WHILE");
             indice++;
             atualAc = ac.get(indice);
-            LOGGER.debug("INDICE ATUAL - " + indice);
-            LOGGER.debug("AC ATUAL - " + atualAc);
+            LOGGER.trace("INDICE ATUAL - " + indice);
+            LOGGER.trace("AC ATUAL - " + atualAc);
         }
-        LOGGER.debug("INDICE MINIMO ESCOLHIDO - " + indice);
+        LOGGER.trace("INDICE MINIMO ESCOLHIDO - " + indice);
         List<BigDecimal> novoAC = ac.subList(indice, ac.size());
-        LOGGER.debug("NOVA QUANTIDADE DE ACS - " + novoAC.size());
+        LOGGER.trace("NOVA QUANTIDADE DE ACS - " + novoAC.size());
         return LOGGER.traceExit(novoAC);
     }
 
@@ -158,9 +158,9 @@ public class Criterios_Rele {
             LOGGER.trace("INDICE ATUAL - " + indice);
             LOGGER.trace("AC ATUAL - " + atualAc);
         }
-        LOGGER.debug("INDICE MÁXIMO ESCOLHIDO - " + indice);
+        LOGGER.trace("INDICE MÁXIMO ESCOLHIDO - " + indice);
         List<BigDecimal> novoAC = ac.subList(0, indice + 1);
-        LOGGER.debug("NOVA QUANTIDADE DE ACS - " + novoAC.size());
+        LOGGER.trace("NOVA QUANTIDADE DE ACS - " + novoAC.size());
         return LOGGER.traceExit(novoAC);
     }
 
@@ -196,11 +196,11 @@ public class Criterios_Rele {
         at2 = at2.add(b);
         at2 = tempoMaxPR.divide(at2, MathContext.DECIMAL128);
 
-        LOGGER.debug("VALOR DE AT1 - " + at1);
-        LOGGER.debug("VALOR DE AT2 - " + at2);
+        LOGGER.trace("VALOR DE AT1 - " + at1);
+        LOGGER.trace("VALOR DE AT2 - " + at2);
 
         BigDecimal at = Collections.min(Arrays.asList(at1, at2));
-        LOGGER.debug("MENOR AT - " + at);
+        LOGGER.trace("MENOR AT - " + at);
 
         return LOGGER.traceExit(at);
     }
@@ -223,8 +223,8 @@ public class Criterios_Rele {
         } else {
             BigDecimal razao = at.divide(passoAT, MathContext.DECIMAL128);
             int indice = razao.intValue();
-            LOGGER.debug("RAZÃO - " + razao);
-            LOGGER.debug("INDICE - " + indice);
+            LOGGER.trace("RAZÃO - " + razao);
+            LOGGER.trace("INDICE - " + indice);
             return LOGGER.traceExit(curva.gerarAT().get(indice - 1));
         }
     }
@@ -235,10 +235,10 @@ public class Criterios_Rele {
         BigDecimal t1 = fase ? this.tempoMaxPRFase : this.tempoMaxPRNeutro;
         BigDecimal t2 = calculaTempo(curva, ac, at, iMinFFPP);
         BigDecimal t3 = fase ? this.tempoMaxPPFase : this.tempoMaxPPNeutro;
-        LOGGER.debug("t0 (tempo da curva iMinFFPR) - " + t0);
-        LOGGER.debug("t1 - (tolerância máxima aceitável)" + t1);
-        LOGGER.debug("t2 (tempo da curva iMinFFPP)- " + t2);
-        LOGGER.debug("t3 - (tolerância máxima aceitável)" + t3);
+        LOGGER.trace("t0 (tempo da curva iMinFFPR) - " + t0);
+        LOGGER.trace("t1 - (tolerância máxima aceitável)" + t1);
+        LOGGER.trace("t2 (tempo da curva iMinFFPP)- " + t2);
+        LOGGER.trace("t3 - (tolerância máxima aceitável)" + t3);
         BigDecimal diff1 = t1.subtract(t0);
         BigDecimal diff2 = t3.subtract(t2);
         diff1 = diff1.pow(2);

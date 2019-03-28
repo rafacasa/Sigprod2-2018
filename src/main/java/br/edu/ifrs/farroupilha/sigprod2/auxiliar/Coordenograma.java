@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
@@ -22,6 +23,7 @@ import org.knowm.xchart.style.markers.SeriesMarkers;
 public class Coordenograma {
 
     private XYChart chart;
+    private JPanel chartPanel;
     private String titulo;
 
     public Coordenograma(String titulo) {
@@ -34,11 +36,26 @@ public class Coordenograma {
         this.chart.getStyler().setYAxisLogarithmic(true);
         this.chart.getStyler().setXAxisLogarithmic(true);
         this.chart.getStyler().setLegendPosition(Styler.LegendPosition.OutsideE);
+        this.chart.getStyler().setToolTipsEnabled(true);
+        this.chart.getStyler().setToolTipsAlwaysVisible(true);
+        this.chart.getStyler().setChartBackgroundColor(UIManager.getColor("Panel.background"));
+        this.chartPanel = new XChartPanel(this.chart);
     }
 
     public void add(Elo elo, String nomeCurva, Color cor) {
         this.addCurva(elo.getDadosCurva(CurvasElo.MAXIMA), nomeCurva, cor, true);
         this.addCurva(elo.getDadosCurva(CurvasElo.MINIMA), nomeCurva + "2", cor, false);
+    }
+
+    public List<String> add(BigDecimal corrente, List<BigDecimal> tempos, String nome, List<Color> cores) {
+        double correnteD = corrente.doubleValue();
+        List<String> nomes = new ArrayList<>();
+        List<Double> temposD = this.convertToDouble(tempos);
+        for (int i = 0; i < temposD.size(); i++) {
+            this.addPonto(correnteD, temposD.get(i), nome + i, cores.get(i));
+            nomes.add(nome + i);
+        }
+        return nomes;
     }
 
     public void add(Elo elo, CurvasElo curva, double fator, String nomeCurva, Color cor) {
@@ -54,9 +71,32 @@ public class Coordenograma {
 
     private void addCurva(List<List<Double>> pontos, String nomeCurva, Color cor, boolean showInLegend) {
         XYSeries serie = this.chart.addSeries(nomeCurva, pontos.get(0), pontos.get(1));
+        String[] tooltips = new String[pontos.get(0).size()];
+        for (int i = 0; i < tooltips.length; i++) {
+            tooltips[i] = null;
+        }
+        serie.setToolTips(tooltips);
         serie.setLineColor(cor);
         serie.setMarker(SeriesMarkers.NONE);
         serie.setShowInLegend(showInLegend);
+        this.chartPanel.revalidate();
+        this.chartPanel.repaint();
+    }
+
+    private void addPonto(double x, double y, String nomeCurva, Color cor) {
+        List<Double> listaX = new ArrayList<>();
+        List<Double> listaY = new ArrayList<>();
+        listaX.add(x);
+        listaY.add(y);
+        XYSeries serie = this.chart.addSeries(nomeCurva, listaX, listaY);
+        serie.setLineColor(cor);
+        serie.setMarker(SeriesMarkers.CIRCLE);
+        serie.setMarkerColor(cor);
+        String[] tooltips = {"Tempo: " + y};
+        serie.setToolTips(tooltips);
+        serie.setShowInLegend(false);
+        this.chartPanel.revalidate();
+        this.chartPanel.repaint();
     }
 
     public void add(Rele rele, Color corFase, Color corNeutro) {
@@ -75,9 +115,14 @@ public class Coordenograma {
         }
     }
 
+    public void remove(String s) {
+        this.chart.removeSeries(s);
+        this.chartPanel.revalidate();
+        this.chartPanel.repaint();
+    }
+
     public JPanel getChartPanel() {
-        this.chart.getStyler().setChartBackgroundColor(Color.WHITE);
-        return new XChartPanel(this.chart);
+        return this.chartPanel;
     }
 
     private List<Double> convertToDouble(List<BigDecimal> list) {
