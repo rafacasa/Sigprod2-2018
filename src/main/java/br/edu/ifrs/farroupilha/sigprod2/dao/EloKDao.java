@@ -1,6 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.dao;
 
-import br.edu.ifrs.farroupilha.sigprod2.bd.Conexao;
+import br.edu.ifrs.farroupilha.sigprod2.backend.bd.Conexao;
 import br.edu.ifrs.farroupilha.sigprod2.bd.tables.elo.EloBD;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.PontoCurva;
