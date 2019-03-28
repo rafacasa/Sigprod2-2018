@@ -11,7 +11,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame;
 
 /**
  *
@@ -19,7 +19,7 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
  */
 public class Menu extends JMenuBar{
 
-    MainFrame frame;
+    DefaultMainFrame frame;
     Arquivo localSalvo = null;
     
     JMenu arquivo, sobre, config, dados;
@@ -30,7 +30,7 @@ public class Menu extends JMenuBar{
     JMenu rele, religador;
     JMenuItem releSelect, releAdd, religadorSelect, religadorAdd;
     
-    public Menu(MainFrame f) {
+    public Menu(DefaultMainFrame f) {
         super();
         this.frame = f;
         initComponents();

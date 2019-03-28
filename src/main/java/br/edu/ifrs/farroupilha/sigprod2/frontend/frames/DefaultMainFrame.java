@@ -35,10 +35,10 @@ import org.graphstream.graph.Node;
  *
  * @author Rafael Luiz Casa
  */
-public class MainFrame extends JFrame {
+public class DefaultMainFrame extends JFrame {
 
-    private static final Logger LOGGER = LogManager.getLogger(MainFrame.class.getName());
-    public static MainFrame frame;
+    private static final Logger LOGGER = LogManager.getLogger(DefaultMainFrame.class.getName());
+    public static DefaultMainFrame frame;
     //private JPanel contentPane;
     private JPanel panelSuperior;
     private JPanel panelMiddle;
@@ -52,7 +52,7 @@ public class MainFrame extends JFrame {
     private List<Node> pontosGrafico;
     private boolean salvo, modoSelecionar;
 
-    public MainFrame() {
+    public DefaultMainFrame() {
         this.salvo = false;
         this.initComponents();
         this.initRede();
@@ -158,7 +158,7 @@ public class MainFrame extends JFrame {
     }
 
     private void initRede() {
-        MainFrame.frame = this;
+        DefaultMainFrame.frame = this;
         System.setProperty("org.graphstream.ui", "org.graphstream.ui.swing.util.Display");
         Arquivo arquivoRede = new Arquivo("redeRele.ABCEEE");
         try {
@@ -251,10 +251,10 @@ public class MainFrame extends JFrame {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DefaultMainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         SwingUtilities.invokeLater(() -> {
-            new MainFrame().setVisible(true);
+            new DefaultMainFrame().setVisible(true);
         });
     }
 

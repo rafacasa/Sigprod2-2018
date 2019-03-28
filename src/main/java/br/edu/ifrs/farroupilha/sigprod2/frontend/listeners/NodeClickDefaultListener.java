@@ -2,7 +2,7 @@ package br.edu.ifrs.farroupilha.sigprod2.frontend.listeners;
 
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.ExibeElo;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Informacoes;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.SelecaoElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
@@ -19,14 +19,14 @@ public class NodeClickDefaultListener implements ViewerListener {
 
     public boolean loop = true;
     private Rede rede;
-    private MainFrame frame;
+    private DefaultMainFrame frame;
 
     @Override
     public void viewClosed(String viewName) {
         loop = false;
     }
 
-    public NodeClickDefaultListener(MainFrame frame) {
+    public NodeClickDefaultListener(DefaultMainFrame frame) {
         this.frame = frame;
         this.rede = this.frame.getRede();
     }

@@ -8,7 +8,7 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.RedeNaoRadialE
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Rele;
 import br.edu.ifrs.farroupilha.sigprod2.backend.bd.dao.EloKDao;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.io.File;
@@ -142,7 +142,7 @@ public class Rede {
         this.mapa.display(false);
     }
 
-    public void displayGraph(MainFrame frame) {
+    public void displayGraph(DefaultMainFrame frame) {
         this.viewer = this.mapa.display(false);
 
         viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.HIDE_ONLY);
@@ -160,7 +160,7 @@ public class Rede {
         }
     }
 
-    public View getMapaView(MainFrame frame) {
+    public View getMapaView(DefaultMainFrame frame) {
         viewer = this.mapa.display(false);
 
         viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.HIDE_ONLY);
@@ -649,7 +649,7 @@ public class Rede {
         System.out.println(sb.toString());
         Ponto.addAttribute(this.getMapa().getNode(pontoRede.getNome()), "ui.class", "equipamentoSendoAjustado");
         Informacoes info = new Informacoes(this.getMapa().getNode(pontoRede.getNome()));
-        MainFrame.frame.setInfoPanel(info);
+        DefaultMainFrame.frame.setInfoPanel(info);
         EscolheEloElo escolhe = new EscolheEloElo(metricas);
         Elo ajuste = escolhe.getSelecionado();
         pontoRede.setEquipamentoInstalado(ajuste);

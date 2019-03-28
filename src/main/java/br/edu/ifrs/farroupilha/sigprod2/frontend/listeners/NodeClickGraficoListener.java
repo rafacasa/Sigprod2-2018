@@ -5,7 +5,7 @@
  */
 package br.edu.ifrs.farroupilha.sigprod2.frontend.listeners;
 
-import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import java.util.Objects;
@@ -19,9 +19,9 @@ import org.graphstream.ui.view.ViewerListener;
 public class NodeClickGraficoListener implements ViewerListener {
 
     private Rede rede;
-    private MainFrame frame;
+    private DefaultMainFrame frame;
 
-    public NodeClickGraficoListener(MainFrame frame) {
+    public NodeClickGraficoListener(DefaultMainFrame frame) {
         this.frame = frame;
         this.rede = this.frame.getRede();
     }

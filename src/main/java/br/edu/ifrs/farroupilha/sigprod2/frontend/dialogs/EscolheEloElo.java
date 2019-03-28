@@ -9,7 +9,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 
@@ -86,7 +86,7 @@ public class EscolheEloElo{
         this.botaoSelecionar = new JButton("Selecionar Elo");
         this.botaoSelecionar.addActionListener(this::botaoSelecionarActionPerformed);
         
-        this.dialog = new JDialog(MainFrame.frame, "Escolher Elo", true);
+        this.dialog = new JDialog(DefaultMainFrame.frame, "Escolher Elo", true);
     }
     
     private void addItens() {
