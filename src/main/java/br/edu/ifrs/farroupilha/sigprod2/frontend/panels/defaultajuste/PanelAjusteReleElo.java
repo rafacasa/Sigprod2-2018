@@ -3,7 +3,7 @@ package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Rele_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.AjusteFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultAjusteFrame;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.MetricasReleElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
@@ -29,7 +29,7 @@ public class PanelAjusteReleElo extends PanelAjuste {
 
     private static final Logger LOGGER = LogManager.getLogger(PanelAjusteReleElo.class.getName());
     private List<MetricasReleElo> metricas;
-    private AjusteFrame ajusteFrame;
+    private DefaultAjusteFrame ajusteFrame;
     private Rele relePai;
     private Elo selecionado;
     private Ponto ponto;
@@ -44,7 +44,7 @@ public class PanelAjusteReleElo extends PanelAjuste {
     private JPanel panelAlcance;
     private JPanel panelSeletividade;
 
-    public PanelAjusteReleElo(AjusteFrame ajusteFrame, Ponto p, Rede rede, Ponto pOrigem) {
+    public PanelAjusteReleElo(DefaultAjusteFrame ajusteFrame, Ponto p, Rede rede, Ponto pOrigem) {
         LOGGER.trace("Cria Panel AjusteReleElo");
         this.ajusteFrame = ajusteFrame;
         this.relePai = (Rele) pOrigem.getEquipamentoInstalado();

@@ -33,9 +33,9 @@ import org.apache.logging.log4j.Logger;
  *
  * @author Rafael Luiz Casa
  */
-public class AjusteFrame extends JDialog {
+public class DefaultAjusteFrame extends JDialog {
 
-    private static final Logger LOGGER = LogManager.getLogger(AjusteFrame.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(DefaultAjusteFrame.class.getName());
     private PanelNavegacao navegacao;
     private JPanel panelCoordenograma, panelAjuste, panelEsquerda;
     private PanelAjuste ajuste;
@@ -43,7 +43,7 @@ public class AjusteFrame extends JDialog {
     private Rede rede;
     private boolean coordenograma;
 
-    public AjusteFrame(br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame frame) {
+    public DefaultAjusteFrame(br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame frame) {
         super(frame);
         this.coordenograma = false;
         this.mainFrame = frame;
@@ -236,13 +236,13 @@ public class AjusteFrame extends JDialog {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AjusteFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DefaultAjusteFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         SwingUtilities.invokeLater(() -> {
             new br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame().setVisible(true);
         });
         SwingUtilities.invokeLater(() -> {
-            new AjusteFrame(br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame.frame).setVisible(true);
+            new DefaultAjusteFrame(br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame.frame).setVisible(true);
         });
     }
 

@@ -11,12 +11,12 @@ import org.apache.logging.log4j.Logger;
  *
  * @author Rafael Luiz Casa
  */
-public class MainFrameRelative extends JFrame {
+public class RelativeMainFrame extends JFrame {
 
-    private static final Logger LOGGER = LogManager.getLogger(MainFrameRelative.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RelativeMainFrame.class.getName());
     private Rede rede;
 
-    public MainFrameRelative(Rede rede) {
+    public RelativeMainFrame(Rede rede) {
         this.rede = rede;
         this.initComponents();
         this.addItens();

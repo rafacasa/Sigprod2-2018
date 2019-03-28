@@ -203,7 +203,7 @@ public class DefaultMainFrame extends JFrame {
      */
     private void botaoExecutarEstudoActionPerformed(java.awt.event.ActionEvent evt) {
         SwingUtilities.invokeLater(() -> {
-            new br.edu.ifrs.farroupilha.sigprod2.frontend.frames.AjusteFrame(this).setVisible(true);
+            new br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultAjusteFrame(this).setVisible(true);
         });
     }
 

@@ -1,7 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste;
 
 import java.awt.Color;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.AjusteFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultAjusteFrame;
 import java.awt.Dimension;
 import java.util.List;
 import javax.swing.Box;
@@ -23,13 +23,13 @@ public class PanelAjusteEloElo extends br.edu.ifrs.farroupilha.sigprod2.frontend
 
     private List<Metricas_Elo_Elo> metricas;
     private Elo selecionado, pai;
-    private AjusteFrame ajusteFrame;
+    private DefaultAjusteFrame ajusteFrame;
     private JPanel panelTProtetor1, panelTProtetor2, panelIFTMin, panelIFTMinSel, panelPorcentagem, panelBotoes;
     private JLabel nomeTProtetor1, nomeTProtetor2, nomeIFTMin, nomeIFTMinSel, nomePorcentagem, labelTProtetor1, labelTProtetor2, labelIFTMin, labelIFTMinSel, labelPorcentagem;
     private JComboBox<Metricas_Elo_Elo> lista;
     private JButton botaoSelecionar;
 
-    public PanelAjusteEloElo(List<Metricas_Elo_Elo> metricas, AjusteFrame ajusteFrame, Elo pai) {
+    public PanelAjusteEloElo(List<Metricas_Elo_Elo> metricas, DefaultAjusteFrame ajusteFrame, Elo pai) {
         this.metricas = metricas;
         this.ajusteFrame = ajusteFrame;
         this.criaPanels();

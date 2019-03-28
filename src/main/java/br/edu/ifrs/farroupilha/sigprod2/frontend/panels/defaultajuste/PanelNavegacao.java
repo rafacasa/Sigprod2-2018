@@ -1,6 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste;
 
-import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.AjusteFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultAjusteFrame;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.List;
@@ -23,13 +23,13 @@ public class PanelNavegacao extends JPanel {
     private List<List<Ponto>> camadasRedeReduzida;
     private Rede rede;
     private int camadaAtual, pontoAtual;
-    private AjusteFrame ajusteFrame;
+    private DefaultAjusteFrame ajusteFrame;
     private boolean coordenograma;
     private JButton up, down, left, right;
     private JLabel labelCamadas, labelPontos;
     private JToggleButton botaoCoordenograma;
 
-    public PanelNavegacao(Rede rede, AjusteFrame ajusteFrame) {
+    public PanelNavegacao(Rede rede, DefaultAjusteFrame ajusteFrame) {
         this.rede = rede;
         this.camadasRedeReduzida = rede.getCamadasRedeReduzida();
         this.ajusteFrame = ajusteFrame;
