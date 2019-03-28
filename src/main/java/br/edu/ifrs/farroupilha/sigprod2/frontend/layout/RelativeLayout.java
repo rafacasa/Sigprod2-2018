@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.gui.layout;
+package br.edu.ifrs.farroupilha.sigprod2.frontend.layout;
 
 import java.awt.*;
 import java.util.*;
