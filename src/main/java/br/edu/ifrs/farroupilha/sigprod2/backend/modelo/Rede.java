@@ -23,7 +23,7 @@ import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
-import br.edu.ifrs.farroupilha.sigprod2.gui.dialogs.EscolheEloElo;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.EscolheEloElo;
 import br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels.Informacoes;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
 import org.apache.logging.log4j.LogManager;

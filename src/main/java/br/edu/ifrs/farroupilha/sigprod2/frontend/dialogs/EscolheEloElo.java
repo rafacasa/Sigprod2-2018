@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.gui.dialogs;
+package br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs;
 
 import java.awt.Dimension;
 import java.util.List;
