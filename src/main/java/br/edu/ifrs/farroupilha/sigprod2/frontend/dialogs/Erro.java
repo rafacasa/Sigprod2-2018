@@ -1,4 +1,4 @@
-package br.edu.ifrs.farroupilha.sigprod2.auxiliar;
+package br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs;
 
 import java.awt.Component;
 import javax.swing.JOptionPane;

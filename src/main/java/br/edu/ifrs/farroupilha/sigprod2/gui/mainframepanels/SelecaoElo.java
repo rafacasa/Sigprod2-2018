@@ -1,6 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.gui.mainframepanels;
 
-import br.edu.ifrs.farroupilha.sigprod2.auxiliar.Erro;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import br.edu.ifrs.farroupilha.sigprod2.auxiliar.NodeClickDefaultListener;
 import br.edu.ifrs.farroupilha.sigprod2.backend.bd.dao.EloKDao;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;

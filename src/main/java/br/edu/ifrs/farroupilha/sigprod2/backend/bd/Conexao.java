@@ -1,7 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.bd;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.DadosConexaoException;
-import br.edu.ifrs.farroupilha.sigprod2.auxiliar.Erro;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;

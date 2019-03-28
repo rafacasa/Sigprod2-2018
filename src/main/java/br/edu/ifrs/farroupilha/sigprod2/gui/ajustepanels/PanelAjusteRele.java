@@ -1,7 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.gui.ajustepanels;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
-import br.edu.ifrs.farroupilha.sigprod2.auxiliar.Erro;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
 import java.awt.Color;
 import java.math.BigDecimal;
