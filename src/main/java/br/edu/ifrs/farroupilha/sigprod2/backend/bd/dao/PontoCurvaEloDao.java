@@ -4,6 +4,7 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.bd.Conexao;
 import br.edu.ifrs.farroupilha.sigprod2.backend.bd.tables.elo.PontoDeCurvaBD;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.PontoCurva;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +17,7 @@ import java.util.List;
  * remover pontos de curva de um Elo.
  *
  * @author Rafael Casa
- * @version 06/04/2016
+ * @version 29/03/2019
  */
 public class PontoCurvaEloDao {
 
@@ -114,24 +115,28 @@ public class PontoCurvaEloDao {
      * as constantes SIGPRO2.Modelo.PontoCurva.PONTODACURVAMAXIMA e
      * SIGPRO2.Modelo.PontoCurva.PONTODACURVAMINIMA.
      * @return Um ArrayList com os Pontos de Curva localizados no Banco de Dados
-     * @throws SQLException Caso houver erro de acesso ao Banco de Dados, ou os
-     * Dados forem inválidos
+     * @throws BancoDeDadosException Caso houver erro de acesso ao Banco de
+     * Dados, ou os Dados forem inválidos
      */
-    public static ArrayList<PontoCurva> buscaPontosCurva(int correnteNominal, boolean curva) throws SQLException {
-        ArrayList<PontoCurva> lista = new ArrayList<>();
-        Connection conexao = Conexao.getConexao();
-        PreparedStatement comando = conexao.prepareStatement(BUSCAR);
-        comando.setInt(1, correnteNominal);
-        comando.setBoolean(2, curva);
-        ResultSet resultado = comando.executeQuery();
-        while (resultado.next()) {
-            PontoCurva pontoCurva = new PontoCurva();
-            pontoCurva.setId(resultado.getInt("Id"));
-            pontoCurva.setCorrente(resultado.getDouble("corrente"));
-            pontoCurva.setTempo(resultado.getDouble("tempo"));
-            lista.add(pontoCurva);
+    public static ArrayList<PontoCurva> buscaPontosCurva(int correnteNominal, boolean curva) throws BancoDeDadosException {
+        try {
+            ArrayList<PontoCurva> lista = new ArrayList<>();
+            Connection conexao = Conexao.getConexao();
+            PreparedStatement comando = conexao.prepareStatement(BUSCAR);
+            comando.setInt(1, correnteNominal);
+            comando.setBoolean(2, curva);
+            ResultSet resultado = comando.executeQuery();
+            while (resultado.next()) {
+                PontoCurva pontoCurva = new PontoCurva();
+                pontoCurva.setId(resultado.getInt("Id"));
+                pontoCurva.setCorrente(resultado.getDouble("corrente"));
+                pontoCurva.setTempo(resultado.getDouble("tempo"));
+                lista.add(pontoCurva);
+            }
+            Conexao.fechaConexao();
+            return lista;
+        } catch (SQLException ex) {
+            throw new BancoDeDadosException(ex);
         }
-        Conexao.fechaConexao();
-        return lista;
     }
 }

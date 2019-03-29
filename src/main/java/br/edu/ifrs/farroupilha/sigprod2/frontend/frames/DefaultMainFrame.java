@@ -8,6 +8,7 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.listeners.NodeClickGraficoListe
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Corrente;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Trecho;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.awt.BorderLayout;
@@ -15,7 +16,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -163,7 +163,7 @@ public class DefaultMainFrame extends JFrame {
         Arquivo arquivoRede = new Arquivo("redeRele.ABCEEE");
         try {
             this.rede = new Rede(arquivoRede);
-        } catch (SQLException ex) {
+        } catch (BancoDeDadosException ex) {
             Erro.mostraMensagemSQL(this);
         }
         Component c = (Component) this.rede.getMapaView(this);
@@ -283,7 +283,7 @@ public class DefaultMainFrame extends JFrame {
         Arquivo arquivoRede = arquivo;
         try {
             this.rede = new Rede(arquivoRede);
-        } catch (SQLException ex) {
+        } catch (BancoDeDadosException ex) {
             Erro.mostraMensagemSQL(this);
         }
         Component c = (Component) this.rede.getMapaView(this);

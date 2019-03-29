@@ -26,6 +26,7 @@ import org.graphstream.ui.view.ViewerPipe;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.EscolheEloElo;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Informacoes;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,7 +49,7 @@ public class Rede {
     private ViewerListener listener;
     private boolean loop;
 
-    public Rede(Arquivo arquivoRede) throws SQLException {
+    public Rede(Arquivo arquivoRede) throws BancoDeDadosException {
         loop = true;
         String dadosRede = arquivoRede.lerArquivo();
         String[] linhas = dadosRede.split("\r");

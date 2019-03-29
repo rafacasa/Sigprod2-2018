@@ -4,6 +4,7 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.bd.Conexao;
 import br.edu.ifrs.farroupilha.sigprod2.backend.bd.tables.elo.EloBD;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.PontoCurva;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +17,7 @@ import java.util.List;
  * remover Elos Tipo K
  *
  * @author Rafael Casa
- * @version 25/03/2016
+ * @version 29/03/2019
  */
 public class EloKDao {
 
@@ -82,21 +83,26 @@ public class EloKDao {
      * cadastrados(corrente nominal e preferencial)
      *
      * @return ArrayList com os elos encontrados
-     * @throws SQLException Caso houver erro de acesso ao Banco de Dados
+     * @throws BancoDeDadosException Caso houver erro de acesso ao Banco de
+     * Dados
      */
-    public static List<Elo> buscarCorrentes() throws SQLException {
-        ArrayList<Elo> lista = new ArrayList<>();
-        Connection conexao = Conexao.getConexao();
-        PreparedStatement comando = conexao.prepareStatement(BUSCAR);
-        ResultSet resultado = comando.executeQuery();
-        while (resultado.next()) {
-            Elo elo = new Elo();
-            elo.setCorrenteNominal(resultado.getInt("correnteNominal"));
-            elo.setPreferencial(resultado.getBoolean("preferencial"));
-            lista.add(elo);
+    public static List<Elo> buscarCorrentes() throws BancoDeDadosException {
+        try {
+            ArrayList<Elo> lista = new ArrayList<>();
+            Connection conexao = Conexao.getConexao();
+            PreparedStatement comando = conexao.prepareStatement(BUSCAR);
+            ResultSet resultado = comando.executeQuery();
+            while (resultado.next()) {
+                Elo elo = new Elo();
+                elo.setCorrenteNominal(resultado.getInt("correnteNominal"));
+                elo.setPreferencial(resultado.getBoolean("preferencial"));
+                lista.add(elo);
+            }
+            Conexao.fechaConexao();
+            return lista;
+        } catch (SQLException ex) {
+            throw new BancoDeDadosException(ex);
         }
-        Conexao.fechaConexao();
-        return lista;
     }
 
     /**
@@ -106,22 +112,23 @@ public class EloKDao {
      * @param elo o elo (contendo corrente nominal e preferencial) a ser
      * carregado com os pontos de curva
      * @return O EloBD já carregado com os pontos de curva
-     * @throws SQLException Caso houver erro de acesso ao Banco de Dados
+     * @throws BancoDeDadosException Caso houver erro de acesso ao Banco de
+     * Dados
      */
-    public static Elo buscarEloK(Elo elo) throws SQLException {
+    public static Elo buscarEloK(Elo elo) throws BancoDeDadosException {
         elo.setCurvaDeMinimaFusao(PontoCurvaEloDao.buscaPontosCurva(elo.getCorrenteNominal(), PontoCurva.PONTO_DA_CURVA_MINIMA));
         elo.setCurvaDeMaximaInterrupcao(PontoCurvaEloDao.buscaPontosCurva(elo.getCorrenteNominal(), PontoCurva.PONTO_DA_CURVA_MAXIMA));
         return elo;
     }
-    
-    public static List<Elo> buscarElos() throws SQLException {
+
+    public static List<Elo> buscarElos() throws BancoDeDadosException {
         List<Elo> elos = buscarCorrentes();
         List<Elo> retorno = new ArrayList<>();
-        
+
         for (Elo elo : elos) {
             retorno.add(EloKDao.buscarEloK(elo));
         }
-        
+
         return retorno;
     }
 }
