@@ -1,7 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.frames;
 
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.layout.RelativeLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -77,31 +77,31 @@ public class RelativeMainFrame extends JFrame implements MainFrame {
 //        });
 //    }
     @Override
-    public void setMapa(JPanel panel) {
+    public void setMapa(Component panel) {
         this.clearMapa();
         this.panelMapa.add(panel);
     }
 
     @Override
-    public void setCoordenograma(JPanel panel) {
+    public void setCoordenograma(Component panel) {
         this.clearCoordenograma();
         this.panelCoordenograma.add(panel);
     }
 
     @Override
-    public void setInfo(JPanel panel) {
+    public void setInfo(Component panel) {
         this.clearInfo();
         this.panelInfo.add(panel);
     }
 
     @Override
-    public void setNavegacao(JPanel panel) {
+    public void setNavegacao(Component panel) {
         this.clearNavegacao();
         this.panelNavegacao.add(panel);
     }
 
     @Override
-    public void setAjuste(JPanel panel) {
+    public void setAjuste(Component panel) {
         this.clearAjuste();
         this.panelAjuste.add(panel);
     }

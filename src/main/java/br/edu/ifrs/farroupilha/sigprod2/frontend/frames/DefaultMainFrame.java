@@ -166,10 +166,10 @@ public class DefaultMainFrame extends JFrame {
         } catch (BancoDeDadosException ex) {
             Erro.mostraMensagemSQL(this);
         }
-        Component c = (Component) this.rede.getMapaView(this);
+        Component c = (Component) this.rede.getMapaView();
         c.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         c.setPreferredSize(new Dimension(100, 100));
-        this.panelRight.add((Component) this.rede.getMapaView(this));
+        this.panelRight.add(c);
         this.addBotaoExecutarAjustes();
         this.pack();
         setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
@@ -286,10 +286,10 @@ public class DefaultMainFrame extends JFrame {
         } catch (BancoDeDadosException ex) {
             Erro.mostraMensagemSQL(this);
         }
-        Component c = (Component) this.rede.getMapaView(this);
+        Component c = (Component) this.rede.getMapaView();
         c.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         c.setPreferredSize(new Dimension(100, 100));
-        this.panelRight.add((Component) this.rede.getMapaView(this));
+        this.panelRight.add(c);
         this.addBotaoExecutarAjustes();
         this.pack();
         setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);

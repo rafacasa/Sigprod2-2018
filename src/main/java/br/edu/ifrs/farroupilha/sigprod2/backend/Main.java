@@ -3,6 +3,10 @@ package br.edu.ifrs.farroupilha.sigprod2.backend;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Arquivo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.RelativeMainFrame;
+import java.awt.Component;
+import java.util.logging.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,21 +34,32 @@ public class Main {
         return new Arquivo("redeRele.ABCEEE");
     }
 
+    private static void setupMainFrame(MainFrame frame) throws BancoDeDadosException {
+        Rede rede = getRedeInicial();
+        Component c = (Component) rede.getMapaView();
+        frame.setMapa(c);
+    }
+
 //    private static Rede getRede(String caminhoArquivo) {
 //        
 //    }
     public static void main(String[] args) {
-        int guiType = getGuiType();
-        switch (guiType) {
-            case DEFAULT_GUI:
-                LOGGER.error("AINDA NÃO DESENVOLVIDO");
-                break;
-            case RELATIVE_GUI:
-
-                break;
-            default:
-                LOGGER.error("OPÇÃO INVÁLIDA DE GUI TYPE");
-                break;
+        try {
+            int guiType = getGuiType();
+            switch (guiType) {
+                case DEFAULT_GUI:
+                    LOGGER.error("AINDA NÃO DESENVOLVIDO");
+                    break;
+                case RELATIVE_GUI:
+                    MainFrame frame = new RelativeMainFrame();
+                    setupMainFrame(frame);
+                    break;
+                default:
+                    LOGGER.error("OPÇÃO INVÁLIDA DE GUI TYPE");
+                    break;
+            }
+        } catch (BancoDeDadosException ex) {
+            LOGGER.error("ERRO DE BANCO DE DADOS" + ex.getMessage());
         }
     }
 }

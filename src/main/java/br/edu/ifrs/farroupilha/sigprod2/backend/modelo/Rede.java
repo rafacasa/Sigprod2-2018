@@ -160,7 +160,7 @@ public class Rede {
         }
     }
 
-    public View getMapaView(DefaultMainFrame frame) {
+    public View getMapaView() { //NAO ESTA CRIANDO LISTENER NO GRAPH, CORRIGIR LISTENER USANDO A CLASSE MAIN ESTATICA
         viewer = this.mapa.display(false);
 
         viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.HIDE_ONLY);
@@ -168,9 +168,9 @@ public class Rede {
         view.openInAFrame(false);
 
         fromViewer = viewer.newViewerPipe();
-        listener = new NodeClickDefaultListener(frame);
+        //listener = new NodeClickDefaultListener(frame);
 
-        view.setMouseManager(new NodeClickMouseManager(listener));
+        //view.setMouseManager(new NodeClickMouseManager(listener));
 
         return view;
     }

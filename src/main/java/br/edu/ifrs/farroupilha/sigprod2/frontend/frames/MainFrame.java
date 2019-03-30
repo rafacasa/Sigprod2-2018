@@ -1,6 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.frames;
 
-import javax.swing.JPanel;
+import java.awt.Component;
 
 /**
  *
@@ -8,15 +8,15 @@ import javax.swing.JPanel;
  */
 public interface MainFrame {
 
-    public void setMapa(JPanel panel);
+    public void setMapa(Component panel);
 
-    public void setCoordenograma(JPanel panel);
+    public void setCoordenograma(Component panel);
 
-    public void setInfo(JPanel panel);
+    public void setInfo(Component panel);
 
-    public void setNavegacao(JPanel panel);
+    public void setNavegacao(Component panel);
 
-    public void setAjuste(JPanel panel);
+    public void setAjuste(Component panel);
 
     public void clearMapa();
 
