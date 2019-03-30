@@ -1,10 +1,10 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.frames;
 
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.layout.RelativeLayout;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,9 +12,10 @@ import org.apache.logging.log4j.Logger;
  *
  * @author Rafael Luiz Casa
  */
-public class RelativeMainFrame extends JFrame {
+public class RelativeMainFrame extends JFrame implements MainFrame {
 
     private static final Logger LOGGER = LogManager.getLogger(RelativeMainFrame.class.getName());
+    //private Rede rede;
     private JPanel panelMapa;
     private JPanel panelCoordenograma;
     private JPanel panelAjuste;
@@ -23,7 +24,6 @@ public class RelativeMainFrame extends JFrame {
     private JPanel panelConteudo;
     private JPanel panelInferior;
     private JPanel contentPanel;
-    //private Rede rede;
 
     public RelativeMainFrame() {
         //this.rede = rede;
@@ -61,19 +61,82 @@ public class RelativeMainFrame extends JFrame {
         this.contentPanel.add(this.panelInferior);
     }
 
-    public static void main(String[] args) {
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Windows".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            LOGGER.error("ERRO NA SELEÇÃO DE LOOKANDFELL - " + ex.getMessage());
-        }
-        SwingUtilities.invokeLater(() -> {
-            new RelativeMainFrame().setVisible(true);
-        });
+//    public static void main(String[] args) {
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Windows".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+//            LOGGER.error("ERRO NA SELEÇÃO DE LOOKANDFELL - " + ex.getMessage());
+//        }
+//        SwingUtilities.invokeLater(() -> {
+//            new RelativeMainFrame().setVisible(true);
+//        });
+//    }
+    @Override
+    public void setMapa(JPanel panel) {
+        this.clearMapa();
+        this.panelMapa.add(panel);
+    }
+
+    @Override
+    public void setCoordenograma(JPanel panel) {
+        this.clearCoordenograma();
+        this.panelCoordenograma.add(panel);
+    }
+
+    @Override
+    public void setInfo(JPanel panel) {
+        this.clearInfo();
+        this.panelInfo.add(panel);
+    }
+
+    @Override
+    public void setNavegacao(JPanel panel) {
+        this.clearNavegacao();
+        this.panelNavegacao.add(panel);
+    }
+
+    @Override
+    public void setAjuste(JPanel panel) {
+        this.clearAjuste();
+        this.panelAjuste.add(panel);
+    }
+
+    @Override
+    public void clearAll() {
+        this.panelAjuste.removeAll();
+        this.panelNavegacao.removeAll();
+        this.panelCoordenograma.removeAll();
+        this.panelInfo.removeAll();
+        this.panelMapa.removeAll();
+    }
+
+    @Override
+    public void clearMapa() {
+        this.panelMapa.removeAll();
+    }
+
+    @Override
+    public void clearCoordenograma() {
+        this.panelCoordenograma.removeAll();
+    }
+
+    @Override
+    public void clearInfo() {
+        this.panelInfo.removeAll();
+    }
+
+    @Override
+    public void clearNavegacao() {
+        this.panelNavegacao.removeAll();
+    }
+
+    @Override
+    public void clearAjuste() {
+        this.panelAjuste.removeAll();
     }
 }

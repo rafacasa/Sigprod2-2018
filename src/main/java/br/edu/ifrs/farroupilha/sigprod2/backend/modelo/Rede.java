@@ -12,7 +12,6 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.io.File;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
