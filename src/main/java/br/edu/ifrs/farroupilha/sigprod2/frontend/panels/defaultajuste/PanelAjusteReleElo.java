@@ -51,6 +51,7 @@ public class PanelAjusteReleElo extends PanelAjuste {
         this.initComponents();
         this.criaPanels();
         this.addItens();
+        Main.setCoordenograma(this.geraCoordenograma());
     }
 
     private void calculaAjustes(Rede rede, Ponto pOrigem) {

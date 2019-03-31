@@ -197,7 +197,7 @@ public class RelativeMainFrame extends JFrame implements MainFrame {
         int innerH = scrH - getInsets().top - getInsets().bottom;
 
         // Need to setSize(), otherwise pack() will collapse the empty JFrame
-        setSize(scrW, scrH);
+        setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
 
         this.panelAjuste.setPreferredSize(new Dimension((int) (innerW * 0.2), 0));
         this.panelCoordenograma.setPreferredSize(new Dimension((int) (innerW * 0.4), 0));
@@ -205,7 +205,7 @@ public class RelativeMainFrame extends JFrame implements MainFrame {
         this.panelInfo.setPreferredSize(new Dimension((int) (innerW * 0.7), 20));
         this.panelNavegacao.setPreferredSize(new Dimension((int) (innerW * 0.3), 20));
 
-        this.panelConteudo.setPreferredSize(new Dimension(innerW, 0));
+        this.panelConteudo.setPreferredSize(new Dimension(innerW, innerH-20));
         this.panelInferior.setPreferredSize(new Dimension(innerW, 20));
         this.contentPanel.setPreferredSize(new Dimension(innerW, innerH));
     }
