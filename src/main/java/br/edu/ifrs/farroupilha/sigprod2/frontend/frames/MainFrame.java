@@ -29,4 +29,6 @@ public interface MainFrame {
     public void clearAjuste();
 
     public void clearAll();
+
+    public void setVisible(boolean b);
 }

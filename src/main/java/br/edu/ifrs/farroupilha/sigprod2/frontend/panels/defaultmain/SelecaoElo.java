@@ -5,6 +5,7 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.listeners.NodeClickDefaultListe
 import br.edu.ifrs.farroupilha.sigprod2.backend.bd.dao.EloKDao;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -155,7 +156,7 @@ public class SelecaoElo extends JPanel {
             correntes.forEach((elo) -> {
                 this.listaCorrentes.addItem(elo);
             });
-        } catch (SQLException ex) {
+        } catch (BancoDeDadosException ex) {
             Erro.mostraMensagemSQL(this);
         }
     }

@@ -1,12 +1,29 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend;
 
+import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo_Elo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Rele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Arquivo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Equipamento;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.TipoEquipamento;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.RelativeMainFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.Navegacao;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteEloElo;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteRele;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReleElo;
 import java.awt.Component;
-import java.util.logging.Level;
+import java.awt.Dimension;
+import java.util.List;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,6 +35,8 @@ import org.apache.logging.log4j.Logger;
 public class Main {
 
     private static final Logger LOGGER = LogManager.getLogger(Main.class.getName());
+    private static Rede rede;
+    private static MainFrame frame;
     public static final int DEFAULT_GUI = 1;
     public static final int RELATIVE_GUI = 2;
 
@@ -35,9 +54,132 @@ public class Main {
     }
 
     private static void setupMainFrame(MainFrame frame) throws BancoDeDadosException {
-        Rede rede = getRedeInicial();
+        rede = getRedeInicial();
         Component c = (Component) rede.getMapaView();
+        c.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+        c.setPreferredSize(new Dimension(100, 100));
         frame.setMapa(c);
+        Navegacao navegacao = new Navegacao(rede);
+        navegacao.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+        navegacao.setPreferredSize(new Dimension(100, 100));
+        frame.setNavegacao(navegacao);
+        irPara(navegacao.getPontoAtual(), true);
+    }
+
+    public static boolean irPara(Ponto ponto, boolean inicioRede) {
+        if (inicioRede) {
+            return irParaInicioRede(ponto);
+        } else {
+            return irParaMeioRede(ponto);
+        }
+    }
+
+    private static boolean irParaInicioRede(Ponto ponto) {
+        TipoEquipamento tipoEquipamento = ponto.getTipoEquipamentoInstalado();
+        switch (tipoEquipamento) {
+            case ELO:
+                Elo ajuste;
+                try {
+                    ajuste = Criterios_Elo.criterio_elo(rede.getElosDisponiveis(), ponto, rede);
+                    selecionaEquipamento(ponto, ajuste);
+                } catch (AjusteImpossivelException ex) {
+                    LOGGER.error("AJUSTE IMPOSSIVEL" + ex.getMessage());
+                    return false;
+                }
+                break;
+            case RELE:
+                Rele rele = Criterios_Rele.getReleTeste(); //COMO DEFINIR QUAL EQUIPAMENTO ESTA INSTALADO NO PONTO
+                Criterios_Rele criteriosRele = new Criterios_Rele(rede, ponto, rele);
+                criteriosRele.ajuste();
+                frame.setAjuste(new PanelAjusteRele(rele));
+                selecionaEquipamento(ponto, rele);
+                break;
+            case RELIGADOR:
+
+                break;
+            default:
+                LOGGER.error("DEFAULT CLAUSE");
+                break;
+        }
+        return true;
+    }
+
+    private static boolean irParaMeioRede(Ponto ponto) {
+        Ponto pOrigem = rede.getParentRedeReduzida(ponto);
+        TipoEquipamento tipoEquipamento = ponto.getTipoEquipamentoInstalado();
+        TipoEquipamento tipoOrigem = pOrigem.getTipoEquipamentoInstalado();
+        switch (tipoOrigem) {
+            case ELO:
+                switch (tipoEquipamento) {
+                    case ELO:
+                        Criterios_Elo_Elo criteriosEloElo = new Criterios_Elo_Elo(rede, pOrigem, ponto);
+                        List<Metricas_Elo_Elo> metricas;
+                        try {
+                            metricas = criteriosEloElo.ajuste();
+                            ponto.resetAtributos(true);
+                            frame.setAjuste(new PanelAjusteEloElo(metricas, (Elo) pOrigem.getEquipamentoInstalado()));
+                        } catch (AjusteImpossivelException ex) {
+                            LOGGER.error("AJUSTE IMPOSSIVEL" + ex.getMessage());
+                            return false;
+                        }
+                        break;
+                    case RELE:
+
+                        break;
+                    case RELIGADOR:
+
+                        break;
+                    default:
+                        LOGGER.error("DEFAULT CLAUSE");
+                        break;
+                }
+                break;
+            case RELE:
+                switch (tipoEquipamento) {
+                    case ELO:
+                        frame.setAjuste(new PanelAjusteReleElo(ponto, rede, pOrigem));
+                        break;
+                    case RELE:
+
+                        break;
+                    case RELIGADOR:
+
+                        break;
+                    default:
+                        LOGGER.error("DEFAULT CLAUSE");
+                        break;
+                }
+                break;
+            case RELIGADOR:
+                switch (tipoEquipamento) {
+                    case ELO:
+
+                        break;
+                    case RELE:
+
+                        break;
+                    case RELIGADOR:
+
+                        break;
+                    default:
+                        LOGGER.error("DEFAULT CLAUSE");
+                        break;
+                }
+                break;
+            default:
+                LOGGER.error("DEFAULT CLAUSE");
+                break;
+        }
+        return true;
+    }
+
+    public static void selecionaEquipamento(Ponto p, Equipamento e) {
+        p.setEquipamentoInstalado(e);
+        p.resetAtributos(true);
+    }
+
+    public static void setCoordenograma(JPanel p) {
+        frame.setCoordenograma(p);
     }
 
 //    private static Rede getRede(String caminhoArquivo) {
@@ -51,13 +193,27 @@ public class Main {
                     LOGGER.error("AINDA NÃO DESENVOLVIDO");
                     break;
                 case RELATIVE_GUI:
-                    MainFrame frame = new RelativeMainFrame();
-                    setupMainFrame(frame);
+                    frame = new RelativeMainFrame();
                     break;
                 default:
                     LOGGER.error("OPÇÃO INVÁLIDA DE GUI TYPE");
                     break;
             }
+            try {
+                for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                    if ("Windows".equals(info.getName())) {
+                        javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                        break;
+                    }
+                }
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+                LOGGER.error("look and feel nao encontgrado" + ex.getMessage());
+            }
+            SwingUtilities.invokeLater(() -> {
+                frame.setVisible(true);
+            });
+            setupMainFrame(frame);
+            LOGGER.info("over");
         } catch (BancoDeDadosException ex) {
             LOGGER.error("ERRO DE BANCO DE DADOS" + ex.getMessage());
         }

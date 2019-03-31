@@ -1,5 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste;
 
+import br.edu.ifrs.farroupilha.sigprod2.backend.Main;
 import java.awt.Color;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultAjusteFrame;
 import java.awt.Dimension;
@@ -23,19 +24,19 @@ public class PanelAjusteEloElo extends br.edu.ifrs.farroupilha.sigprod2.frontend
 
     private List<Metricas_Elo_Elo> metricas;
     private Elo selecionado, pai;
-    private DefaultAjusteFrame ajusteFrame;
+    //private DefaultAjusteFrame ajusteFrame;
     private JPanel panelTProtetor1, panelTProtetor2, panelIFTMin, panelIFTMinSel, panelPorcentagem, panelBotoes;
     private JLabel nomeTProtetor1, nomeTProtetor2, nomeIFTMin, nomeIFTMinSel, nomePorcentagem, labelTProtetor1, labelTProtetor2, labelIFTMin, labelIFTMinSel, labelPorcentagem;
     private JComboBox<Metricas_Elo_Elo> lista;
     private JButton botaoSelecionar;
 
-    public PanelAjusteEloElo(List<Metricas_Elo_Elo> metricas, DefaultAjusteFrame ajusteFrame, Elo pai) {
+    public PanelAjusteEloElo(List<Metricas_Elo_Elo> metricas, Elo pai) {
         this.metricas = metricas;
-        this.ajusteFrame = ajusteFrame;
         this.criaPanels();
         this.initComponents();
         this.addItens();
         this.pai = pai;
+        Main.setCoordenograma(this.geraCoordenograma());
     }
 
     private void criaPanels() {
@@ -141,13 +142,12 @@ public class PanelAjusteEloElo extends br.edu.ifrs.farroupilha.sigprod2.frontend
         this.labelIFTMin.setText(metrica.getiFTMinI300() + "");
         this.labelIFTMinSel.setText(metrica.getiFTMinSelI300() + "");
         this.labelPorcentagem.setText((metrica.getPorcentagemProtegida() * 100) + "%");
-        this.ajusteFrame.atualizaCoordenograma(this.geraCoordenograma());
-        this.ajusteFrame.pack();
+        Main.setCoordenograma(this.geraCoordenograma());
     }
 
     private void botaoSelecionarActionPerformed(java.awt.event.ActionEvent evt) {
         this.selecionado = this.lista.getItemAt(this.lista.getSelectedIndex()).getElo();
-        this.ajusteFrame.selecionaEquipamento(this.metricas.get(0).getPonto(), this.selecionado);
+        Main.selecionaEquipamento(this.metricas.get(0).getPonto(), this.selecionado);
     }
 
     public Elo getSelecionado() {

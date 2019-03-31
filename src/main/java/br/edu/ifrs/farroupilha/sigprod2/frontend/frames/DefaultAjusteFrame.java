@@ -154,7 +154,7 @@ public class DefaultAjusteFrame extends JDialog {
                                 metricas = criteriosEloElo.ajuste();
                                 ponto.resetAtributos(true);
                                 this.panelAjuste.removeAll();
-                                this.ajuste = new PanelAjusteEloElo(metricas, this, (Elo) pOrigem.getEquipamentoInstalado());
+                                this.ajuste = new PanelAjusteEloElo(metricas, (Elo) pOrigem.getEquipamentoInstalado());
                                 this.panelAjuste.add(this.ajuste);
                                 if (this.coordenograma) {
                                     this.panelCoordenograma.removeAll();
@@ -168,7 +168,7 @@ public class DefaultAjusteFrame extends JDialog {
                             break;
                         case RELE:
                             LOGGER.trace("AJUSTE RELE ELO");
-                            this.setPanelAjuste(new PanelAjusteReleElo(this, ponto, rede, pOrigem));
+                            this.setPanelAjuste(new PanelAjusteReleElo(ponto, rede, pOrigem));
                             break;
                         case RELIGADOR:
 
