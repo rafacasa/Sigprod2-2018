@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -47,6 +48,7 @@ public class PanelAjusteRele extends PanelAjuste {
         this.add(this.campoCorrente);
         this.add(this.botaoMostrar);
         this.add(this.botaoLimpar);
+        this.add(Box.createVerticalGlue());
     }
 
     public void botaoMostrarActionPerformed(java.awt.event.ActionEvent evt) {

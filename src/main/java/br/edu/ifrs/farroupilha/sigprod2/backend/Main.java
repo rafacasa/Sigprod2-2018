@@ -63,6 +63,7 @@ public class Main {
         navegacao.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         navegacao.setPreferredSize(new Dimension(100, 100));
         frame.setNavegacao(navegacao);
+        navegacao.atualizarPontoAtual();
         irPara(navegacao.getPontoAtual(), true);
     }
 
