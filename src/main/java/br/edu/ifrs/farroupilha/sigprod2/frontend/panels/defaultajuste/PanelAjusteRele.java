@@ -82,10 +82,10 @@ public class PanelAjusteRele extends PanelAjuste {
     }
 
     @Override
-    public JPanel geraCoordenograma() {
+    public Coordenograma geraCoordenograma() {
         this.coordenograma = new Coordenograma("Relé");
         this.coordenograma.add(this.rele, Color.BLUE, Color.RED);
-        return this.coordenograma.getChartPanel();
+        return this.coordenograma;
     }
 
 }

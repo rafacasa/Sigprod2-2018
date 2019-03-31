@@ -25,6 +25,8 @@ public class RelativeMainFrame extends JFrame implements MainFrame {
     private JPanel panelNavegacao;
     private JPanel panelConteudo;
     private JPanel panelInferior;
+    private JPanel panelEsquerdo;
+    private JPanel panelCorrentes;
     private JPanel contentPanel;
 
     public RelativeMainFrame() {
@@ -51,6 +53,10 @@ public class RelativeMainFrame extends JFrame implements MainFrame {
         this.panelInferior.setLayout(new BoxLayout(this.panelInferior, BoxLayout.LINE_AXIS));
         this.contentPanel = new JPanel();
         this.contentPanel.setLayout(new BoxLayout(this.contentPanel, BoxLayout.PAGE_AXIS));
+        this.panelEsquerdo = new JPanel();
+        this.panelEsquerdo.setLayout(new BoxLayout(this.panelEsquerdo, BoxLayout.PAGE_AXIS));
+        this.panelCorrentes = new JPanel();
+        this.panelCorrentes.setLayout(new BoxLayout(this.panelCorrentes, BoxLayout.PAGE_AXIS));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
     }
@@ -76,7 +82,9 @@ public class RelativeMainFrame extends JFrame implements MainFrame {
     private void addItens() {
         this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.LINE_AXIS));
 
-        this.panelConteudo.add(this.panelAjuste);
+        this.panelEsquerdo.add(this.panelAjuste);
+        this.panelEsquerdo.add(this.panelCorrentes);
+        this.panelConteudo.add(this.panelEsquerdo);
         this.panelConteudo.add(this.panelCoordenograma);
         this.panelConteudo.add(this.panelMapa);
         this.panelInferior.add(this.panelInfo);
@@ -144,6 +152,15 @@ public class RelativeMainFrame extends JFrame implements MainFrame {
     }
 
     @Override
+    public void setCorrentes(Component panel) {
+        this.clearCorrentes();
+        this.panelCorrentes.add(panel);
+        this.panelCorrentes.add(Box.createVerticalGlue());
+        this.revalidate();
+        this.repaint();
+    }
+
+    @Override
     public void clearAll() {
         this.panelAjuste.removeAll();
         this.panelNavegacao.removeAll();
@@ -162,6 +179,13 @@ public class RelativeMainFrame extends JFrame implements MainFrame {
     @Override
     public void clearCoordenograma() {
         this.panelCoordenograma.removeAll();
+        this.revalidate();
+        this.repaint();
+    }
+
+    @Override
+    public void clearCorrentes() {
+        this.panelCorrentes.removeAll();
         this.revalidate();
         this.repaint();
     }
@@ -205,7 +229,7 @@ public class RelativeMainFrame extends JFrame implements MainFrame {
         this.panelInfo.setPreferredSize(new Dimension((int) (innerW * 0.7), 20));
         this.panelNavegacao.setPreferredSize(new Dimension((int) (innerW * 0.3), 20));
 
-        this.panelConteudo.setPreferredSize(new Dimension(innerW, innerH-20));
+        this.panelConteudo.setPreferredSize(new Dimension(innerW, innerH - 20));
         this.panelInferior.setPreferredSize(new Dimension(innerW, 20));
         this.contentPanel.setPreferredSize(new Dimension(innerW, innerH));
     }

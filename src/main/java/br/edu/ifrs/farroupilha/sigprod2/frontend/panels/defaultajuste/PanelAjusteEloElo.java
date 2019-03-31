@@ -2,7 +2,6 @@ package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.Main;
 import java.awt.Color;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultAjusteFrame;
 import java.awt.Dimension;
 import java.util.List;
 import javax.swing.Box;
@@ -155,7 +154,7 @@ public class PanelAjusteEloElo extends br.edu.ifrs.farroupilha.sigprod2.frontend
     }
 
     @Override
-    public JPanel geraCoordenograma() {
+    public Coordenograma geraCoordenograma() {
         int index = this.lista.getSelectedIndex();
         if (index >= 0) {
             Elo atual = this.lista.getItemAt(index).getElo();
@@ -163,9 +162,9 @@ public class PanelAjusteEloElo extends br.edu.ifrs.farroupilha.sigprod2.frontend
             coordenograma.add(this.pai, "Elo superior", Color.RED);
             coordenograma.add(this.pai, CurvasElo.MINIMA, 0.75, "Curva Mínima * Fator", Color.DARK_GRAY);
             coordenograma.add(atual, "Elo sendo Ajustado", Color.BLUE);
-            return coordenograma.getChartPanel();
+            return coordenograma;
         } else {
-            return new JPanel();
+            return null;
         }
     }
 }

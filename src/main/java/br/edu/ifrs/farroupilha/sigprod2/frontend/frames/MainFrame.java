@@ -18,6 +18,8 @@ public interface MainFrame {
 
     public void setAjuste(Component panel);
 
+    public void setCorrentes(Component panel);
+
     public void clearMapa();
 
     public void clearCoordenograma();
@@ -27,6 +29,8 @@ public interface MainFrame {
     public void clearNavegacao();
 
     public void clearAjuste();
+
+    public void clearCorrentes();
 
     public void clearAll();
 

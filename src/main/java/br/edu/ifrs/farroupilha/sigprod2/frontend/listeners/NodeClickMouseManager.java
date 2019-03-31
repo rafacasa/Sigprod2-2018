@@ -1,12 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.edu.ifrs.farroupilha.sigprod2.frontend.listeners;
 
 import java.awt.event.MouseEvent;
 import java.util.EnumSet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.swing_viewer.util.DefaultMouseManager;
 import org.graphstream.ui.view.ViewerListener;
@@ -19,6 +16,7 @@ import org.graphstream.ui.view.util.InteractiveElement;
 public class NodeClickMouseManager extends DefaultMouseManager {
 
     ViewerListener listener;
+    private static final Logger LOGGER = LogManager.getLogger(NodeClickMouseManager.class.getName());
 
     public NodeClickMouseManager(ViewerListener listener) {
         this.listener = listener;
@@ -34,7 +32,7 @@ public class NodeClickMouseManager extends DefaultMouseManager {
 
     @Override
     public void mouseDragged(MouseEvent event) {
-
+        LOGGER.debug("mouseDragged" + event.paramString());
     }
 
     @Override
@@ -42,6 +40,7 @@ public class NodeClickMouseManager extends DefaultMouseManager {
         //super.mouseButtonPress(event);
 
         //System.out.println("Press");
+        LOGGER.debug("mouseButtonPress" + event.paramString());
     }
 
     @Override
@@ -68,5 +67,6 @@ public class NodeClickMouseManager extends DefaultMouseManager {
         //super.mousePressed(event);
 
         // if you need object of Node pressed, following code will help you, curElement is already defined at DefaultMouseManager.
+        LOGGER.debug("mousePressed" + event.paramString());
     }
 }

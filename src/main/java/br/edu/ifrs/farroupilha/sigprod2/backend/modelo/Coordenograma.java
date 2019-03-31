@@ -3,13 +3,17 @@ package br.edu.ifrs.farroupilha.sigprod2.backend.modelo;
 import java.awt.Color;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.XYSeries;
+import org.knowm.xchart.internal.chartpart.Chart;
 import org.knowm.xchart.style.Styler;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
@@ -19,6 +23,7 @@ import org.knowm.xchart.style.markers.SeriesMarkers;
  */
 public class Coordenograma {
 
+    private static final Logger LOGGER = LogManager.getLogger(Coordenograma.class.getName());
     private XYChart chart;
     private JPanel chartPanel;
     private String titulo;
@@ -110,6 +115,23 @@ public class Coordenograma {
             dadosNeutroDouble.add(this.convertToDouble(dadosNeutro.get(1)));
             this.addCurva(dadosNeutroDouble, "Curva de Neutro", corNeutro, true);
         }
+    }
+
+    public void add(BigDecimal corrente, Color cor, String nome) {
+        double tempoMin = 0.01;//this.chart.getStyler().getYAxisMin();
+        double tempoMax = 100;//this.chart.getStyler().getYAxisMax();
+        List<Double> tempos = new ArrayList<>();
+        List<Double> correntes = new ArrayList<>();
+        for (double d = tempoMin; d < tempoMax; d++) {
+            tempos.add(d);
+            correntes.add(corrente.doubleValue());
+        }
+        XYSeries serie = this.chart.addSeries(nome, correntes, tempos);
+        serie.setLineColor(cor);
+        serie.setMarker(SeriesMarkers.NONE);
+        serie.setShowInLegend(true);
+        this.chartPanel.revalidate();
+        this.chartPanel.repaint();
     }
 
     public void remove(String s) {

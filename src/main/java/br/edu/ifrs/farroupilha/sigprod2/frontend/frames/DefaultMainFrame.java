@@ -4,7 +4,6 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Menu;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Arquivo;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.threads.LoopPumpThread;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.listeners.NodeClickGraficoListener;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Corrente;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Trecho;
@@ -230,7 +229,7 @@ public class DefaultMainFrame extends JFrame {
 
         this.pontosGrafico = new ArrayList<>();
 
-        this.rede.setListener(new NodeClickGraficoListener(this));
+        //this.rede.setListener(new NodeClickGraficoListener(this));
         this.modoSelecionar = true;
     }
 

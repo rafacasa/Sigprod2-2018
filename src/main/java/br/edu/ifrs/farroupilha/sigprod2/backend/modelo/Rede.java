@@ -148,7 +148,7 @@ public class Rede {
         viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.HIDE_ONLY);
 
         fromViewer = viewer.newViewerPipe();
-        NodeClickDefaultListener listener = new NodeClickDefaultListener(frame);
+        NodeClickDefaultListener listener = new NodeClickDefaultListener();
         fromViewer.addViewerListener(listener);
         fromViewer.addSink(this.mapa);
 
@@ -168,10 +168,9 @@ public class Rede {
         view.openInAFrame(false);
 
         fromViewer = viewer.newViewerPipe();
-        //listener = new NodeClickDefaultListener(frame);
+        listener = new NodeClickDefaultListener();
 
-        //view.setMouseManager(new NodeClickMouseManager(listener));
-
+        view.setMouseManager(new NodeClickMouseManager(listener));
         return view;
     }
 

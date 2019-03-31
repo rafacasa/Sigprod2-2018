@@ -5,6 +5,7 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Rele;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Arquivo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Equipamento;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
@@ -15,17 +16,22 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossiv
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.RelativeMainFrame;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.CorrentesPonto;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.Navegacao;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteEloElo;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReleElo;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Informacoes;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.graphstream.graph.Node;
 
 /**
  * Classe Principal do Sistema
@@ -37,8 +43,12 @@ public class Main {
     private static final Logger LOGGER = LogManager.getLogger(Main.class.getName());
     private static Rede rede;
     private static MainFrame frame;
+    private static Coordenograma coordenograma;
+    private static int tipoSelecaoMapa = Main.SELECAO_DEFAULT;
     public static final int DEFAULT_GUI = 1;
     public static final int RELATIVE_GUI = 2;
+    public static final int SELECAO_DEFAULT = 1;
+    public static final int SELECAO_CORRENTES = 2;
 
     private static int getGuiType() { //ESTE METODO VERIFICARA QUAL TIPO DE GUI ESTA SALVA NAS CONFIGURACOES
         return RELATIVE_GUI;
@@ -59,6 +69,7 @@ public class Main {
         c.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         c.setPreferredSize(new Dimension(100, 100));
         frame.setMapa(c);
+        frame.setCorrentes(new CorrentesPonto());
         Navegacao navegacao = new Navegacao(rede);
         navegacao.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         navegacao.setPreferredSize(new Dimension(100, 100));
@@ -179,8 +190,66 @@ public class Main {
         p.resetAtributos(true);
     }
 
-    public static void setCoordenograma(JPanel p) {
-        frame.setCoordenograma(p);
+    public static void setCoordenograma(Coordenograma c) {
+        if (c != null) {
+            coordenograma = c;
+            frame.setCoordenograma(c.getChartPanel());
+        } else {
+            frame.setCoordenograma(new JPanel());
+        }
+    }
+
+    public static void setTipoSelecao(int tipoSelecao) {
+        Main.tipoSelecaoMapa = tipoSelecao;
+    }
+
+    public static void mapaClickedActionPerformed(String id) {
+        switch (Main.tipoSelecaoMapa) {
+            case Main.SELECAO_DEFAULT:
+                selecaoDefault(id);
+                break;
+            case Main.SELECAO_CORRENTES:
+                selecaoCorrentes(id);
+                break;
+            default:
+                LOGGER.error("DEFAULT CASE");
+                break;
+        }
+    }
+
+    private static void selecaoDefault(String id) {
+        if (id == null) {
+            frame.clearInfo();
+        } else {
+            LOGGER.debug("Button pushed on node " + id);
+            Node n = rede.getMapa().getNode(id);
+            Ponto p = n.getAttribute("classe", Ponto.class);
+            LOGGER.debug("icc3f - " + p.getIcc3f());
+
+            JPanel panelInfo = new Informacoes(n);
+            frame.setInfo(panelInfo);
+        }
+    }
+
+    private static void selecaoCorrentes(String id) {
+        if (id != null) {
+            LOGGER.debug("Button pushed on node " + id);
+            Node n = rede.getMapa().getNode(id);
+            Ponto p = n.getAttribute("classe", Ponto.class);
+            LOGGER.debug("icc3f - " + p.getIcc3f());
+
+            coordenograma.add(new BigDecimal(p.getIcc3f()), Color.red, "Icc3F");
+            coordenograma.add(new BigDecimal(p.getIcc2f()), Color.BLACK, "Icc2F");
+            coordenograma.add(new BigDecimal(p.getIccft()), Color.GREEN, "IccFT");
+            coordenograma.add(new BigDecimal(p.getIccftmin()), Color.MAGENTA, "IccFTMin");
+        }
+    }
+
+    public static void removeCorrentes() {
+        coordenograma.remove("Icc3F");
+        coordenograma.remove("Icc2F");
+        coordenograma.remove("IccFT");
+        coordenograma.remove("IccFTMin");
     }
 
 //    private static Rede getRede(String caminhoArquivo) {

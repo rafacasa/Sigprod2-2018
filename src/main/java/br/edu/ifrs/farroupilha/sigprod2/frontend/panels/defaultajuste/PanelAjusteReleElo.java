@@ -139,16 +139,16 @@ public class PanelAjusteReleElo extends PanelAjuste {
     }
 
     @Override
-    public JPanel geraCoordenograma() {
+    public Coordenograma geraCoordenograma() {
         MetricasReleElo metricaselo = this.lista.getItemAt(this.lista.getSelectedIndex());
         if (metricaselo != null) {
             Elo elo = metricaselo.getElo();
             this.coordenograma = new Coordenograma("Coordenograma");
             this.coordenograma.add(this.relePai, Color.RED, Color.RED);
             this.coordenograma.add(elo, "Elo Selecionado", Color.BLUE);
-            return this.coordenograma.getChartPanel();
+            return this.coordenograma;
         }
-        return new JPanel();
+        return null;
     }
 
 }

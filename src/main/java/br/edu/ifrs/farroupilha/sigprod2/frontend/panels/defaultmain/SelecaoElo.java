@@ -9,7 +9,6 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosEx
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.sql.SQLException;
 import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -145,7 +144,7 @@ public class SelecaoElo extends JPanel {
         this.ponto.setEquipamentoInstalado(elo);
         this.ponto.resetAtributos();
         this.listener.buttonPushed(this.node.getId());
-        this.listener.setSalvo(false);
+        //this.listener.setSalvo(false);
     }
 
     private void carregarCorrentesEloK() {
