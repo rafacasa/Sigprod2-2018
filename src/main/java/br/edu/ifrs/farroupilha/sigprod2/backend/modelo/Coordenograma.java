@@ -120,16 +120,14 @@ public class Coordenograma {
     public void add(BigDecimal corrente, Color cor, String nome) {
         double tempoMin = 0.01;//this.chart.getStyler().getYAxisMin();
         double tempoMax = 100;//this.chart.getStyler().getYAxisMax();
-        List<Double> tempos = new ArrayList<>();
-        List<Double> correntes = new ArrayList<>();
-        for (double d = tempoMin; d < tempoMax; d++) {
-            tempos.add(d);
-            correntes.add(corrente.doubleValue());
-        }
+        List<Double> tempos = Arrays.asList(tempoMin, tempoMax);
+        List<Double> correntes = Arrays.asList(corrente.doubleValue(), corrente.doubleValue());
+        String[] tooltips = {null, null};
         XYSeries serie = this.chart.addSeries(nome, correntes, tempos);
         serie.setLineColor(cor);
         serie.setMarker(SeriesMarkers.NONE);
         serie.setShowInLegend(true);
+        serie.setToolTips(tooltips);
         this.chartPanel.revalidate();
         this.chartPanel.repaint();
     }
