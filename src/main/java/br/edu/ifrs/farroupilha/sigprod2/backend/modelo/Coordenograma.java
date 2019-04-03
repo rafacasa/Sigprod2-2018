@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -117,8 +119,9 @@ public class Coordenograma {
     }
 
     public void add(BigDecimal corrente, Color cor, String nome) {
-        double tempoMin = 0.01;//this.chart.getStyler().getYAxisMin();
-        double tempoMax = 100;//this.chart.getStyler().getYAxisMax();
+        BigDecimal[] limites = this.getLimitesY();
+        double tempoMin = limites[0].doubleValue();
+        double tempoMax = limites[1].doubleValue();
         List<Double> tempos = Arrays.asList(tempoMin, tempoMax);
         List<Double> correntes = Arrays.asList(corrente.doubleValue(), corrente.doubleValue());
         String[] tooltips = {null, null};
@@ -139,6 +142,21 @@ public class Coordenograma {
 
     public JPanel getChartPanel() {
         return this.chartPanel;
+    }
+
+    private BigDecimal[] getLimitesY() {
+        Collection<XYSeries> series = this.chart.getSeriesMap().values();
+        List<BigDecimal> maximos = new ArrayList<>();
+        List<BigDecimal> minimos = new ArrayList<>();
+        series.forEach(serie -> {
+            maximos.add(BigDecimal.valueOf(serie.getYMax()));
+            minimos.add(BigDecimal.valueOf(serie.getYMin()));
+        });
+        BigDecimal[] retorno = new BigDecimal[2];
+        retorno[0] = Collections.min(minimos);
+        retorno[1] = Collections.max(maximos);
+        LOGGER.debug("MINIMO Y - " + retorno[0] + " MAXIMO Y - " + retorno[1]);
+        return retorno;
     }
 
     private List<Double> convertToDouble(List<BigDecimal> list) {
