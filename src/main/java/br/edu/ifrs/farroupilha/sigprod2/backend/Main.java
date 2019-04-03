@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -45,6 +46,7 @@ public class Main {
     private static MainFrame frame;
     private static Coordenograma coordenograma;
     private static int tipoSelecaoMapa = Main.SELECAO_DEFAULT;
+    private static List<String> retasCorrentes;
     public static final int DEFAULT_GUI = 1;
     public static final int RELATIVE_GUI = 2;
     public static final int SELECAO_DEFAULT = 1;
@@ -238,18 +240,22 @@ public class Main {
             Ponto p = n.getAttribute("classe", Ponto.class);
             LOGGER.debug("icc3f - " + p.getIcc3f());
 
-            coordenograma.add(new BigDecimal(p.getIcc3f()), Color.red, "Icc3F");
-            coordenograma.add(new BigDecimal(p.getIcc2f()), Color.BLACK, "Icc2F");
-            coordenograma.add(new BigDecimal(p.getIccft()), Color.GREEN, "IccFT");
-            coordenograma.add(new BigDecimal(p.getIccftmin()), Color.MAGENTA, "IccFTMin");
+            coordenograma.add(new BigDecimal(p.getIcc3f()), Color.red, "Icc3F" + id);
+            coordenograma.add(new BigDecimal(p.getIcc2f()), Color.BLACK, "Icc2F" + id);
+            coordenograma.add(new BigDecimal(p.getIccft()), Color.GREEN, "IccFT" + id);
+            coordenograma.add(new BigDecimal(p.getIccftmin()), Color.MAGENTA, "IccFTMin" + id);
+            retasCorrentes.add("Icc3F" + id);
+            retasCorrentes.add("Icc2F" + id);
+            retasCorrentes.add("IccFT" + id);
+            retasCorrentes.add("IccFTMin" + id);
         }
     }
 
     public static void removeCorrentes() {
-        coordenograma.remove("Icc3F");
-        coordenograma.remove("Icc2F");
-        coordenograma.remove("IccFT");
-        coordenograma.remove("IccFTMin");
+        retasCorrentes.forEach(s -> {
+            coordenograma.remove(s);
+        });
+        retasCorrentes.clear();
     }
 
 //    private static Rede getRede(String caminhoArquivo) {
@@ -257,6 +263,7 @@ public class Main {
 //    }
     public static void main(String[] args) {
         try {
+            retasCorrentes = new ArrayList<>();
             int guiType = getGuiType();
             switch (guiType) {
                 case DEFAULT_GUI:
