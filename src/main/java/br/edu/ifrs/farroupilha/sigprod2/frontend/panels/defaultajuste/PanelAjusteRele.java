@@ -1,6 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.Main;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.AjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
@@ -8,9 +9,13 @@ import java.awt.Color;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.border.BevelBorder;
 import net.miginfocom.swing.MigLayout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,9 +33,15 @@ public class PanelAjusteRele extends PanelAjuste {
     private JTextField campoCorrente;
     private JButton botaoMostrar;
     private JButton botaoLimpar;
+    JLabel fabricante;
+    JLabel modelo;
+    JTabbedPane ajustes;
+    JPanel ajusteFase;
+    JPanel ajusteNeutro;
 
     public PanelAjusteRele(Rele rele) {
         this.rele = rele;
+        this.dadosRele();
         this.initComponents();
         this.placeComponents();
         Main.setCoordenograma(this.geraCoordenograma());
@@ -44,8 +55,33 @@ public class PanelAjusteRele extends PanelAjuste {
         this.botaoLimpar.addActionListener(this::botaoLimparActionPerformed);
     }
 
+    private void dadosRele() {
+        this.fabricante = new JLabel("Fabricante: " + this.rele.getFabricante());
+        this.modelo = new JLabel("Modelo: " + this.rele.getModelo());
+        this.ajustes = new JTabbedPane(JTabbedPane.TOP);
+        this.ajusteFase = this.getPanelDadosAjuste(true);
+        this.ajusteNeutro = this.getPanelDadosAjuste(false);
+        this.ajustes.addTab("Fase", null, ajusteFase, "Ajustes de Fase do Rele");
+        this.ajustes.addTab("Neutro", null, ajusteNeutro, "Ajustes de Neutro do Rele");
+    }
+
+    private JPanel getPanelDadosAjuste(boolean fase) {
+        AjusteRele ajuste = fase ? this.rele.getAjusteFase() : this.rele.getAjusteNeutro();
+        JPanel panel = new JPanel(new MigLayout());
+        JLabel tipo = new JLabel(this.rele.getNomeCurva(ajuste.getCurva(), fase));
+        JLabel labelAT = new JLabel("AT: " + ajuste.getAt());
+        JLabel labelAC = new JLabel("AC: " + ajuste.getAc());
+        panel.add(tipo, "wrap");
+        panel.add(labelAT, "wrap");
+        panel.add(labelAC, "wrap");
+        return panel;
+    }
+
     private void placeComponents() {
         this.setLayout(new MigLayout());
+        this.add(this.fabricante, "wrap");
+        this.add(this.modelo, "wrap");
+        this.add(this.ajustes, "wrap");
         this.add(this.campoCorrente, "wrap");
         this.add(this.botaoMostrar, "wrap");
         this.add(this.botaoLimpar, "wrap");

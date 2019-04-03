@@ -133,4 +133,14 @@ public class CurvaRele {
         }
         return correntes;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof CurvaRele) {
+            CurvaRele c = (CurvaRele) obj;
+            return this.a.equals(c.a) && this.b.equals(c.b) && this.p.equals(c.p) && this.menorAC.equals(c.menorAC) && this.maiorAC.equals(c.maiorAC) && this.passoAC.equals(c.passoAC) && this.menorAT.equals(c.menorAT) && this.maiorAT.equals(c.maiorAT) && this.passoAT.equals(c.passoAT);
+        } else {
+            return false;
+        }
+    }
 }
