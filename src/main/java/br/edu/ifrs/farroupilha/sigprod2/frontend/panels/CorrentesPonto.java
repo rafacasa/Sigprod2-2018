@@ -27,7 +27,7 @@ public class CorrentesPonto extends JPanel {
         this.selecionarPonto.addActionListener(this::selecionarPontoActionPerformed);
         this.mostrarTempos = new JToggleButton("Mostrar Tempos");
         this.mostrarTempos.setEnabled(false);
-        this.mostrarTempos.addActionListener(this::mostrarTemposActionPerformed);
+//        this.mostrarTempos.addActionListener(this::mostrarTemposActionPerformed);
     }
 
     private void addItens() {
@@ -46,13 +46,13 @@ public class CorrentesPonto extends JPanel {
         }
     }
 
-    private void mostrarTemposActionPerformed(java.awt.event.ActionEvent evt) {
-        LOGGER.debug(evt.getActionCommand());
-        if (this.mostrarTempos.getModel().isSelected()) {
-
-        } else {
-
-        }
-    }
+//    private void mostrarTemposActionPerformed(java.awt.event.ActionEvent evt) {
+//        LOGGER.debug(evt.getActionCommand());
+//        if (this.mostrarTempos.getModel().isSelected()) {
+//
+//        } else {
+//
+//        }
+//    }
 
 }
