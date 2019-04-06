@@ -57,10 +57,14 @@ public class PanelAjusteRele extends PanelAjuste {
         this.fabricante = new JLabel("Fabricante: " + this.rele.getFabricante());
         this.modelo = new JLabel("Modelo: " + this.rele.getModelo());
         this.ajustes = new JTabbedPane(JTabbedPane.TOP);
+        this.setPanelsAjuste();
+        this.ajustes.addTab("Fase", null, this.ajusteFase, "Ajustes de Fase do Rele");
+        this.ajustes.addTab("Neutro", null, this.ajusteNeutro, "Ajustes de Neutro do Rele");
+    }
+
+    private void setPanelsAjuste() {
         this.ajusteFase = this.getPanelDadosAjuste(true);
         this.ajusteNeutro = this.getPanelDadosAjuste(false);
-        this.ajustes.addTab("Fase", null, ajusteFase, "Ajustes de Fase do Rele");
-        this.ajustes.addTab("Neutro", null, ajusteNeutro, "Ajustes de Neutro do Rele");
     }
 
     private JPanel getPanelDadosAjuste(boolean fase) {
