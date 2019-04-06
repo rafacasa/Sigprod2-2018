@@ -213,7 +213,7 @@ public class RelativeMainFrame extends JFrame implements MainFrame {
 
     private void calculaTamanhos() { // calcula preferedSize dos panels e seta neles e em cada coisa q sera adicionada
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
+        LOGGER.debug("screensize = " + screenSize.toString());
         pack(); // Need this, otherwise insets() show as 0.  
         int scrW = (int) screenSize.getWidth();
         int scrH = (int) screenSize.getHeight();
