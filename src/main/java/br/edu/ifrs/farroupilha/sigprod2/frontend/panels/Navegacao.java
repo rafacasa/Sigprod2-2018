@@ -11,6 +11,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -18,6 +20,7 @@ import javax.swing.JPanel;
  */
 public class Navegacao extends JPanel {
 
+    private static final Logger LOGGER = LogManager.getLogger(Navegacao.class.getName());
     private JButton up;
     private JButton down;
     private JButton left;
@@ -114,6 +117,7 @@ public class Navegacao extends JPanel {
     }
 
     private void subirCamada(java.awt.event.ActionEvent evt) {
+        LOGGER.debug(evt.getActionCommand());
         this.desabilitarBotoes();
         Ponto atual = this.getPontoAtual();
         Ponto target = rede.getParentRedeReduzida(atual);
@@ -127,6 +131,7 @@ public class Navegacao extends JPanel {
     }
 
     private void descerCamada(java.awt.event.ActionEvent evt) {
+        LOGGER.debug(evt.getActionCommand());
         this.desabilitarBotoes();
         Ponto atual = this.getPontoAtual();
         Ponto target = rede.getDestinosRedeReduzida(atual).get(0);
@@ -146,6 +151,7 @@ public class Navegacao extends JPanel {
     }
 
     private void proximoPonto(java.awt.event.ActionEvent evt) {
+        LOGGER.debug(evt.getActionCommand());
         this.desabilitarBotoes();
         Ponto atual = this.getPontoAtual();
         Ponto target = this.camadasRedeReduzida.get(this.camadaAtual).get(this.pontoAtual + 1);
@@ -165,6 +171,7 @@ public class Navegacao extends JPanel {
     }
 
     private void pontoAnterior(java.awt.event.ActionEvent evt) {
+        LOGGER.debug(evt.getActionCommand());
         this.desabilitarBotoes();
         Ponto atual = this.getPontoAtual();
         Ponto target = this.camadasRedeReduzida.get(this.camadaAtual).get(this.pontoAtual - 1);
