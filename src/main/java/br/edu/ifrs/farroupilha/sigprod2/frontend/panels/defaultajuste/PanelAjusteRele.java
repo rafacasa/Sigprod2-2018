@@ -9,13 +9,11 @@ import java.awt.Color;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.border.BevelBorder;
 import net.miginfocom.swing.MigLayout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,11 +31,11 @@ public class PanelAjusteRele extends PanelAjuste {
     private JTextField campoCorrente;
     private JButton botaoMostrar;
     private JButton botaoLimpar;
-    JLabel fabricante;
-    JLabel modelo;
-    JTabbedPane ajustes;
-    JPanel ajusteFase;
-    JPanel ajusteNeutro;
+    private JLabel fabricante;
+    private JLabel modelo;
+    private JTabbedPane ajustes;
+    private JPanel ajusteFase;
+    private JPanel ajusteNeutro;
 
     public PanelAjusteRele(Rele rele) {
         this.rele = rele;
