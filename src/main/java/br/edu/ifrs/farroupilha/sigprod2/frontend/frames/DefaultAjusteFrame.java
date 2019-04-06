@@ -154,11 +154,11 @@ public class DefaultAjusteFrame extends JDialog {
                                 metricas = criteriosEloElo.ajuste();
                                 ponto.resetAtributos(true);
                                 this.panelAjuste.removeAll();
-                                this.ajuste = new PanelAjusteEloElo(metricas, this, (Elo) pOrigem.getEquipamentoInstalado());
+                                this.ajuste = new PanelAjusteEloElo(metricas, (Elo) pOrigem.getEquipamentoInstalado());
                                 this.panelAjuste.add(this.ajuste);
                                 if (this.coordenograma) {
                                     this.panelCoordenograma.removeAll();
-                                    this.panelCoordenograma.add(this.ajuste.geraCoordenograma());
+                                    this.panelCoordenograma.add(this.ajuste.geraCoordenograma().getChartPanel());
                                 }
                                 this.pack();
                             } catch (AjusteImpossivelException ex) {
@@ -168,7 +168,7 @@ public class DefaultAjusteFrame extends JDialog {
                             break;
                         case RELE:
                             LOGGER.trace("AJUSTE RELE ELO");
-                            this.setPanelAjuste(new PanelAjusteReleElo(this, ponto, rede, pOrigem));
+                            this.setPanelAjuste(new PanelAjusteReleElo(ponto, rede, pOrigem));
                             break;
                         case RELIGADOR:
 
@@ -220,7 +220,7 @@ public class DefaultAjusteFrame extends JDialog {
         this.panelAjuste.add(this.ajuste);
         if (this.coordenograma) {
             this.panelCoordenograma.removeAll();
-            this.panelCoordenograma.add(this.ajuste.geraCoordenograma());
+            this.panelCoordenograma.add(this.ajuste.geraCoordenograma().getChartPanel());
         }
         this.revalidate();
         this.repaint();
@@ -248,7 +248,7 @@ public class DefaultAjusteFrame extends JDialog {
 
     public void ativarCoordenograma() {
         this.coordenograma = true;
-        this.panelCoordenograma.add(this.ajuste.geraCoordenograma());
+        this.panelCoordenograma.add(this.ajuste.geraCoordenograma().getChartPanel());
         this.pack();
     }
 

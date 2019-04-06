@@ -3,9 +3,14 @@ package br.edu.ifrs.farroupilha.sigprod2.backend.modelo;
 import java.awt.Color;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
@@ -19,6 +24,7 @@ import org.knowm.xchart.style.markers.SeriesMarkers;
  */
 public class Coordenograma {
 
+    private static final Logger LOGGER = LogManager.getLogger(Coordenograma.class.getName());
     private XYChart chart;
     private JPanel chartPanel;
     private String titulo;
@@ -32,7 +38,7 @@ public class Coordenograma {
         this.chart = new XYChartBuilder().title(this.titulo).xAxisTitle("Corrente").yAxisTitle("Tempo").build();
         this.chart.getStyler().setYAxisLogarithmic(true);
         this.chart.getStyler().setXAxisLogarithmic(true);
-        this.chart.getStyler().setLegendPosition(Styler.LegendPosition.OutsideE);
+        this.chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNE);
         this.chart.getStyler().setToolTipsEnabled(true);
         this.chart.getStyler().setToolTipsAlwaysVisible(true);
         this.chart.getStyler().setChartBackgroundColor(UIManager.getColor("Panel.background"));
@@ -112,6 +118,22 @@ public class Coordenograma {
         }
     }
 
+    public void add(BigDecimal corrente, Color cor, String nome) {
+        BigDecimal[] limites = this.getLimitesY();
+        double tempoMin = limites[0].doubleValue();
+        double tempoMax = limites[1].doubleValue();
+        List<Double> tempos = Arrays.asList(tempoMin, tempoMax);
+        List<Double> correntes = Arrays.asList(corrente.doubleValue(), corrente.doubleValue());
+        String[] tooltips = {null, null};
+        XYSeries serie = this.chart.addSeries(nome, correntes, tempos);
+        serie.setLineColor(cor);
+        serie.setMarker(SeriesMarkers.NONE);
+        serie.setShowInLegend(true);
+        serie.setToolTips(tooltips);
+        this.chartPanel.revalidate();
+        this.chartPanel.repaint();
+    }
+
     public void remove(String s) {
         this.chart.removeSeries(s);
         this.chartPanel.revalidate();
@@ -120,6 +142,21 @@ public class Coordenograma {
 
     public JPanel getChartPanel() {
         return this.chartPanel;
+    }
+
+    private BigDecimal[] getLimitesY() {
+        Collection<XYSeries> series = this.chart.getSeriesMap().values();
+        List<BigDecimal> maximos = new ArrayList<>();
+        List<BigDecimal> minimos = new ArrayList<>();
+        series.forEach(serie -> {
+            maximos.add(BigDecimal.valueOf(serie.getYMax()));
+            minimos.add(BigDecimal.valueOf(serie.getYMin()));
+        });
+        BigDecimal[] retorno = new BigDecimal[2];
+        retorno[0] = Collections.min(minimos);
+        retorno[1] = Collections.max(maximos);
+        LOGGER.debug("MINIMO Y - " + retorno[0] + " MAXIMO Y - " + retorno[1]);
+        return retorno;
     }
 
     private List<Double> convertToDouble(List<BigDecimal> list) {

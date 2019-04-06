@@ -1,6 +1,5 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.modelo;
 
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvaRele;
 import ch.obermuhlner.math.big.BigDecimalMath;
 import ch.obermuhlner.math.big.stream.BigDecimalStream;
 import java.math.BigDecimal;

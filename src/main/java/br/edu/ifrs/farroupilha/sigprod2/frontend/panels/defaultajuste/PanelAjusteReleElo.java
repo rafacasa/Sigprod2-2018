@@ -1,9 +1,9 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste;
 
+import br.edu.ifrs.farroupilha.sigprod2.backend.Main;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Rele_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultAjusteFrame;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.MetricasReleElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
@@ -29,7 +29,6 @@ public class PanelAjusteReleElo extends PanelAjuste {
 
     private static final Logger LOGGER = LogManager.getLogger(PanelAjusteReleElo.class.getName());
     private List<MetricasReleElo> metricas;
-    private DefaultAjusteFrame ajusteFrame;
     private Rele relePai;
     private Elo selecionado;
     private Ponto ponto;
@@ -44,15 +43,15 @@ public class PanelAjusteReleElo extends PanelAjuste {
     private JPanel panelAlcance;
     private JPanel panelSeletividade;
 
-    public PanelAjusteReleElo(DefaultAjusteFrame ajusteFrame, Ponto p, Rede rede, Ponto pOrigem) {
+    public PanelAjusteReleElo(Ponto p, Rede rede, Ponto pOrigem) {
         LOGGER.trace("Cria Panel AjusteReleElo");
-        this.ajusteFrame = ajusteFrame;
         this.relePai = (Rele) pOrigem.getEquipamentoInstalado();
         this.ponto = p;
         this.calculaAjustes(rede, pOrigem);
         this.initComponents();
         this.criaPanels();
         this.addItens();
+        Main.setCoordenograma(this.geraCoordenograma());
     }
 
     private void calculaAjustes(Rede rede, Ponto pOrigem) {
@@ -124,7 +123,7 @@ public class PanelAjusteReleElo extends PanelAjuste {
     private void botaoSelecionarActionPerformed(java.awt.event.ActionEvent evt) {
         LOGGER.trace(evt.getActionCommand());
         this.selecionado = this.lista.getItemAt(this.lista.getSelectedIndex()).getElo();
-        this.ajusteFrame.selecionaEquipamento(this.ponto, this.selecionado);
+        Main.selecionaEquipamento(this.ponto, this.selecionado);
     }
 
     private void listaActionPerformed(java.awt.event.ActionEvent evt) {
@@ -132,8 +131,7 @@ public class PanelAjusteReleElo extends PanelAjuste {
         MetricasReleElo metrica = this.lista.getItemAt(this.lista.getSelectedIndex());
         this.labelAlcance.setText(metrica.getAlcance().toString());
         this.labelSeletividade.setText(metrica.isSeletividade() ? "TRUE" : "FALSE");
-        this.ajusteFrame.atualizaCoordenograma(this.geraCoordenograma());
-        this.ajusteFrame.pack();
+        Main.setCoordenograma(this.geraCoordenograma());
     }
 
     public Elo getSelecionado() {
@@ -141,16 +139,16 @@ public class PanelAjusteReleElo extends PanelAjuste {
     }
 
     @Override
-    public JPanel geraCoordenograma() {
+    public Coordenograma geraCoordenograma() {
         MetricasReleElo metricaselo = this.lista.getItemAt(this.lista.getSelectedIndex());
         if (metricaselo != null) {
-            Elo elo  = metricaselo.getElo();
+            Elo elo = metricaselo.getElo();
             this.coordenograma = new Coordenograma("Coordenograma");
             this.coordenograma.add(this.relePai, Color.RED, Color.RED);
             this.coordenograma.add(elo, "Elo Selecionado", Color.BLUE);
-            return this.coordenograma.getChartPanel();
+            return this.coordenograma;
         }
-        return new JPanel();
+        return null;
     }
 
 }

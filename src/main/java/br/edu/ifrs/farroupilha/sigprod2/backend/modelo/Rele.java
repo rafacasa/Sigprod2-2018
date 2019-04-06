@@ -121,4 +121,28 @@ public class Rele implements Equipamento {
     public TipoEquipamento getTipoEquipamento() {
         return TipoEquipamento.RELE;
     }
+
+    public String getNomeCurva(CurvaRele curva, boolean fase) {
+        if (fase) {
+            if (this.nIFase.equals(curva)) {
+                return "Curva Normalmente Inversa";
+            } else if (this.mIFase.equals(curva)) {
+                return "Curva Muito Inversa";
+            } else if (this.eIFase.equals(curva)) {
+                return "Curva Extremamente Inversa";
+            } else {
+                return null;
+            }
+        } else {
+            if (this.nINeutro.equals(curva)) {
+                return "Curva Normalmente Inversa";
+            } else if (this.mINeutro.equals(curva)) {
+                return "Curva Muito Inversa";
+            } else if (this.eINeutro.equals(curva)) {
+                return "Curva Extremamente Inversa";
+            } else {
+                return null;
+            }
+        }
+    }
 }

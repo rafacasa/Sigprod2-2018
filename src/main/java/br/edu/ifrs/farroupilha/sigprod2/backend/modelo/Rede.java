@@ -12,7 +12,6 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.io.File;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +25,7 @@ import org.graphstream.ui.view.ViewerPipe;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.EscolheEloElo;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Informacoes;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,7 +48,7 @@ public class Rede {
     private ViewerListener listener;
     private boolean loop;
 
-    public Rede(Arquivo arquivoRede) throws SQLException {
+    public Rede(Arquivo arquivoRede) throws BancoDeDadosException {
         loop = true;
         String dadosRede = arquivoRede.lerArquivo();
         String[] linhas = dadosRede.split("\r");
@@ -148,7 +148,7 @@ public class Rede {
         viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.HIDE_ONLY);
 
         fromViewer = viewer.newViewerPipe();
-        NodeClickDefaultListener listener = new NodeClickDefaultListener(frame);
+        NodeClickDefaultListener listener = new NodeClickDefaultListener();
         fromViewer.addViewerListener(listener);
         fromViewer.addSink(this.mapa);
 
@@ -160,7 +160,7 @@ public class Rede {
         }
     }
 
-    public View getMapaView(DefaultMainFrame frame) {
+    public View getMapaView() { //NAO ESTA CRIANDO LISTENER NO GRAPH, CORRIGIR LISTENER USANDO A CLASSE MAIN ESTATICA
         viewer = this.mapa.display(false);
 
         viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.HIDE_ONLY);
@@ -168,10 +168,9 @@ public class Rede {
         view.openInAFrame(false);
 
         fromViewer = viewer.newViewerPipe();
-        listener = new NodeClickDefaultListener(frame);
+        listener = new NodeClickDefaultListener();
 
         view.setMouseManager(new NodeClickMouseManager(listener));
-
         return view;
     }
 
