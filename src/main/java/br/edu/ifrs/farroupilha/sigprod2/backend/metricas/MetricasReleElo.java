@@ -19,6 +19,12 @@ public class MetricasReleElo {
         this.elo = elo;
     }
 
+    public MetricasReleElo(MetricasReleElo metricas) {
+        this.alcance = metricas.alcance;
+        this.seletividade = metricas.seletividade;
+        this.elo = metricas.elo;
+    }
+
     public BigDecimal getAlcance() {
         return alcance;
     }

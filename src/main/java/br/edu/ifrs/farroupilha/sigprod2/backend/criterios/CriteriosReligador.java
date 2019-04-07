@@ -39,18 +39,18 @@ public class CriteriosReligador {
         this.criteriosRele = new Criterios_Rele(rede, ponto, religador, tempoMaxPPFase, tempoMaxPRFase, tempoMaxPPNeutro, tempoMaxPRNeutro, fatorDesbalanco);
     }
 
-    public void ajuste() {
+    public void ajuste() throws ValorATImposivelException {
         this.criteriosRele.ajuste();
         this.ajustarCurvaRapida();
 
     }
 
-    private void ajustarCurvaRapida() {
+    private void ajustarCurvaRapida() throws ValorATImposivelException {
         this.ajustarCurvaRapida(true);
         this.ajustarCurvaRapida(false);
     }
 
-    private void ajustarCurvaRapida(boolean fase) {
+    private void ajustarCurvaRapida(boolean fase) throws ValorATImposivelException {
         AjusteRele ajusteLenta = fase ? this.religador.getAjusteFase() : this.religador.getAjusteNeutro();
         AjusteRele ajusteRapida = new AjusteRele(ajusteLenta);
         BigDecimal iInrush = BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.ponto, Corrente.IINRUSH));
@@ -62,11 +62,7 @@ public class CriteriosReligador {
             at = ajusteLenta.getCurva().getA().divide(at, MathContext.DECIMAL128);
             at = at.add(ajusteLenta.getCurva().getB());
             at = this.tempoMinCurvaRapida.divide(at, MathContext.DECIMAL128);
-            try {
-                ajusteRapida.setAt(this.verificaAT(ajusteLenta.getCurva(), at));
-            } catch (ValorATImposivelException ex) {
-                LOGGER.error("AT IMPOSSIVEL" + ex.getLocalizedMessage());
-            }
+            ajusteRapida.setAt(this.verificaAT(ajusteLenta.getCurva(), at));
             if (fase) {
                 this.religador.setAjusteRapidaFase(ajusteRapida);
             } else {

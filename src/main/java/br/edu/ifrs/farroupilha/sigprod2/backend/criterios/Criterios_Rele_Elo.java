@@ -167,17 +167,17 @@ public class Criterios_Rele_Elo {
 
     private BigDecimal getI2Seletividade(boolean fase) {
         if (fase) {
-            return BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pOrigem, Corrente.ICC3F));
+            return BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pontoRede, Corrente.ICC3F));
         } else {
-            return BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pOrigem, Corrente.ICCFT));
+            return BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pontoRede, Corrente.ICCFT));
         }
     }
 
     private BigDecimal getI1Seletividade(boolean fase) {
         if (fase) {
-            return BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pOrigem, Corrente.ICC2F));
+            return BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pontoRede, Corrente.ICC2F));
         } else {
-            return BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pOrigem, Corrente.ICCFTMIN));
+            return BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pontoRede, Corrente.ICCFTMIN));
         }
     }
 
