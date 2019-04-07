@@ -26,6 +26,13 @@ public class AjusteRele implements Comparable<AjusteRele> {
         this.curva = curva;
     }
 
+    public AjusteRele(AjusteRele ajuste) {
+        this.curva = ajuste.curva;
+        this.ac = ajuste.ac;
+        this.at = ajuste.at;
+        this.fm = BigDecimal.ZERO;
+    }
+
     public BigDecimal getFm() {
         return fm;
     }
@@ -40,6 +47,10 @@ public class AjusteRele implements Comparable<AjusteRele> {
 
     public CurvaRele getCurva() {
         return curva;
+    }
+
+    public void setAt(BigDecimal at) {
+        this.at = at;
     }
 
     @Override

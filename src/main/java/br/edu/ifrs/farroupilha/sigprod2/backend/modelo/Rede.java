@@ -83,7 +83,7 @@ public class Rede {
             icarga = Double.parseDouble(dados[25].replace(",", "."));
             indice = pontosRede.indexOf(new Ponto(nome));
             if (indice == -1) {
-                destino = new Ponto(nome, coordX, coordY, TipoEquipamento.converte(equip), icc3f, icc2f, iccft, iccftmin, icarga);
+                destino = new Ponto(nome, coordX, coordY, TipoEquipamento.converte(equip), icc3f, icc2f, iccft, iccftmin, icarga, 0);
                 pontosRede.add(destino);
             } else {
                 destino = pontosRede.get(indice);
@@ -415,8 +415,11 @@ public class Rede {
                 return p.getIccft();
             case ICCFTMIN:
                 return p.getIccftmin();
+            case IINRUSH:
+                return p.getiInRush();
+            default:
+                return 0;
         }
-        return 0;
     }
 
     public double buscaCorrentePonto(String s, Corrente c) {

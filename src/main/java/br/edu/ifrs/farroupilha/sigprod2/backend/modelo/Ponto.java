@@ -19,6 +19,7 @@ public class Ponto {
     private Equipamento equipamentoInstalado;
     private boolean fimdeTrecho;
     private double icc3f, icc2f, iccft, iccftmin, icarga;
+    private double iInRush;
     private Node node;
 
     public Ponto(String nome) {
@@ -37,9 +38,10 @@ public class Ponto {
         this.iccft = 0;
         this.iccftmin = 0;
         this.icarga = 0;
+        this.iInRush = 0;
     }
 
-    public Ponto(String nome, double coordenadaX, double coordenadaY, TipoEquipamento tipoEquipamentoInstalado, double icc3f, double icc2f, double iccft, double iccftmin, double icarga) {
+    public Ponto(String nome, double coordenadaX, double coordenadaY, TipoEquipamento tipoEquipamentoInstalado, double icc3f, double icc2f, double iccft, double iccftmin, double icarga, double iInRush) {
         this.nome = nome;
         this.coordenadaX = coordenadaX;
         this.coordenadaY = coordenadaY;
@@ -49,6 +51,7 @@ public class Ponto {
         this.iccft = iccft;
         this.iccftmin = iccftmin;
         this.icarga = icarga;
+        this.iInRush = iInRush;
         this.equipamentoInstalado = null;
         this.fimdeTrecho = false;
     }
@@ -159,6 +162,14 @@ public class Ponto {
 
     public void setIcarga(double icarga) {
         this.icarga = icarga;
+    }
+
+    public double getiInRush() {
+        return iInRush;
+    }
+
+    public void setiInRush(double iInRush) {
+        this.iInRush = iInRush;
     }
 
     public Node getNode() {

@@ -40,6 +40,17 @@ public class Criterios_Rele {
         this.rele = rele;
     }
 
+    public Criterios_Rele(Rede rede, Ponto ponto, Rele rele, BigDecimal tempoMaxPPFase, BigDecimal tempoMaxPRFase, BigDecimal tempoMaxPPNeutro, BigDecimal tempoMaxPRNeutro, BigDecimal fatorDesbalanco) {
+        this.rede = rede;
+        this.ponto = ponto;
+        this.rele = rele;
+        this.tempoMaxPPFase = tempoMaxPPFase;
+        this.tempoMaxPRFase = tempoMaxPRFase;
+        this.tempoMaxPPNeutro = tempoMaxPPNeutro;
+        this.tempoMaxPRNeutro = tempoMaxPRNeutro;
+        this.fatorDesbalanco = fatorDesbalanco;
+    }
+
     public void ajuste() {
         List<AjusteRele> ajustesFase = ajustaFase();
         List<AjusteRele> ajustesNeutro = ajustaNeutro();
