@@ -48,7 +48,7 @@ public class Criterios_Rele {
         this.rele.setAjusteNeutro(ajustesNeutro.get(0));
     }
 
-    public List<AjusteRele> ajustaFase() {
+    private List<AjusteRele> ajustaFase() {
         LOGGER.traceEntry();
         BigDecimal iMinFFPP = BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.ponto, Corrente.ICC2F));
         BigDecimal iMinFFPR = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(this.ponto, Corrente.ICC2F));
@@ -65,7 +65,7 @@ public class Criterios_Rele {
         return LOGGER.traceExit(ajustesPossiveis);
     }
 
-    public List<AjusteRele> ajustaNeutro() {
+    private List<AjusteRele> ajustaNeutro() {
         LOGGER.traceEntry();
         BigDecimal iMinFFPP = BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.ponto, Corrente.ICCFTMIN));
         BigDecimal iMinFFPR = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(this.ponto, Corrente.ICCFTMIN));

@@ -9,16 +9,16 @@ import java.util.List;
  */
 public class Rele implements Equipamento {
 
-    private CurvaRele nIFase;
-    private CurvaRele mIFase;
-    private CurvaRele eIFase;
-    private CurvaRele nINeutro;
-    private CurvaRele mINeutro;
-    private CurvaRele eINeutro;
-    private AjusteRele ajusteNeutro;
-    private AjusteRele ajusteFase;
-    private String modelo;
-    private String fabricante;
+    protected CurvaRele nIFase;
+    protected CurvaRele mIFase;
+    protected CurvaRele eIFase;
+    protected CurvaRele nINeutro;
+    protected CurvaRele mINeutro;
+    protected CurvaRele eINeutro;
+    protected AjusteRele ajusteNeutro;
+    protected AjusteRele ajusteFase;
+    protected String modelo;
+    protected String fabricante;
 
     public Rele(String modelo, String fabricante) {
         this.modelo = modelo;
