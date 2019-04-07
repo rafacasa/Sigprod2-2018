@@ -39,15 +39,19 @@ public class CriteriosReligador {
         this.criteriosRele = new Criterios_Rele(rede, ponto, religador, tempoMaxPPFase, tempoMaxPRFase, tempoMaxPPNeutro, tempoMaxPRNeutro, fatorDesbalanco);
     }
 
-    public void ajuste() throws ValorATImposivelException {
+    public void ajuste() {
         this.criteriosRele.ajuste();
         this.ajustarCurvaRapida();
 
     }
 
-    private void ajustarCurvaRapida() throws ValorATImposivelException {
-        this.ajustarCurvaRapida(true);
-        this.ajustarCurvaRapida(false);
+    private void ajustarCurvaRapida() {
+        try {
+            this.ajustarCurvaRapida(true);
+            this.ajustarCurvaRapida(false);
+        } catch (ValorATImposivelException ex) {
+            LOGGER.error("AT IMPOSSIVEL - " + ex.getLocalizedMessage());
+        }
     }
 
     private void ajustarCurvaRapida(boolean fase) throws ValorATImposivelException {

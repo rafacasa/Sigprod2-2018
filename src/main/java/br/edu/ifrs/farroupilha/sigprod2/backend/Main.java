@@ -1,5 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend;
 
+import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.CriteriosReligador;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Rele;
@@ -11,6 +12,7 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Equipamento;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Religador;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.TipoEquipamento;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
@@ -21,6 +23,7 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.Navegacao;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteEloElo;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReleElo;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReligador;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Informacoes;
 import java.awt.Color;
 import java.awt.Component;
@@ -109,7 +112,11 @@ public class Main {
                 selecionaEquipamento(ponto, rele);
                 break;
             case RELIGADOR:
-
+                Religador religador = CriteriosReligador.getReligadorTeste(); //DEFINIR QUAL RELIGADOR ESTA INSTALADO NO PONTO
+                CriteriosReligador criteriosReligador = new CriteriosReligador(Main.rede, ponto, religador);
+                criteriosReligador.ajuste();
+                frame.setAjuste(new PanelAjusteReligador(religador));
+                selecionaEquipamento(ponto, religador);
                 break;
             default:
                 LOGGER.error("DEFAULT CLAUSE");
