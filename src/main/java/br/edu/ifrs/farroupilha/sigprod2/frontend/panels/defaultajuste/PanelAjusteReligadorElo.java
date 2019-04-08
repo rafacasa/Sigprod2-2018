@@ -1,14 +1,14 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.Main;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
+import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.CriteriosReligadorElo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.MetricasReligadorElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
-import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Rele_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.MetricasReleElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Religador;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.List;
@@ -25,16 +25,16 @@ import org.apache.logging.log4j.Logger;
  *
  * @author Rafael Luiz Casa
  */
-public class PanelAjusteReleElo extends PanelAjuste {
+public class PanelAjusteReligadorElo extends PanelAjuste {
 
-    private static final Logger LOGGER = LogManager.getLogger(PanelAjusteReleElo.class.getName());
-    private List<MetricasReleElo> metricas;
-    private Rele relePai;
+    private static final Logger LOGGER = LogManager.getLogger(PanelAjusteReligadorElo.class.getName());
+    private List<MetricasReligadorElo> metricas;
+    private Religador religadorPai;
     private Elo selecionado;
     private Ponto ponto;
     private Coordenograma coordenograma;
 
-    private JComboBox<MetricasReleElo> lista;
+    private JComboBox<MetricasReligadorElo> lista;
     private JButton botaoSelecionar;
     private JLabel nomeAlcance;
     private JLabel labelAlcance;
@@ -43,9 +43,9 @@ public class PanelAjusteReleElo extends PanelAjuste {
     private JPanel panelAlcance;
     private JPanel panelSeletividade;
 
-    public PanelAjusteReleElo(Ponto p, Rede rede, Ponto pOrigem) {
+    public PanelAjusteReligadorElo(Ponto p, Rede rede, Ponto pOrigem) {
         LOGGER.trace("Cria Panel AjusteReleElo");
-        this.relePai = (Rele) pOrigem.getEquipamentoInstalado();
+        this.religadorPai = (Religador) pOrigem.getEquipamentoInstalado();
         this.ponto = p;
         this.calculaAjustes(rede, pOrigem);
         this.initComponents();
@@ -56,7 +56,7 @@ public class PanelAjusteReleElo extends PanelAjuste {
 
     private void calculaAjustes(Rede rede, Ponto pOrigem) {
         this.ponto.resetAtributos(true);
-        Criterios_Rele_Elo criterios = new Criterios_Rele_Elo(this.relePai, this.ponto, rede, pOrigem);
+        CriteriosReligadorElo criterios = new CriteriosReligadorElo(this.religadorPai, this.ponto, rede, pOrigem);
         try {
             this.metricas = criterios.ajuste();
         } catch (AjusteImpossivelException ex) {
@@ -128,7 +128,7 @@ public class PanelAjusteReleElo extends PanelAjuste {
 
     private void listaActionPerformed(java.awt.event.ActionEvent evt) {
         LOGGER.trace(evt.getActionCommand());
-        MetricasReleElo metrica = this.lista.getItemAt(this.lista.getSelectedIndex());
+        MetricasReligadorElo metrica = this.lista.getItemAt(this.lista.getSelectedIndex());
         this.labelAlcance.setText(metrica.getAlcance().toString());
         this.labelSeletividade.setText(metrica.isSeletividade() ? "TRUE" : "FALSE");
         Main.setCoordenograma(this.geraCoordenograma());
@@ -140,15 +140,14 @@ public class PanelAjusteReleElo extends PanelAjuste {
 
     @Override
     public final Coordenograma geraCoordenograma() {
-        MetricasReleElo metricaselo = this.lista.getItemAt(this.lista.getSelectedIndex());
+        MetricasReligadorElo metricaselo = this.lista.getItemAt(this.lista.getSelectedIndex());
         if (metricaselo != null) {
             Elo elo = metricaselo.getElo();
             this.coordenograma = new Coordenograma("Coordenograma");
-            this.coordenograma.add(this.relePai, Color.RED, Color.RED);
+            this.coordenograma.add(this.religadorPai, Color.BLACK, Color.RED, Color.DARK_GRAY, Color.ORANGE);
             this.coordenograma.add(elo, "Elo Selecionado", Color.BLUE);
             return this.coordenograma;
         }
         return null;
     }
-
 }

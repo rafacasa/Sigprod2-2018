@@ -21,6 +21,11 @@ public class MetricasReligadorElo extends MetricasReleElo {
         this.seletividadeRapida = false;
     }
 
+    @Override
+    public boolean isSeletividade() {
+        return (super.isSeletividade()) && this.seletividadeRapida;
+    }
+
     public boolean isSeletividadeRapida() {
         return seletividadeRapida;
     }

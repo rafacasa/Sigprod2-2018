@@ -133,7 +133,7 @@ public class PanelAjusteReligador extends PanelAjuste {
     @Override
     public final Coordenograma geraCoordenograma() {
         this.coordenograma = new Coordenograma("Relé");
-        this.coordenograma.add(this.religador, Color.BLUE, Color.RED);
+        this.coordenograma.add(this.religador, Color.BLUE, Color.RED, Color.DARK_GRAY, Color.ORANGE);
         return this.coordenograma;
     }
 

@@ -24,6 +24,7 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjust
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReleElo;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReligador;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReligadorElo;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Informacoes;
 import java.awt.Color;
 import java.awt.Component;
@@ -174,7 +175,7 @@ public class Main {
             case RELIGADOR:
                 switch (tipoEquipamento) {
                     case ELO:
-
+                        frame.setAjuste(new PanelAjusteReligadorElo(ponto, rede, pOrigem));
                         break;
                     case RELE:
 
