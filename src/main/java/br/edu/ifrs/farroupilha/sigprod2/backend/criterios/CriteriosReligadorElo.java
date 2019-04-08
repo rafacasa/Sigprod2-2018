@@ -12,6 +12,8 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossiv
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -19,6 +21,7 @@ import java.util.List;
  */
 public class CriteriosReligadorElo {
 
+    private static final Logger LOGGER = LogManager.getLogger(CriteriosReligadorElo.class.getName());
     private Religador religadorPai;
     private Ponto pontoRede;
     private Rede rede;
@@ -59,8 +62,12 @@ public class CriteriosReligadorElo {
         BigDecimal tempoCorrenteMin = curvaRapida.calculaTempo(correnteMin);
 
         ajustes.forEach(ajuste -> {
-            BigDecimal tempoEloMax = BigDecimal.valueOf(ajuste.getElo().tempoDaCorrente(correnteMax.doubleValue(), CurvasElo.MINIMA));
-            BigDecimal tempoEloMin = BigDecimal.valueOf(ajuste.getElo().tempoDaCorrente(correnteMin.doubleValue(), CurvasElo.MINIMA));
+            double tempoEloMaxd = ajuste.getElo().tempoDaCorrente(correnteMax.doubleValue(), CurvasElo.MINIMA);
+            double tempoEloMind = ajuste.getElo().tempoDaCorrente(correnteMin.doubleValue(), CurvasElo.MINIMA);
+            LOGGER.debug("tempoEloMin = " + tempoEloMind);
+            LOGGER.debug("tempoEloMax = " + tempoEloMaxd);
+            BigDecimal tempoEloMax = BigDecimal.valueOf(tempoEloMaxd);
+            BigDecimal tempoEloMin = BigDecimal.valueOf(tempoEloMind);
             ajuste.setSeletividadeRapida((tempoCorrenteMax.compareTo(tempoEloMax) < 0) && (tempoCorrenteMin.compareTo(tempoEloMin) < 0));
         });
     }

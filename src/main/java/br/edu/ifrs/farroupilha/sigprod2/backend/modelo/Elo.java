@@ -241,7 +241,7 @@ public class Elo implements Curvas, Equipamento {
     private double tempoDaCorrente(double curva[][], double correnteEntrada) {
         double corrente1 = 0, corrente2 = 0, tempo1 = 0, tempo2 = 0;
         boolean sai = false;
-        for (int i = 0; i < curva.length; i++) {
+        for (int i = 0; i < curva.length - 1; i++) {
             if ((correnteEntrada > curva[i][0]) && (correnteEntrada < curva[i + 1][0])) {
                 corrente1 = curva[i][0]; //corrente Menor
                 corrente2 = curva[i + 1][0]; //corrente Maior

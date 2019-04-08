@@ -67,13 +67,13 @@ public class CriteriosReligador {
             at = at.add(ajusteLenta.getCurva().getB());
             at = this.tempoMinCurvaRapida.divide(at, MathContext.DECIMAL128);
             ajusteRapida.setAt(this.verificaAT(ajusteLenta.getCurva(), at));
-            if (fase) {
-                this.religador.setAjusteRapidaFase(ajusteRapida);
-            } else {
-                this.religador.setAjusteRapidaNeutro(ajusteRapida);
-            }
         } else {
             ajusteRapida.setAt(ajusteLenta.getCurva().getMenorAT());
+        }
+        if (fase) {
+            this.religador.setAjusteRapidaFase(ajusteRapida);
+        } else {
+            this.religador.setAjusteRapidaNeutro(ajusteRapida);
         }
     }
 

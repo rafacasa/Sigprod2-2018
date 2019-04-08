@@ -142,7 +142,7 @@ public class Coordenograma {
             List<List<Double>> dadosNeutroDoubleRapida = new ArrayList<>();
             dadosNeutroDoubleRapida.add(this.convertToDouble(dadosNeutroRapida.get(0)));
             dadosNeutroDoubleRapida.add(this.convertToDouble(dadosNeutroRapida.get(1)));
-            this.addCurva(dadosNeutroDoubleRapida, "Curva de Neutro Lenta", corNeutroRap, true);
+            this.addCurva(dadosNeutroDoubleRapida, "Curva de Neutro Rápida", corNeutroRap, true);
         }
     }
 
