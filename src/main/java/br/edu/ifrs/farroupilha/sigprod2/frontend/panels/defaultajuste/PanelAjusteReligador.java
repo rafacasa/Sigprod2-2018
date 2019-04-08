@@ -82,8 +82,6 @@ public class PanelAjusteReligador extends PanelAjuste {
         panel.add(labelAC, "wrap");
         panel.add(labelAT, "wrap");
         panel.add(rapida, "wrap");
-        panel.add(tipo, "wrap");
-        panel.add(labelAC, "wrap");
         panel.add(labelATRap, "wrap");
         return panel;
     }
