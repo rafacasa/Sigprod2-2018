@@ -68,7 +68,7 @@ public class Main {
     }
 
     private static Arquivo getArquivoRedeInicial() {
-        return new Arquivo("redeReleReligador1.ABCEEE");
+        return new Arquivo("redeReligador.ABCEEE");
     }
 
     private static void setupMainFrame(MainFrame frame) throws BancoDeDadosException {

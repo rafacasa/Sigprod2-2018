@@ -95,7 +95,7 @@ public class Coordenograma {
         serie.setLineColor(cor);
         serie.setMarker(SeriesMarkers.CIRCLE);
         serie.setMarkerColor(cor);
-        String[] tooltips = {"Tempo: " + y};
+        String[] tooltips = {nomeCurva + " - Tempo: " + y};
         serie.setToolTips(tooltips);
         serie.setShowInLegend(false);
         this.chartPanel.revalidate();

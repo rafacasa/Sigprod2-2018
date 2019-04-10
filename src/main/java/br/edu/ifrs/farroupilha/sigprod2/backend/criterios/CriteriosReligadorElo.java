@@ -55,15 +55,21 @@ public class CriteriosReligadorElo {
     }
 
     private void verificaCurvaRapidaElo(List<MetricasReligadorElo> ajustes, boolean fase) {
+        LOGGER.debug("FASE " + fase);
         AjusteRele curvaRapida = fase ? this.religadorPai.getAjusteRapidaFase() : this.religadorPai.getAjusteRapidaNeutro();
         BigDecimal correnteMin = this.getCorrenteMin(fase);
         BigDecimal correnteMax = this.getCorrenteMax(fase);
         BigDecimal tempoCorrenteMax = curvaRapida.calculaTempo(correnteMax);
         BigDecimal tempoCorrenteMin = curvaRapida.calculaTempo(correnteMin);
 
+        LOGGER.debug("RELE ");
+        LOGGER.debug("tempoCorrenteMax = " + tempoCorrenteMax);
+        LOGGER.debug("tempoCorrenteMin = " + tempoCorrenteMin);
+
         ajustes.forEach(ajuste -> {
             double tempoEloMaxd = ajuste.getElo().tempoDaCorrente(correnteMax.doubleValue(), CurvasElo.MINIMA);
             double tempoEloMind = ajuste.getElo().tempoDaCorrente(correnteMin.doubleValue(), CurvasElo.MINIMA);
+            LOGGER.debug("ELO " + ajuste.getElo().getCorrenteNominal());
             LOGGER.debug("tempoEloMin = " + tempoEloMind);
             LOGGER.debug("tempoEloMax = " + tempoEloMaxd);
             BigDecimal tempoEloMax = BigDecimal.valueOf(tempoEloMaxd);

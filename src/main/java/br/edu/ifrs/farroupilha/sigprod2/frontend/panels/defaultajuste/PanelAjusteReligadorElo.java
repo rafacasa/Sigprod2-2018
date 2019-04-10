@@ -4,13 +4,17 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.Main;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.CriteriosReligadorElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.MetricasReligadorElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvasElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Religador;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -18,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,6 +47,10 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
     private JLabel labelSeletividade;
     private JPanel panelAlcance;
     private JPanel panelSeletividade;
+    private JTextField campoCorrente;
+    private JButton botaoMostrar;
+    private JButton botaoLimpar;
+    private List<String> nomePontos;
 
     public PanelAjusteReligadorElo(Ponto p, Rede rede, Ponto pOrigem) {
         LOGGER.trace("Cria Panel AjusteReleElo");
@@ -90,6 +99,12 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
 
         this.nomeAlcance = new JLabel("Porcentagem de Alcançe: ");
         this.nomeSeletividade = new JLabel("Seletividade: ");
+
+        this.campoCorrente = new JTextField(5);
+        this.botaoMostrar = new JButton("Exibir Tempo");
+        this.botaoMostrar.addActionListener(this::botaoMostrarActionPerformed);
+        this.botaoLimpar = new JButton("Limpar");
+        this.botaoLimpar.addActionListener(this::botaoLimparActionPerformed);
     }
 
     private void criaPanels() {
@@ -118,6 +133,9 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
         this.add(this.panelSeletividade);
         this.add(Box.createRigidArea(new Dimension(0, 10)));
         this.add(this.botaoSelecionar);
+        this.add(this.campoCorrente);
+        this.add(this.botaoMostrar);
+        this.add(this.botaoLimpar);
     }
 
     private void botaoSelecionarActionPerformed(java.awt.event.ActionEvent evt) {
@@ -136,6 +154,40 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
 
     public Elo getSelecionado() {
         return selecionado;
+    }
+
+    public void botaoMostrarActionPerformed(java.awt.event.ActionEvent evt) {
+        LOGGER.trace(evt.getActionCommand());
+        this.limparPontos();
+        String numeroDigitado = this.campoCorrente.getText();
+        try {
+            BigDecimal corrente = new BigDecimal(numeroDigitado);
+            BigDecimal tempoFaseLenta = religadorPai.getAjusteFase().calculaTempo(corrente);
+            BigDecimal tempoNeutroLenta = religadorPai.getAjusteNeutro().calculaTempo(corrente);
+            BigDecimal tempoFaseRapida = religadorPai.getAjusteRapidaFase().calculaTempo(corrente);
+            BigDecimal tempoNeutroRapida = religadorPai.getAjusteRapidaNeutro().calculaTempo(corrente);
+            BigDecimal tempoMaximaElo = BigDecimal.valueOf(this.lista.getItemAt(this.lista.getSelectedIndex()).getElo().tempoDaCorrente(corrente.doubleValue(), CurvasElo.MAXIMA));
+            BigDecimal tempoMinimaElo = BigDecimal.valueOf(this.lista.getItemAt(this.lista.getSelectedIndex()).getElo().tempoDaCorrente(corrente.doubleValue(), CurvasElo.MINIMA));
+            this.nomePontos = this.coordenograma.add(corrente, Arrays.asList(tempoFaseLenta, tempoNeutroLenta, tempoFaseRapida, tempoNeutroRapida, tempoMaximaElo, tempoMinimaElo), "pontoDigitado", Arrays.asList(Color.BLACK, Color.RED, Color.DARK_GRAY, Color.ORANGE, Color.BLUE, Color.BLUE));
+        } catch (NumberFormatException e) {
+            Erro.entradaInvalida(this);
+            LOGGER.error("STRING INVÁLIDA" + e.getMessage());
+        } catch (NullPointerException e) {
+            LOGGER.error("COORDENOGRAMA NAO ABERTO" + e.getMessage());
+        }
+    }
+
+    public void botaoLimparActionPerformed(java.awt.event.ActionEvent evt) {
+        LOGGER.trace(evt.getActionCommand());
+        this.limparPontos();
+    }
+
+    public void limparPontos() {
+        if (this.nomePontos != null) {
+            this.nomePontos.forEach(s -> {
+                this.coordenograma.remove(s);
+            });
+        }
     }
 
     @Override
