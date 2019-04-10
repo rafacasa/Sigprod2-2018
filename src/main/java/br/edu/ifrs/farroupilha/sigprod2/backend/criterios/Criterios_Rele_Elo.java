@@ -125,6 +125,9 @@ public class Criterios_Rele_Elo {
     }
 
     private BigDecimal calculaAlcance(BigDecimal iFTMinProximo, BigDecimal iFTMin2Camadas, BigDecimal i300) {
+        if (iFTMinProximo.compareTo(iFTMin2Camadas) == 0) {
+            return BigDecimal.ZERO;
+        }
         return iFTMinProximo.multiply(iFTMin2Camadas, MathContext.DECIMAL128).subtract(iFTMin2Camadas.multiply(i300, MathContext.DECIMAL128)).divide(i300.multiply(iFTMinProximo.subtract(iFTMin2Camadas), MathContext.DECIMAL128), MathContext.DECIMAL128);
     }
 

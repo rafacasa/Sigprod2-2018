@@ -1,5 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend;
 
+import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.CriteriosReleReligador;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.CriteriosReligador;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo_Elo;
@@ -67,7 +68,7 @@ public class Main {
     }
 
     private static Arquivo getArquivoRedeInicial() {
-        return new Arquivo("redeReligador.ABCEEE");
+        return new Arquivo("redeReleReligador1.ABCEEE");
     }
 
     private static void setupMainFrame(MainFrame frame) throws BancoDeDadosException {
@@ -166,6 +167,11 @@ public class Main {
 
                         break;
                     case RELIGADOR:
+                        Rele relePai = (Rele) pOrigem.getEquipamentoInstalado();
+                        Religador religador = CriteriosReligador.getReligadorTeste(); //DEFINIR QUAL RELIGADOR ESTA INSTALADO NO PONTO
+                        CriteriosReleReligador criterios = new CriteriosReleReligador(relePai, ponto, rede, religador);
+                        criterios.ajuste();
+                        selecionaEquipamento(ponto, religador);
                         frame.setAjuste(new PanelAjusteReleReligador(ponto, pOrigem));
                         break;
                     default:

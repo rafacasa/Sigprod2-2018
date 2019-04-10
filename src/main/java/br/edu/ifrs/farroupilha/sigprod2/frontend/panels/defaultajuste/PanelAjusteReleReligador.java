@@ -113,7 +113,7 @@ public class PanelAjusteReleReligador extends PanelAjuste {
             BigDecimal tempoNeutroRapida = religador.getAjusteRapidaNeutro().calculaTempo(corrente);
             BigDecimal tempoFaseRele = this.relePai.getAjusteFase().calculaTempo(corrente);
             BigDecimal tempoNeutroRele = this.relePai.getAjusteNeutro().calculaTempo(corrente);
-            this.nomePontos = this.coordenograma.add(corrente, Arrays.asList(tempoFaseLenta, tempoNeutroLenta, tempoFaseRapida, tempoNeutroRapida, tempoFaseRele, tempoNeutroRele), "pontoDigitado", Arrays.asList(Color.BLUE, Color.RED, Color.BLACK, Color.ORANGE));
+            this.nomePontos = this.coordenograma.add(corrente, Arrays.asList(tempoFaseLenta, tempoNeutroLenta, tempoFaseRapida, tempoNeutroRapida, tempoFaseRele, tempoNeutroRele), "pontoDigitado", Arrays.asList(Color.BLUE, Color.RED, Color.BLACK, Color.ORANGE, Color.PINK, Color.BLACK));
         } catch (NumberFormatException e) {
             Erro.entradaInvalida(this);
             LOGGER.error("STRING INVÁLIDA" + e.getMessage());
