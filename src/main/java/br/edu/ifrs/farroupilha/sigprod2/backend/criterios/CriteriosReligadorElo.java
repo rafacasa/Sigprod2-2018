@@ -67,14 +67,16 @@ public class CriteriosReligadorElo {
         LOGGER.debug("tempoCorrenteMin = " + tempoCorrenteMin);
 
         ajustes.forEach(ajuste -> {
-            double tempoEloMaxd = ajuste.getElo().tempoDaCorrente(correnteMax.doubleValue(), CurvasElo.MINIMA);
-            double tempoEloMind = ajuste.getElo().tempoDaCorrente(correnteMin.doubleValue(), CurvasElo.MINIMA);
-            LOGGER.debug("ELO " + ajuste.getElo().getCorrenteNominal());
-            LOGGER.debug("tempoEloMin = " + tempoEloMind);
-            LOGGER.debug("tempoEloMax = " + tempoEloMaxd);
-            BigDecimal tempoEloMax = BigDecimal.valueOf(tempoEloMaxd);
-            BigDecimal tempoEloMin = BigDecimal.valueOf(tempoEloMind);
-            ajuste.setSeletividadeRapida((tempoCorrenteMax.compareTo(tempoEloMax) < 0) && (tempoCorrenteMin.compareTo(tempoEloMin) < 0));
+            if (ajuste.isSeletividade()) {
+                double tempoEloMaxd = ajuste.getElo().tempoDaCorrente(correnteMax.doubleValue(), CurvasElo.MINIMA);
+                double tempoEloMind = ajuste.getElo().tempoDaCorrente(correnteMin.doubleValue(), CurvasElo.MINIMA);
+                LOGGER.debug("ELO " + ajuste.getElo().getCorrenteNominal());
+                LOGGER.debug("tempoEloMin = " + tempoEloMind);
+                LOGGER.debug("tempoEloMax = " + tempoEloMaxd);
+                BigDecimal tempoEloMax = BigDecimal.valueOf(tempoEloMaxd);
+                BigDecimal tempoEloMin = BigDecimal.valueOf(tempoEloMind);
+                ajuste.setSeletividadeRapida((tempoCorrenteMax.compareTo(tempoEloMax) < 0) && (tempoCorrenteMin.compareTo(tempoEloMin) < 0));
+            }
         });
     }
 

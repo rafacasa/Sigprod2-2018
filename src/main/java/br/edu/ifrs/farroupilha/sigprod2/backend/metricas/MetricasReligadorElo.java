@@ -18,12 +18,12 @@ public class MetricasReligadorElo extends MetricasReleElo {
 
     public MetricasReligadorElo(MetricasReleElo releElo) {
         super(releElo);
-        this.seletividadeRapida = false;
+        this.seletividadeRapida = true;
     }
 
     @Override
     public boolean isSeletividade() {
-        return (super.isSeletividade()) && this.seletividadeRapida;
+        return ((super.isSeletividade()) && this.seletividadeRapida);
     }
 
     public boolean isSeletividadeRapida() {
