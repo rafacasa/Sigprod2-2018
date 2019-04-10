@@ -3,6 +3,9 @@ package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste;
 import br.edu.ifrs.farroupilha.sigprod2.backend.Main;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.AjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Religador;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import java.awt.Color;
@@ -22,10 +25,11 @@ import org.apache.logging.log4j.Logger;
  *
  * @author Rafael Luiz Casa
  */
-public class PanelAjusteReligador extends PanelAjuste {
+public class PanelAjusteReleReligador extends PanelAjuste {
 
-    private static final Logger LOGGER = LogManager.getLogger(PanelAjusteReligador.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PanelAjusteReleReligador.class.getName());
     private Religador religador;
+    private Rele relePai;
     private List<String> nomePontos;
     private Coordenograma coordenograma;
     private JTextField campoCorrente;
@@ -37,8 +41,9 @@ public class PanelAjusteReligador extends PanelAjuste {
     private JPanel ajusteFase;
     private JPanel ajusteNeutro;
 
-    public PanelAjusteReligador(Religador religador) {
-        this.religador = religador;
+    public PanelAjusteReleReligador(Ponto p, Ponto pOrigem) {
+        this.relePai = (Rele) pOrigem.getEquipamentoInstalado();
+        this.religador = (Religador) p.getEquipamentoInstalado();
         this.dadosReligador();
         this.initComponents();
         this.placeComponents();
@@ -106,7 +111,9 @@ public class PanelAjusteReligador extends PanelAjuste {
             BigDecimal tempoNeutroLenta = religador.getAjusteNeutro().calculaTempo(corrente);
             BigDecimal tempoFaseRapida = religador.getAjusteRapidaFase().calculaTempo(corrente);
             BigDecimal tempoNeutroRapida = religador.getAjusteRapidaNeutro().calculaTempo(corrente);
-            this.nomePontos = this.coordenograma.add(corrente, Arrays.asList(tempoFaseLenta, tempoNeutroLenta, tempoFaseRapida, tempoNeutroRapida), "pontoDigitado", Arrays.asList(Color.BLUE, Color.RED, Color.BLACK, Color.ORANGE));
+            BigDecimal tempoFaseRele = this.relePai.getAjusteFase().calculaTempo(corrente);
+            BigDecimal tempoNeutroRele = this.relePai.getAjusteNeutro().calculaTempo(corrente);
+            this.nomePontos = this.coordenograma.add(corrente, Arrays.asList(tempoFaseLenta, tempoNeutroLenta, tempoFaseRapida, tempoNeutroRapida, tempoFaseRele, tempoNeutroRele), "pontoDigitado", Arrays.asList(Color.BLUE, Color.RED, Color.BLACK, Color.ORANGE));
         } catch (NumberFormatException e) {
             Erro.entradaInvalida(this);
             LOGGER.error("STRING INVÁLIDA" + e.getMessage());
@@ -132,6 +139,7 @@ public class PanelAjusteReligador extends PanelAjuste {
     public final Coordenograma geraCoordenograma() {
         this.coordenograma = new Coordenograma("Religador");
         this.coordenograma.add(this.religador, Color.BLUE, Color.RED, Color.DARK_GRAY, Color.ORANGE);
+        this.coordenograma.add(this.relePai, Color.PINK, Color.BLACK);
         return this.coordenograma;
     }
 

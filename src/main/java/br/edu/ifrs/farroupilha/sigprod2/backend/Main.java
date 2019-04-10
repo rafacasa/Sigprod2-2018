@@ -23,6 +23,7 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.Navegacao;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteEloElo;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReleElo;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReleReligador;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReligador;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReligadorElo;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Informacoes;
@@ -165,7 +166,7 @@ public class Main {
 
                         break;
                     case RELIGADOR:
-
+                        frame.setAjuste(new PanelAjusteReleReligador(ponto, pOrigem));
                         break;
                     default:
                         LOGGER.error("DEFAULT CLAUSE");
