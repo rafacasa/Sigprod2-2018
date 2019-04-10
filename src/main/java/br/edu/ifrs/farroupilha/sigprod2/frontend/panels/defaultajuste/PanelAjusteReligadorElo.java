@@ -23,6 +23,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import net.miginfocom.swing.MigLayout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -45,8 +46,6 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
     private JLabel labelAlcance;
     private JLabel nomeSeletividade;
     private JLabel labelSeletividade;
-    private JPanel panelAlcance;
-    private JPanel panelSeletividade;
     private JTextField campoCorrente;
     private JButton botaoMostrar;
     private JButton botaoLimpar;
@@ -58,7 +57,6 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
         this.ponto = p;
         this.calculaAjustes(rede, pOrigem);
         this.initComponents();
-        this.criaPanels();
         this.addItens();
         Main.setCoordenograma(this.geraCoordenograma());
     }
@@ -107,35 +105,19 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
         this.botaoLimpar.addActionListener(this::botaoLimparActionPerformed);
     }
 
-    private void criaPanels() {
-        this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-
-        this.panelAlcance = new JPanel();
-        this.panelAlcance.setLayout(new BoxLayout(this.panelAlcance, BoxLayout.LINE_AXIS));
-
-        this.panelSeletividade = new JPanel();
-        this.panelSeletividade.setLayout(new BoxLayout(this.panelSeletividade, BoxLayout.LINE_AXIS));
-    }
-
     private void addItens() {
-        this.panelAlcance.add(this.nomeAlcance);
-        this.panelAlcance.add(Box.createHorizontalGlue());
-        this.panelAlcance.add(this.labelAlcance);
+        this.setLayout(new MigLayout());
 
-        this.panelSeletividade.add(this.nomeSeletividade);
-        this.panelSeletividade.add(Box.createHorizontalGlue());
-        this.panelSeletividade.add(this.labelSeletividade);
+        this.add(this.lista, "wrap");
+        this.add(this.nomeAlcance);
+        this.add(this.labelAlcance, "wrap");
 
-        this.add(this.lista);
-        this.add(Box.createRigidArea(new Dimension(0, 10)));
-        this.add(this.panelAlcance);
-        this.add(Box.createRigidArea(new Dimension(0, 10)));
-        this.add(this.panelSeletividade);
-        this.add(Box.createRigidArea(new Dimension(0, 10)));
-        this.add(this.botaoSelecionar);
-        this.add(this.campoCorrente);
-        this.add(this.botaoMostrar);
-        this.add(this.botaoLimpar);
+        this.add(this.nomeSeletividade);
+        this.add(this.labelSeletividade, "wrap");
+        this.add(this.botaoSelecionar, "wrap");
+        this.add(this.campoCorrente, "wrap");
+        this.add(this.botaoMostrar, "wrap");
+        this.add(this.botaoLimpar, "wrap");
     }
 
     private void botaoSelecionarActionPerformed(java.awt.event.ActionEvent evt) {
