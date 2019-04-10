@@ -56,7 +56,7 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
 
     private void calculaAjustes(Rede rede, Ponto pOrigem) {
         this.ponto.resetAtributos(true);
-        CriteriosReligadorElo criterios = new CriteriosReligadorElo(this.religadorPai, this.ponto, rede, pOrigem);
+        CriteriosReligadorElo criterios = new CriteriosReligadorElo(this.religadorPai, this.ponto, rede);
         try {
             this.metricas = criterios.ajuste();
         } catch (AjusteImpossivelException ex) {

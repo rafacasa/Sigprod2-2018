@@ -27,11 +27,11 @@ public class CriteriosReligadorElo {
     private Rede rede;
     private Criterios_Rele_Elo criteriosReleElo;
 
-    public CriteriosReligadorElo(Religador religadorPai, Ponto pontoRede, Rede rede, Ponto pOrigem) {
+    public CriteriosReligadorElo(Religador religadorPai, Ponto pontoRede, Rede rede) {
         this.religadorPai = religadorPai;
         this.pontoRede = pontoRede;
         this.rede = rede;
-        this.criteriosReleElo = new Criterios_Rele_Elo(religadorPai, pontoRede, rede, pOrigem);
+        this.criteriosReleElo = new Criterios_Rele_Elo(religadorPai, pontoRede, rede);
     }
 
     public List<MetricasReligadorElo> ajuste() throws AjusteImpossivelException {

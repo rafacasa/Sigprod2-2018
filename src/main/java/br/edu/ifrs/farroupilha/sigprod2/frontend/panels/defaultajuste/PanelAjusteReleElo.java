@@ -56,7 +56,7 @@ public class PanelAjusteReleElo extends PanelAjuste {
 
     private void calculaAjustes(Rede rede, Ponto pOrigem) {
         this.ponto.resetAtributos(true);
-        Criterios_Rele_Elo criterios = new Criterios_Rele_Elo(this.relePai, this.ponto, rede, pOrigem);
+        Criterios_Rele_Elo criterios = new Criterios_Rele_Elo(this.relePai, this.ponto, rede);
         try {
             this.metricas = criterios.ajuste();
         } catch (AjusteImpossivelException ex) {

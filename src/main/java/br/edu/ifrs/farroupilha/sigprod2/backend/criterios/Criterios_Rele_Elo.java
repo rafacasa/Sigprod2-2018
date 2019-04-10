@@ -28,15 +28,13 @@ public class Criterios_Rele_Elo {
     private List<Elo> elosDisponiveis;
     private Ponto pontoRede;
     private Rede rede;
-    private Ponto pOrigem;
     private BigDecimal CTIFase;
     private BigDecimal CTINeutro;
 
-    public Criterios_Rele_Elo(Rele relePai, Ponto pontoRede, Rede rede, Ponto pOrigem) {
+    public Criterios_Rele_Elo(Rele relePai, Ponto pontoRede, Rede rede) {
         this.relePai = relePai;
         this.pontoRede = pontoRede;
         this.rede = rede;
-        this.pOrigem = pOrigem;
         this.elosDisponiveis = new ArrayList<>(this.rede.getElosDisponiveis());
         this.CTIFase = new BigDecimal("0.2");
         this.CTINeutro = new BigDecimal("0.2");
