@@ -5,12 +5,16 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossiv
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Rele_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.MetricasReleElo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvasElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -18,6 +22,8 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import net.miginfocom.swing.MigLayout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,6 +48,10 @@ public class PanelAjusteReleElo extends PanelAjuste {
     private JLabel labelSeletividade;
     private JPanel panelAlcance;
     private JPanel panelSeletividade;
+    private JTextField campoCorrente;
+    private JButton botaoMostrar;
+    private JButton botaoLimpar;
+    private List<String> nomePontos;
 
     public PanelAjusteReleElo(Ponto p, Rede rede, Ponto pOrigem) {
         LOGGER.trace("Cria Panel AjusteReleElo");
@@ -49,7 +59,6 @@ public class PanelAjusteReleElo extends PanelAjuste {
         this.ponto = p;
         this.calculaAjustes(rede, pOrigem);
         this.initComponents();
-        this.criaPanels();
         this.addItens();
         Main.setCoordenograma(this.geraCoordenograma());
     }
@@ -90,34 +99,25 @@ public class PanelAjusteReleElo extends PanelAjuste {
 
         this.nomeAlcance = new JLabel("Porcentagem de Alcançe: ");
         this.nomeSeletividade = new JLabel("Seletividade: ");
-    }
 
-    private void criaPanels() {
-        this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-
-        this.panelAlcance = new JPanel();
-        this.panelAlcance.setLayout(new BoxLayout(this.panelAlcance, BoxLayout.LINE_AXIS));
-
-        this.panelSeletividade = new JPanel();
-        this.panelSeletividade.setLayout(new BoxLayout(this.panelSeletividade, BoxLayout.LINE_AXIS));
+        this.campoCorrente = new JTextField(5);
+        this.botaoMostrar = new JButton("Exibir Tempo");
+        this.botaoMostrar.addActionListener(this::botaoMostrarActionPerformed);
+        this.botaoLimpar = new JButton("Limpar");
+        this.botaoLimpar.addActionListener(this::botaoLimparActionPerformed);
     }
 
     private void addItens() {
-        this.panelAlcance.add(this.nomeAlcance);
-        this.panelAlcance.add(Box.createHorizontalGlue());
-        this.panelAlcance.add(this.labelAlcance);
-
-        this.panelSeletividade.add(this.nomeSeletividade);
-        this.panelSeletividade.add(Box.createHorizontalGlue());
-        this.panelSeletividade.add(this.labelSeletividade);
-
-        this.add(this.lista);
-        this.add(Box.createRigidArea(new Dimension(0, 10)));
-        this.add(this.panelAlcance);
-        this.add(Box.createRigidArea(new Dimension(0, 10)));
-        this.add(this.panelSeletividade);
-        this.add(Box.createRigidArea(new Dimension(0, 10)));
-        this.add(this.botaoSelecionar);
+        this.setLayout(new MigLayout());
+        this.add(this.lista, "wrap");
+        this.add(this.nomeAlcance);
+        this.add(this.labelAlcance, "wrap");
+        this.add(this.nomeSeletividade);
+        this.add(this.labelSeletividade, "wrap");
+        this.add(this.botaoSelecionar, "wrap");
+        this.add(this.campoCorrente, "wrap");
+        this.add(this.botaoMostrar, "wrap");
+        this.add(this.botaoLimpar, "wrap");
     }
 
     private void botaoSelecionarActionPerformed(java.awt.event.ActionEvent evt) {
@@ -136,6 +136,38 @@ public class PanelAjusteReleElo extends PanelAjuste {
 
     public Elo getSelecionado() {
         return selecionado;
+    }
+
+    public void botaoMostrarActionPerformed(java.awt.event.ActionEvent evt) {
+        LOGGER.trace(evt.getActionCommand());
+        this.limparPontos();
+        String numeroDigitado = this.campoCorrente.getText();
+        try {
+            BigDecimal corrente = new BigDecimal(numeroDigitado);
+            BigDecimal tempoFaseLenta = this.relePai.getAjusteFase().calculaTempo(corrente);
+            BigDecimal tempoNeutroLenta = this.relePai.getAjusteNeutro().calculaTempo(corrente);
+            BigDecimal tempoMaximaElo = BigDecimal.valueOf(this.lista.getItemAt(this.lista.getSelectedIndex()).getElo().tempoDaCorrente(corrente.doubleValue(), CurvasElo.MAXIMA));
+            BigDecimal tempoMinimaElo = BigDecimal.valueOf(this.lista.getItemAt(this.lista.getSelectedIndex()).getElo().tempoDaCorrente(corrente.doubleValue(), CurvasElo.MINIMA));
+            this.nomePontos = this.coordenograma.add(corrente, Arrays.asList(tempoFaseLenta, tempoNeutroLenta, tempoMaximaElo, tempoMinimaElo), "pontoDigitado", Arrays.asList(Color.RED, Color.RED, Color.BLUE, Color.BLUE));
+        } catch (NumberFormatException e) {
+            Erro.entradaInvalida(this);
+            LOGGER.error("STRING INVÁLIDA" + e.getMessage());
+        } catch (NullPointerException e) {
+            LOGGER.error("COORDENOGRAMA NAO ABERTO" + e.getMessage());
+        }
+    }
+
+    public void botaoLimparActionPerformed(java.awt.event.ActionEvent evt) {
+        LOGGER.trace(evt.getActionCommand());
+        this.limparPontos();
+    }
+
+    public void limparPontos() {
+        if (this.nomePontos != null) {
+            this.nomePontos.forEach(s -> {
+                this.coordenograma.remove(s);
+            });
+        }
     }
 
     @Override
