@@ -113,7 +113,7 @@ public class PanelAjusteReleReligador extends PanelAjuste {
             BigDecimal tempoNeutroRapida = religador.getAjusteRapidaNeutro().calculaTempo(corrente);
             BigDecimal tempoFaseRele = this.relePai.getAjusteFase().calculaTempo(corrente);
             BigDecimal tempoNeutroRele = this.relePai.getAjusteNeutro().calculaTempo(corrente);
-            this.nomePontos = this.coordenograma.add(corrente, Arrays.asList(tempoFaseLenta, tempoNeutroLenta, tempoFaseRapida, tempoNeutroRapida, tempoFaseRele, tempoNeutroRele), "pontoDigitado", Arrays.asList(Color.BLUE, Color.RED, Color.BLACK, Color.ORANGE, Color.PINK, Color.BLACK));
+            this.nomePontos = this.coordenograma.add(corrente, Arrays.asList(tempoFaseLenta, tempoNeutroLenta, tempoFaseRapida, tempoNeutroRapida, tempoFaseRele, tempoNeutroRele), "pontoDigitado", Arrays.asList(Color.RED, Color.RED, Color.RED, Color.RED, Color.BLACK, Color.BLACK));
         } catch (NumberFormatException e) {
             Erro.entradaInvalida(this);
             LOGGER.error("STRING INVÁLIDA" + e.getMessage());
@@ -138,8 +138,8 @@ public class PanelAjusteReleReligador extends PanelAjuste {
     @Override
     public final Coordenograma geraCoordenograma() {
         this.coordenograma = new Coordenograma("Religador");
-        this.coordenograma.add(this.religador, Color.BLUE, Color.RED, Color.DARK_GRAY, Color.ORANGE);
-        this.coordenograma.add(this.relePai, Color.PINK, Color.BLACK);
+        this.coordenograma.add(this.religador, Color.RED, Color.RED, Color.RED, Color.RED);
+        this.coordenograma.add(this.relePai, Color.BLACK, Color.BLACK);
         return this.coordenograma;
     }
 
