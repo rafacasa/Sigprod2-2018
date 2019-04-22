@@ -47,9 +47,12 @@ public class Criterios_Rele_Elo {
         this.verificaCorrenteCarga();
         this.verificaIInrush();
         List<BigDecimal> alcances = this.calculaAlcances();
-        List<Boolean> seletividades = this.calculaSeletividades();
+        //List<Boolean> seletividades = this.calculaSeletividades();
+        List<Boolean> seletividadesNeutro = this.calculaSeletividadesNeutro();
+        List<Boolean> seletividadesFasePonto = this.calculaSeletividadesFasePonto();
+        List<Boolean> seletividadesFaseAbaixo = this.calculaSeletividadesFaseAbaixo();
         for (int i = 0; i < this.elosDisponiveis.size(); i++) {
-            metricas.add(new MetricasReleElo(alcances.get(i), seletividades.get(i), this.elosDisponiveis.get(i)));
+            metricas.add(new MetricasReleElo(alcances.get(i), seletividadesNeutro.get(i), seletividadesFasePonto.get(i), seletividadesFaseAbaixo.get(i), this.elosDisponiveis.get(i)));
         }
         return metricas;
     }
@@ -139,6 +142,30 @@ public class Criterios_Rele_Elo {
         return seletividade;
     }
 
+    private List<Boolean> calculaSeletividadesNeutro() {
+        List<Boolean> seletividade = new ArrayList<>();
+        this.elosDisponiveis.forEach(elo -> {
+            seletividade.add(this.calculaSeletividade(elo, false));
+        });
+        return seletividade;
+    }
+
+    private List<Boolean> calculaSeletividadesFasePonto() {
+        List<Boolean> seletividade = new ArrayList<>();
+        this.elosDisponiveis.forEach(elo -> {
+            seletividade.add(this.calculaSeletividadeFasePonto(elo, true));
+        });
+        return seletividade;
+    }
+
+    private List<Boolean> calculaSeletividadesFaseAbaixo() {
+        List<Boolean> seletividade = new ArrayList<>();
+        this.elosDisponiveis.forEach(elo -> {
+            seletividade.add(this.calculaSeletividadeFaseAbaixo(elo, true));
+        });
+        return seletividade;
+    }
+
     private boolean calculaSeletividade(Elo elo) {
         return this.calculaSeletividade(elo, true) && this.calculaSeletividade(elo, false);
     }
@@ -156,6 +183,28 @@ public class Criterios_Rele_Elo {
         BigDecimal cti = this.getCTI(fase);
         LOGGER.debug("calculaSeletividade - diff1 = " + diff1.toString() + " diff2 = " + diff2);
         return diff1.compareTo(cti) >= 0 && diff2.compareTo(cti) >= 0;
+    }
+
+    private boolean calculaSeletividadeFasePonto(Elo elo, boolean original) {
+        AjusteRele ajusteRele = this.getAjusteReleSeletividade(true);
+        BigDecimal i2 = original ? this.getI2Seletividade(true) : BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pontoRede, Corrente.ICC2F));
+        BigDecimal tempoRele2 = ajusteRele.calculaTempo(i2);
+        BigDecimal tempoElo2 = BigDecimal.valueOf(elo.tempoDaCorrente(i2.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
+        BigDecimal diff2 = tempoRele2.subtract(tempoElo2);
+        BigDecimal cti = this.getCTI(true);
+        LOGGER.debug("calculaSeletividade - diff2 = " + diff2);
+        return diff2.compareTo(cti) >= 0;
+    }
+
+    private boolean calculaSeletividadeFaseAbaixo(Elo elo, boolean original) {
+        AjusteRele ajusteRele = this.getAjusteReleSeletividade(true);
+        BigDecimal i1 = original ? this.getI1Seletividade(true) : BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pontoRede, Corrente.ICC2F));
+        BigDecimal tempoRele1 = ajusteRele.calculaTempo(i1);
+        BigDecimal tempoElo1 = BigDecimal.valueOf(elo.tempoDaCorrente(i1.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
+        BigDecimal diff1 = tempoRele1.subtract(tempoElo1);
+        BigDecimal cti = this.getCTI(true);
+        LOGGER.debug("calculaSeletividade - diff1 = " + diff1.toString());
+        return diff1.compareTo(cti) >= 0;
     }
 
     private BigDecimal getCTI(boolean fase) {
