@@ -9,6 +9,8 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.CorrenteForaDoAlcanceException;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.TempoForaDoAlcanceException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
@@ -100,10 +102,15 @@ public class Criterios_Rele_Elo {
         Iterator<Elo> it = this.elosDisponiveis.iterator();
 
         while (it.hasNext()) {
-            Elo elo = it.next();
-            iInrushElo = BigDecimal.valueOf(elo.correnteDoTempo(0.1, CurvasElo.MINIMA)); //PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
-            if (iInrushElo.compareTo(iInrush) <= 0) {
+            try {
+                Elo elo = it.next();
+                iInrushElo = BigDecimal.valueOf(elo.correnteDoTempo(0.1, CurvasElo.MINIMA)); //PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
+                if (iInrushElo.compareTo(iInrush) <= 0) {
+                    it.remove();
+                }
+            } catch (TempoForaDoAlcanceException ex) {
                 it.remove();
+                LOGGER.error("Elo nao tem alcance para o tempo 0.1 (IINRUSH)" + ex.getLocalizedMessage());
             }
         }
 
@@ -120,9 +127,13 @@ public class Criterios_Rele_Elo {
         BigDecimal iFTMin2Camadas = BigDecimal.valueOf(rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
 
         for (int i = 0; i < this.elosDisponiveis.size(); i++) {
-            elo = this.elosDisponiveis.get(i);
-            i300 = BigDecimal.valueOf(elo.correnteDoTempo(300, CurvasElo.MAXIMA));
-            alcances.add(this.calculaAlcance(iFTMinProximo, iFTMin2Camadas, i300));
+            try {
+                elo = this.elosDisponiveis.get(i);
+                i300 = BigDecimal.valueOf(elo.correnteDoTempo(300, CurvasElo.MAXIMA));
+                alcances.add(this.calculaAlcance(iFTMinProximo, iFTMin2Camadas, i300));
+            } catch (TempoForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE PARA O TEMPO 300 (ALCANCES)" + ex.getLocalizedMessage());
+            }
         }
         return alcances;
     }
@@ -171,40 +182,55 @@ public class Criterios_Rele_Elo {
     }
 
     private boolean calculaSeletividade(Elo elo, boolean fase) {
-        AjusteRele ajusteRele = this.getAjusteReleSeletividade(fase);
-        BigDecimal i2 = this.getI2Seletividade(fase);
-        BigDecimal i1 = this.getI1Seletividade(fase);
-        BigDecimal tempoRele1 = ajusteRele.calculaTempo(i1);
-        BigDecimal tempoRele2 = ajusteRele.calculaTempo(i2);
-        BigDecimal tempoElo1 = BigDecimal.valueOf(elo.tempoDaCorrente(i1.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
-        BigDecimal tempoElo2 = BigDecimal.valueOf(elo.tempoDaCorrente(i2.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
-        BigDecimal diff1 = tempoRele1.subtract(tempoElo1);
-        BigDecimal diff2 = tempoRele2.subtract(tempoElo2);
-        BigDecimal cti = this.getCTI(fase);
-        LOGGER.debug("calculaSeletividade - diff1 = " + diff1.toString() + " diff2 = " + diff2);
-        return diff1.compareTo(cti) >= 0 && diff2.compareTo(cti) >= 0;
+        try {
+            AjusteRele ajusteRele = this.getAjusteReleSeletividade(fase);
+            BigDecimal i2 = this.getI2Seletividade(fase);
+            BigDecimal i1 = this.getI1Seletividade(fase);
+            BigDecimal tempoRele1 = ajusteRele.calculaTempo(i1);
+            BigDecimal tempoRele2 = ajusteRele.calculaTempo(i2);
+            BigDecimal tempoElo1 = BigDecimal.valueOf(elo.tempoDaCorrente(i1.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
+            BigDecimal tempoElo2 = BigDecimal.valueOf(elo.tempoDaCorrente(i2.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
+            BigDecimal diff1 = tempoRele1.subtract(tempoElo1);
+            BigDecimal diff2 = tempoRele2.subtract(tempoElo2);
+            BigDecimal cti = this.getCTI(fase);
+            LOGGER.debug("calculaSeletividade - diff1 = " + diff1.toString() + " diff2 = " + diff2);
+            return diff1.compareTo(cti) >= 0 && diff2.compareTo(cti) >= 0;
+        } catch (CorrenteForaDoAlcanceException ex) {
+            LOGGER.error("ELO NAO TEM ALCANCE PARA AS CORRENTES NECESSARIAS (SELETIVIDADE)" + ex.getLocalizedMessage());
+            return false;
+        }
     }
 
     private boolean calculaSeletividadeFasePonto(Elo elo, boolean original) {
-        AjusteRele ajusteRele = this.getAjusteReleSeletividade(true);
-        BigDecimal i2 = original ? this.getI2Seletividade(true) : BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pontoRede, Corrente.ICC2F));
-        BigDecimal tempoRele2 = ajusteRele.calculaTempo(i2);
-        BigDecimal tempoElo2 = BigDecimal.valueOf(elo.tempoDaCorrente(i2.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
-        BigDecimal diff2 = tempoRele2.subtract(tempoElo2);
-        BigDecimal cti = this.getCTI(true);
-        LOGGER.debug("calculaSeletividade - diff2 = " + diff2);
-        return diff2.compareTo(cti) >= 0;
+        try {
+            AjusteRele ajusteRele = this.getAjusteReleSeletividade(true);
+            BigDecimal i2 = original ? this.getI2Seletividade(true) : BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pontoRede, Corrente.ICC2F));
+            BigDecimal tempoRele2 = ajusteRele.calculaTempo(i2);
+            BigDecimal tempoElo2 = BigDecimal.valueOf(elo.tempoDaCorrente(i2.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
+            BigDecimal diff2 = tempoRele2.subtract(tempoElo2);
+            BigDecimal cti = this.getCTI(true);
+            LOGGER.debug("calculaSeletividade - diff2 = " + diff2);
+            return diff2.compareTo(cti) >= 0;
+        } catch (CorrenteForaDoAlcanceException ex) {
+            LOGGER.error("ELO NAO TEM ALCANCE PARA A CORRENTE NECESSARIA (SELETIVIDADEFASEPONTO)" + ex.getLocalizedMessage());
+            return false;
+        }
     }
 
     private boolean calculaSeletividadeFaseAbaixo(Elo elo, boolean original) {
-        AjusteRele ajusteRele = this.getAjusteReleSeletividade(true);
-        BigDecimal i1 = original ? this.getI1Seletividade(true) : BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pontoRede, Corrente.ICC2F));
-        BigDecimal tempoRele1 = ajusteRele.calculaTempo(i1);
-        BigDecimal tempoElo1 = BigDecimal.valueOf(elo.tempoDaCorrente(i1.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
-        BigDecimal diff1 = tempoRele1.subtract(tempoElo1);
-        BigDecimal cti = this.getCTI(true);
-        LOGGER.debug("calculaSeletividade - diff1 = " + diff1.toString());
-        return diff1.compareTo(cti) >= 0;
+        try {
+            AjusteRele ajusteRele = this.getAjusteReleSeletividade(true);
+            BigDecimal i1 = original ? this.getI1Seletividade(true) : BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pontoRede, Corrente.ICC2F));
+            BigDecimal tempoRele1 = ajusteRele.calculaTempo(i1);
+            BigDecimal tempoElo1 = BigDecimal.valueOf(elo.tempoDaCorrente(i1.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
+            BigDecimal diff1 = tempoRele1.subtract(tempoElo1);
+            BigDecimal cti = this.getCTI(true);
+            LOGGER.debug("calculaSeletividade - diff1 = " + diff1.toString());
+            return diff1.compareTo(cti) >= 0;
+        } catch (CorrenteForaDoAlcanceException ex) {
+            LOGGER.error("ELO NAO TEM ALCANCE PARA A CORRENTE NECESSARIA (SELETIVIDADEFASEABAIXO)" + ex.getLocalizedMessage());
+            return false;
+        }
     }
 
     private BigDecimal getCTI(boolean fase) {

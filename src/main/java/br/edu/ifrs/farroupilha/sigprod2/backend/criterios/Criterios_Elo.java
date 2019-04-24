@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.edu.ifrs.farroupilha.sigprod2.backend.criterios;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
@@ -11,13 +6,18 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvasElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.CorrenteForaDoAlcanceException;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.TempoForaDoAlcanceException;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
 
 /**
  *
- * @author Rafael Casa
+ * @author Rafael Luiz Casa
  */
 public class Criterios_Elo {
+
+    private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger(Criterios_Elo.class.getName());
 
     public static Elo criterio_elo(List<Elo> elos, Ponto pontoRede, Rede rede) throws AjusteImpossivelException {
 
@@ -33,18 +33,23 @@ public class Criterios_Elo {
         int limite = elos.size() - numeroDeElosAbaixo;
 
         for (int contador = 0; contador < limite; contador++) {
-            elo = elos.get(contador);
-            I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
-            Ielo = elo.getCorrenteNominal();
-            IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
-            IFTmin = rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN);
-            IcargaMax = pontoRede.getIcarga();
-            Iinrush = 0;
+            try {
+                elo = elos.get(contador);
+                I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
+                Ielo = elo.getCorrenteNominal();
+                IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
+                IFTmin = rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN);
+                IcargaMax = pontoRede.getIcarga();
+                Iinrush = 0;
 
-            if (IFTmin > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
-                dadosAjuste = "<html>IFTmin = " + IFTmin + "<br>I300 = " + I300 + "<br>IcargaMax = " + IcargaMax + "<br>IinrushMax = " + IinrushMax + "<br>Iinrush = " + Iinrush + "<br>Elos Abaixo = " + numeroDeElosAbaixo + "</html>";
-                elo.setDadosAjuste(dadosAjuste);
-                return elo;
+                if (IFTmin > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
+                    dadosAjuste = "<html>IFTmin = " + IFTmin + "<br>I300 = " + I300 + "<br>IcargaMax = " + IcargaMax + "<br>IinrushMax = " + IinrushMax + "<br>Iinrush = " + Iinrush + "<br>Elos Abaixo = " + numeroDeElosAbaixo + "</html>";
+                    elo.setDadosAjuste(dadosAjuste);
+                    return elo;
+                }
+            } catch (TempoForaDoAlcanceException ex) {
+                LOGGER.error("Elo nao tem alcance " + ex.getLocalizedMessage());
+                throw new AjusteImpossivelException();
             }
         }
         throw new AjusteImpossivelException();
@@ -76,62 +81,77 @@ public class Criterios_Elo {
 
         // ***** PRIMEIRO TESTE: CORRENTE FTmin de ALCANCE ***** //
         for (int contador = 0; contador < elos.size(); contador++) {
-            elo = elos.get(contador);
+            try {
+                elo = elos.get(contador);
 
-            Ielo = elo.getCorrenteNominal();
-            IcargaMax = pontoRede.getIcarga();
-            IccMax = pontoRede.getMaxICC(1);
-            Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
-            Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
-            IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
-            I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
-            IFTmin = rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN);
-            Iinrush = 0;
+                Ielo = elo.getCorrenteNominal();
+                IcargaMax = pontoRede.getIcarga();
+                IccMax = pontoRede.getMaxICC(1);
+                Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
+                Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
+                IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
+                I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
+                IFTmin = rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN);
+                Iinrush = 0;
 
-            if (Tprotetor < fatorMult * Tprotegido && IFTmin > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
-                dadosAjuste = "<html>Elo escolhido utilizando a corrente de FTmin de alcance<br>IFTmin = " + IFTmin + "<br>I300 = " + I300 + "<br>IcargaMax = " + IcargaMax + "<br>IinrushMax = " + IinrushMax + "<br>Iinrush = " + Iinrush + "<br>Tprotetor = " + Tprotetor + "<br>Tprotegido = " + Tprotegido + "<br>Elos Abaixo = " + numeroDeElosAbaixo + "</html>";
-                elo.setDadosAjuste(dadosAjuste);
-                return elo;
+                if (Tprotetor < fatorMult * Tprotegido && IFTmin > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
+                    dadosAjuste = "<html>Elo escolhido utilizando a corrente de FTmin de alcance<br>IFTmin = " + IFTmin + "<br>I300 = " + I300 + "<br>IcargaMax = " + IcargaMax + "<br>IinrushMax = " + IinrushMax + "<br>Iinrush = " + Iinrush + "<br>Tprotetor = " + Tprotetor + "<br>Tprotegido = " + Tprotegido + "<br>Elos Abaixo = " + numeroDeElosAbaixo + "</html>";
+                    elo.setDadosAjuste(dadosAjuste);
+                    return elo;
+                }
+            } catch (CorrenteForaDoAlcanceException | TempoForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE " + ex.getLocalizedMessage());
+                throw new AjusteImpossivelException();
             }
         }
 
         // ***** SEGUNDO TESTE: CORRENTE FTmin de SELETIVIDADE ***** //
         for (int contador = 0; contador < elos.size(); contador++) {
-            elo = elos.get(contador);
-            Ielo = elo.getCorrenteNominal();
-            IcargaMax = pontoRede.getIcarga();
-            IccMax = pontoRede.getMaxICC(1);
-            Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
-            Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
-            IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
-            I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
-            iFTminSel = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
-            Iinrush = 0;
+            try {
+                elo = elos.get(contador);
+                Ielo = elo.getCorrenteNominal();
+                IcargaMax = pontoRede.getIcarga();
+                IccMax = pontoRede.getMaxICC(1);
+                Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
+                Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
+                IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
+                I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
+                iFTminSel = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
+                Iinrush = 0;
 
-            if (Tprotetor < fatorMult * Tprotegido && iFTminSel > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
-                dadosAjuste = "<html>Elo escolhido utilizando a corrente FTmin de seletividade<br>IcargaMax = " + IcargaMax + "<br>Tprotetor = " + Tprotetor + "<br>Tprotegido = " + Tprotegido + "<br>IinrushMax = " + IinrushMax + "<br>I300 = " + I300 + "<br>iFTminSel = " + iFTminSel + "<br>Iinrush = " + Iinrush + "<br>Elos Abaixo = " + numeroDeElosAbaixo + "</html>";
-                elo.setDadosAjuste(dadosAjuste);
-                return elo;
+                if (Tprotetor < fatorMult * Tprotegido && iFTminSel > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
+                    dadosAjuste = "<html>Elo escolhido utilizando a corrente FTmin de seletividade<br>IcargaMax = " + IcargaMax + "<br>Tprotetor = " + Tprotetor + "<br>Tprotegido = " + Tprotegido + "<br>IinrushMax = " + IinrushMax + "<br>I300 = " + I300 + "<br>iFTminSel = " + iFTminSel + "<br>Iinrush = " + Iinrush + "<br>Elos Abaixo = " + numeroDeElosAbaixo + "</html>";
+                    elo.setDadosAjuste(dadosAjuste);
+                    return elo;
+                }
+            } catch (CorrenteForaDoAlcanceException | TempoForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE " + ex.getLocalizedMessage());
+                throw new AjusteImpossivelException();
             }
         }
 
         // ***** TERCEIRO TESTE: CORRENTE trifásica de ALCANCE E FTMAX PARA SELETIVIDADE ***** //
         for (int contador = 0; contador < elos.size(); contador++) {
-            elo = elos.get(contador);
-            Ielo = elo.getCorrenteNominal();
-            IccMax = pontoRede.getMaxICC(2);
-            IcargaMax = pontoRede.getIcarga();
-            Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
-            Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
-            IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
-            I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
-            IFTmin = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
-            Iinrush = 0;
+            try {
+                elo = elos.get(contador);
+                Ielo = elo.getCorrenteNominal();
+                IccMax = pontoRede.getMaxICC(2);
+                IcargaMax = pontoRede.getIcarga();
+                Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
+                Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
+                IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
+                I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
+                IFTmin = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
+                Iinrush = 0;
 
-            if (Tprotetor < fatorMult * Tprotegido && IFTmin > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
-                dadosAjuste = "<html>Elo escolhido utilizando FTmax para a seletividade<br>IcargaMax = " + IcargaMax + "<br>Tprotetor = " + Tprotetor + "<br>Tprotegido = " + Tprotegido + "<br>IinrushMax = " + IinrushMax + "<br>I300 = " + I300 + "<br>iFTmin = " + IFTmin + "<br>Iinrush = " + Iinrush + "<br>Elos Abaixo = " + numeroDeElosAbaixo + "</html>";
-                elo.setDadosAjuste(dadosAjuste);
-                return elo;
+                if (Tprotetor < fatorMult * Tprotegido && IFTmin > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
+                    dadosAjuste = "<html>Elo escolhido utilizando FTmax para a seletividade<br>IcargaMax = " + IcargaMax + "<br>Tprotetor = " + Tprotetor + "<br>Tprotegido = " + Tprotegido + "<br>IinrushMax = " + IinrushMax + "<br>I300 = " + I300 + "<br>iFTmin = " + IFTmin + "<br>Iinrush = " + Iinrush + "<br>Elos Abaixo = " + numeroDeElosAbaixo + "</html>";
+                    elo.setDadosAjuste(dadosAjuste);
+                    return elo;
+                }
+            } catch (CorrenteForaDoAlcanceException | TempoForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE " + ex.getLocalizedMessage());
+                throw new AjusteImpossivelException();
             }
         }
         throw new AjusteImpossivelException();
@@ -156,22 +176,27 @@ public class Criterios_Elo {
         Elo elo;
 
         for (int contador = 0; contador < elos.size(); contador++) {
-            elo = elos.get(contador);
+            try {
+                elo = elos.get(contador);
 
-            Ielo = elo.getCorrenteNominal();
-            IcargaMax = pontoRede.getIcarga();
-            IccMax = pontoRede.getMaxICC(1);
-            Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
-            Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA);
-            IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
-            I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
-            IFTmin = rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN);
-            Iinrush = 0;
+                Ielo = elo.getCorrenteNominal();
+                IcargaMax = pontoRede.getIcarga();
+                IccMax = pontoRede.getMaxICC(1);
+                Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
+                Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA);
+                IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
+                I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
+                IFTmin = rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN);
+                Iinrush = 0;
 
-            if (Tprotetor < fatorMult * Tprotegido && IFTmin > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
-                dadosAjuste = "<html>Elo escolhido utilizando método 1<br>IFTmin = " + IFTmin + "<br>I300 = " + I300 + "<br>IcargaMax = " + IcargaMax + "<br>IinrushMax = " + IinrushMax + "<br>Iinrush = " + Iinrush + "<br>Tprotetor = " + Tprotetor + "<br>Tprotegido = " + Tprotegido + "</html>";
-                elo.setDadosAjuste(dadosAjuste);
-                return elo;
+                if (Tprotetor < fatorMult * Tprotegido && IFTmin > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
+                    dadosAjuste = "<html>Elo escolhido utilizando método 1<br>IFTmin = " + IFTmin + "<br>I300 = " + I300 + "<br>IcargaMax = " + IcargaMax + "<br>IinrushMax = " + IinrushMax + "<br>Iinrush = " + Iinrush + "<br>Tprotetor = " + Tprotetor + "<br>Tprotegido = " + Tprotegido + "</html>";
+                    elo.setDadosAjuste(dadosAjuste);
+                    return elo;
+                }
+            } catch (CorrenteForaDoAlcanceException | TempoForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE " + ex.getLocalizedMessage());
+                throw new AjusteImpossivelException();
             }
         }
         throw new AjusteImpossivelException();
@@ -192,21 +217,26 @@ public class Criterios_Elo {
         Elo elo;
 
         for (int contador = 0; contador < elos.size(); contador++) {
-            elo = elos.get(contador);
-            Ielo = elo.getCorrenteNominal();
-            IcargaMax = pontoRede.getIcarga();
-            IccMax = pontoRede.getMaxICC(1);
-            Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
-            Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
-            IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
-            I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
-            iFTminSel = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
-            Iinrush = 0;
+            try {
+                elo = elos.get(contador);
+                Ielo = elo.getCorrenteNominal();
+                IcargaMax = pontoRede.getIcarga();
+                IccMax = pontoRede.getMaxICC(1);
+                Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
+                Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
+                IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
+                I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
+                iFTminSel = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
+                Iinrush = 0;
 
-            if (Tprotetor < fatorMult * Tprotegido && iFTminSel > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
-                dadosAjuste = "<html>Elo escolhido utilizando a corrente FTmin de seletividade<br>IcargaMax = " + IcargaMax + "<br>Tprotetor = " + Tprotetor + "<br>Tprotegido = " + Tprotegido + "<br>IinrushMax = " + IinrushMax + "<br>I300 = " + I300 + "<br>iFTminSel = " + iFTminSel + "<br>Iinrush = " + Iinrush + "</html>";
-                elo.setDadosAjuste(dadosAjuste);
-                return elo;
+                if (Tprotetor < fatorMult * Tprotegido && iFTminSel > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
+                    dadosAjuste = "<html>Elo escolhido utilizando a corrente FTmin de seletividade<br>IcargaMax = " + IcargaMax + "<br>Tprotetor = " + Tprotetor + "<br>Tprotegido = " + Tprotegido + "<br>IinrushMax = " + IinrushMax + "<br>I300 = " + I300 + "<br>iFTminSel = " + iFTminSel + "<br>Iinrush = " + Iinrush + "</html>";
+                    elo.setDadosAjuste(dadosAjuste);
+                    return elo;
+                }
+            } catch (CorrenteForaDoAlcanceException | TempoForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE " + ex.getLocalizedMessage());
+                throw new AjusteImpossivelException();
             }
         }
         throw new AjusteImpossivelException();
@@ -227,21 +257,26 @@ public class Criterios_Elo {
         Elo elo;
 
         for (int contador = 0; contador < elos.size(); contador++) {
-            elo = elos.get(contador);
-            Ielo = elo.getCorrenteNominal();
-            IccMax = pontoRede.getMaxICC(2);
-            IcargaMax = pontoRede.getIcarga();
-            Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
-            Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
-            IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
-            I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
-            IFTmin = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
-            Iinrush = 0;
+            try {
+                elo = elos.get(contador);
+                Ielo = elo.getCorrenteNominal();
+                IccMax = pontoRede.getMaxICC(2);
+                IcargaMax = pontoRede.getIcarga();
+                Tprotetor = elo.tempoDaCorrente(IccMax, CurvasElo.MAXIMA);
+                Tprotegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(IccMax, CurvasElo.MINIMA); //CONFERIR SE EH CURVA MINIMA
+                IinrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
+                I300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
+                IFTmin = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
+                Iinrush = 0;
 
-            if (Tprotetor < fatorMult * Tprotegido && IFTmin > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
-                dadosAjuste = "<html>Elo escolhido utilizando FTmax para a seletividade<br>IcargaMax = " + IcargaMax + "<br>Tprotetor = " + Tprotetor + "<br>Tprotegido = " + Tprotegido + "<br>IinrushMax = " + IinrushMax + "<br>I300 = " + I300 + "<br>iFTmin = " + IFTmin + "<br>Iinrush = " + Iinrush + "</html>";
-                elo.setDadosAjuste(dadosAjuste);
-                return elo;
+                if (Tprotetor < fatorMult * Tprotegido && IFTmin > I300 && Ielo > IcargaMax && IinrushMax > Iinrush) {
+                    dadosAjuste = "<html>Elo escolhido utilizando FTmax para a seletividade<br>IcargaMax = " + IcargaMax + "<br>Tprotetor = " + Tprotetor + "<br>Tprotegido = " + Tprotegido + "<br>IinrushMax = " + IinrushMax + "<br>I300 = " + I300 + "<br>iFTmin = " + IFTmin + "<br>Iinrush = " + Iinrush + "</html>";
+                    elo.setDadosAjuste(dadosAjuste);
+                    return elo;
+                }
+            } catch (CorrenteForaDoAlcanceException | TempoForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE " + ex.getLocalizedMessage());
+                throw new AjusteImpossivelException();
             }
         }
         throw new AjusteImpossivelException();

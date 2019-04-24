@@ -10,6 +10,7 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.CorrenteForaDoAlcanceException;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -163,6 +164,8 @@ public class PanelAjusteReleElo extends PanelAjuste {
             LOGGER.error("STRING INVÁLIDA" + e.getMessage());
         } catch (NullPointerException e) {
             LOGGER.error("COORDENOGRAMA NAO ABERTO" + e.getMessage());
+        } catch (CorrenteForaDoAlcanceException ex) {
+            LOGGER.error("ELO NAO TEM ALCANCE PARA CORRENTE DIGITADA " + ex.getLocalizedMessage());
         }
     }
 

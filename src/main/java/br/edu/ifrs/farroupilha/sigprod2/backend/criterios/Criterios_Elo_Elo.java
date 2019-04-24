@@ -10,9 +10,17 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvasElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.CorrenteForaDoAlcanceException;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.TempoForaDoAlcanceException;
+import org.apache.logging.log4j.LogManager;
 
+/**
+ *
+ * @author Rafael Luiz Casa
+ */
 public class Criterios_Elo_Elo {
 
+    private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger(Criterios_Elo_Elo.class.getName());
     private List<Elo> elos;
     private Ponto pontoRede;
     private Rede rede;
@@ -66,10 +74,15 @@ public class Criterios_Elo_Elo {
         Iterator<Elo> it = this.elos.iterator();
 
         while (it.hasNext()) {
-            Elo elo = it.next();
-            iElo = elo.getCorrenteNominal();
-            iInrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
-            if (iElo <= iCargaMax || iInrushMax <= iInrush) {
+            try {
+                Elo elo = it.next();
+                iElo = elo.getCorrenteNominal();
+                iInrushMax = elo.correnteDoTempo(0.1, CurvasElo.MINIMA);
+                if (iElo <= iCargaMax || iInrushMax <= iInrush) {
+                    it.remove();
+                }
+            } catch (TempoForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE PARA O TEMPO DE 0.1");
                 it.remove();
             }
         }
@@ -92,23 +105,33 @@ public class Criterios_Elo_Elo {
         double tProtetor, tProtetorProtegido1;
         double fatorMult = 0.75;
         double iCCMax = pontoRede.getMaxICC(1);
-        double tProtegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(iCCMax, CurvasElo.MINIMA);
-        tProtegido *= fatorMult;
+        double tProtegido;
+        try {
+            tProtegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(iCCMax, CurvasElo.MINIMA);
+            tProtegido *= fatorMult;
+        } catch (CorrenteForaDoAlcanceException ex) {
+            LOGGER.error("ELO NAO TEM ALCANCE " + ex.getLocalizedMessage());
+            throw new RuntimeException("ELO NAO TEM ALCANCE " + ex.getLocalizedMessage());
+        }
 
         double i300, iFTMinI300;
         double iFTMin = rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN);
         for (int i = 0; i < this.elos.size(); i++) {
-            elo = this.elos.get(i);
+            try {
+                elo = this.elos.get(i);
 
-            tProtetor = elo.tempoDaCorrente(iCCMax, CurvasElo.MAXIMA);
-            tProtetorProtegido1 = (tProtegido - tProtetor) / tProtegido;
+                tProtetor = elo.tempoDaCorrente(iCCMax, CurvasElo.MAXIMA);
+                tProtetorProtegido1 = (tProtegido - tProtetor) / tProtegido;
 
-            i300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
-            iFTMinI300 = (iFTMin - i300) / iFTMin;
+                i300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
+                iFTMinI300 = (iFTMin - i300) / iFTMin;
 
-            metrica = this.metricas.get(i);
-            metrica.settProtetorProtegido1(tProtetorProtegido1);
-            metrica.setiFTMinI300(iFTMinI300);
+                metrica = this.metricas.get(i);
+                metrica.settProtetorProtegido1(tProtetorProtegido1);
+                metrica.setiFTMinI300(iFTMinI300);
+            } catch (CorrenteForaDoAlcanceException | TempoForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE " + ex.getLocalizedMessage());
+            }
         }
     }
 
@@ -120,13 +143,17 @@ public class Criterios_Elo_Elo {
         double iFTMinSel = rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN);
 
         for (int i = 0; i < this.elos.size(); i++) {
-            elo = this.elos.get(i);
+            try {
+                elo = this.elos.get(i);
 
-            i300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
-            iFTMinSelI300 = (iFTMinSel - i300) / iFTMinSel;
+                i300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
+                iFTMinSelI300 = (iFTMinSel - i300) / iFTMinSel;
 
-            metrica = this.metricas.get(i);
-            metrica.setiFTMinSelI300(iFTMinSelI300);
+                metrica = this.metricas.get(i);
+                metrica.setiFTMinSelI300(iFTMinSelI300);
+            } catch (TempoForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE" + ex.getLocalizedMessage());
+            }
         }
     }
 
@@ -137,17 +164,27 @@ public class Criterios_Elo_Elo {
         double tProtetor, tProtetorProtegido2;
         double fatorMult = 0.75;
         double iCCMax = pontoRede.getMaxICC(2);
-        double tProtegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(iCCMax, CurvasElo.MINIMA);
-        tProtegido *= fatorMult;
+        double tProtegido;
+        try {
+            tProtegido = ((Elo) pontoOrigem.getEquipamentoInstalado()).tempoDaCorrente(iCCMax, CurvasElo.MINIMA);
+            tProtegido *= fatorMult;
+        } catch (CorrenteForaDoAlcanceException ex) {
+            LOGGER.error("Elo nao tem alcance " + ex.getLocalizedMessage());
+            throw new RuntimeException("Elo nao tem alcance " + ex.getLocalizedMessage());
+        }
 
         for (int i = 0; i < this.elos.size(); i++) {
-            elo = this.elos.get(i);
+            try {
+                elo = this.elos.get(i);
 
-            tProtetor = elo.tempoDaCorrente(iCCMax, CurvasElo.MAXIMA);
-            tProtetorProtegido2 = (tProtegido - tProtetor) / tProtegido;
+                tProtetor = elo.tempoDaCorrente(iCCMax, CurvasElo.MAXIMA);
+                tProtetorProtegido2 = (tProtegido - tProtetor) / tProtegido;
 
-            metrica = this.metricas.get(i);
-            metrica.settProtetorProtegido2(tProtetorProtegido2);
+                metrica = this.metricas.get(i);
+                metrica.settProtetorProtegido2(tProtetorProtegido2);
+            } catch (CorrenteForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE " + ex.getLocalizedMessage());
+            }
         }
     }
 
@@ -160,12 +197,16 @@ public class Criterios_Elo_Elo {
         double iFTMin2Camadas = rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN);
 
         for (int i = 0; i < this.elos.size(); i++) {
-            elo = this.elos.get(i);
-            i300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
-            porcentagem = this.calculaPorcentagemCobertura(iFTMinProximo, iFTMin2Camadas, i300);
+            try {
+                elo = this.elos.get(i);
+                i300 = elo.correnteDoTempo(300, CurvasElo.MAXIMA);
+                porcentagem = this.calculaPorcentagemCobertura(iFTMinProximo, iFTMin2Camadas, i300);
 
-            metrica = this.metricas.get(i);
-            metrica.setPorcentagemProtegida(porcentagem);
+                metrica = this.metricas.get(i);
+                metrica.setPorcentagemProtegida(porcentagem);
+            } catch (TempoForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE " + ex.getLocalizedMessage());
+            }
         }
     }
 

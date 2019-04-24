@@ -9,6 +9,7 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Religador;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.CorrenteForaDoAlcanceException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,16 +68,20 @@ public class CriteriosReligadorElo {
         LOGGER.debug("tempoCorrenteMin = " + tempoCorrenteMin);
 
         ajustes.forEach(ajuste -> {
-            //if (ajuste.isSeletividade()) {
-            double tempoEloMaxd = ajuste.getElo().tempoDaCorrente(correnteMax.doubleValue(), CurvasElo.MINIMA);
-            double tempoEloMind = ajuste.getElo().tempoDaCorrente(correnteMin.doubleValue(), CurvasElo.MINIMA);
-            LOGGER.debug("ELO " + ajuste.getElo().getCorrenteNominal());
-            LOGGER.debug("tempoEloMin = " + tempoEloMind);
-            LOGGER.debug("tempoEloMax = " + tempoEloMaxd);
-            BigDecimal tempoEloMax = BigDecimal.valueOf(tempoEloMaxd);
-            BigDecimal tempoEloMin = BigDecimal.valueOf(tempoEloMind);
-            ajuste.setSeletividadeRapida((tempoCorrenteMax.compareTo(tempoEloMax) < 0) && (tempoCorrenteMin.compareTo(tempoEloMin) < 0));
-            //}
+            try {
+                //if (ajuste.isSeletividade()) {
+                double tempoEloMaxd = ajuste.getElo().tempoDaCorrente(correnteMax.doubleValue(), CurvasElo.MINIMA);
+                double tempoEloMind = ajuste.getElo().tempoDaCorrente(correnteMin.doubleValue(), CurvasElo.MINIMA);
+                LOGGER.debug("ELO " + ajuste.getElo().getCorrenteNominal());
+                LOGGER.debug("tempoEloMin = " + tempoEloMind);
+                LOGGER.debug("tempoEloMax = " + tempoEloMaxd);
+                BigDecimal tempoEloMax = BigDecimal.valueOf(tempoEloMaxd);
+                BigDecimal tempoEloMin = BigDecimal.valueOf(tempoEloMind);
+                ajuste.setSeletividadeRapida((tempoCorrenteMax.compareTo(tempoEloMax) < 0) && (tempoCorrenteMin.compareTo(tempoEloMin) < 0));
+                //}
+            } catch (CorrenteForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE PARA AS CORRENTES NECESSARIAS (VERIFICACURVARAPIDAELO)" + ex.getLocalizedMessage());
+            }
         });
     }
 
