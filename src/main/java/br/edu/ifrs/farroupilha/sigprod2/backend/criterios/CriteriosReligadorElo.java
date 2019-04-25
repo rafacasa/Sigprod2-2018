@@ -27,8 +27,14 @@ public class CriteriosReligadorElo {
     private Ponto pontoRede;
     private Rede rede;
     private Criterios_Rele_Elo criteriosReleElo;
+    private List<BigDecimal> fatorK;
 
     public CriteriosReligadorElo(Religador religadorPai, Ponto pontoRede, Rede rede) {
+        this.fatorK = new ArrayList<>();
+        this.fatorK.add(BigDecimal.valueOf(1.25));
+        this.fatorK.add(BigDecimal.valueOf(1.25));
+        this.fatorK.add(BigDecimal.valueOf(1.35));
+        this.fatorK.add(BigDecimal.valueOf(1.8));
         this.religadorPai = religadorPai;
         this.pontoRede = pontoRede;
         this.rede = rede;
@@ -60,8 +66,9 @@ public class CriteriosReligadorElo {
         AjusteRele curvaRapida = fase ? this.religadorPai.getAjusteRapidaFase() : this.religadorPai.getAjusteRapidaNeutro();
         BigDecimal correnteMin = this.getCorrenteMin(fase);
         BigDecimal correnteMax = this.getCorrenteMax(fase);
-        BigDecimal tempoCorrenteMax = curvaRapida.calculaTempo(correnteMax);
-        BigDecimal tempoCorrenteMin = curvaRapida.calculaTempo(correnteMin);
+        BigDecimal fatorK = this.getFatorK();
+        BigDecimal tempoCorrenteMax = curvaRapida.calculaTempo(correnteMax).multiply(fatorK);
+        BigDecimal tempoCorrenteMin = curvaRapida.calculaTempo(correnteMin).multiply(fatorK);
 
         LOGGER.debug("RELE ");
         LOGGER.debug("tempoCorrenteMax = " + tempoCorrenteMax);
@@ -99,5 +106,14 @@ public class CriteriosReligadorElo {
         } else {
             return BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pontoRede, Corrente.ICCFTMIN));
         }
+    }
+
+    private BigDecimal getFatorK() {
+        //PEGAR INFORMACOES SOBRE TEMPO DE RELIGAMENTO E QTD OPERACOES RAPIDAS
+        //1 OP RAPIDA e tempo > 0,5s e < 5,0s .get(0)
+        //1 OP RAPIDA e tempo < 0,5s .get(1)
+        //2 OP RAPIDA e tempo > 0,5s e < 5,0s .get(2)
+        //2 OP RAPIDA e tempo < 0,5s .get(3)
+        return this.fatorK.get(2);
     }
 }
