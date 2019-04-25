@@ -55,8 +55,8 @@ public class CriteriosReleReligador {
     private List<AjusteRele> ajusteSeletividadeFase() {
         LOGGER.traceEntry();
         List<BigDecimal> dados = this.calculaTemposReligador(true);
-        BigDecimal limiteMaximo = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICC2F));
-        BigDecimal limiteMinimo = BigDecimal.valueOf(this.rede.buscaCorrentePonto(pontoRede, Corrente.ICARGA));
+        BigDecimal limiteMaximo = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICC2F)).divide(BigDecimal.valueOf(1.1), MathContext.DECIMAL128);
+        BigDecimal limiteMinimo = BigDecimal.valueOf(this.rede.buscaCorrentePonto(pontoRede, Corrente.ICARGA)).multiply(BigDecimal.valueOf(1.1), MathContext.DECIMAL128);
         CurvaRele ni = this.religador.getnIFase();
         CurvaRele mi = this.religador.getmIFase();
         CurvaRele ei = this.religador.geteIFase();
@@ -71,8 +71,8 @@ public class CriteriosReleReligador {
     private List<AjusteRele> ajusteSeletividadeNeutro() {
         LOGGER.traceEntry();
         List<BigDecimal> dados = this.calculaTemposReligador(false);
-        BigDecimal limiteMaximo = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN));
-        BigDecimal limiteMinimo = this.fatorDesbalanco.multiply(BigDecimal.valueOf(this.rede.buscaCorrentePonto(pontoRede, Corrente.ICARGA)));
+        BigDecimal limiteMaximo = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN)).divide(BigDecimal.valueOf(1.1), MathContext.DECIMAL128);
+        BigDecimal limiteMinimo = this.fatorDesbalanco.multiply(BigDecimal.valueOf(this.rede.buscaCorrentePonto(pontoRede, Corrente.ICARGA))).multiply(BigDecimal.valueOf(1.1), MathContext.DECIMAL128);
         CurvaRele ni = this.religador.getnINeutro();
         CurvaRele mi = this.religador.getmINeutro();
         CurvaRele ei = this.religador.geteINeutro();
