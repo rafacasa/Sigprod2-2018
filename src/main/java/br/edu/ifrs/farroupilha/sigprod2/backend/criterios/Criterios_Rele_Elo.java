@@ -30,16 +30,12 @@ public class Criterios_Rele_Elo {
     private List<Elo> elosDisponiveis;
     private Ponto pontoRede;
     private Rede rede;
-    private BigDecimal CTIFase;
-    private BigDecimal CTINeutro;
 
     public Criterios_Rele_Elo(Rele relePai, Ponto pontoRede, Rede rede) {
         this.relePai = relePai;
         this.pontoRede = pontoRede;
         this.rede = rede;
         this.elosDisponiveis = new ArrayList<>(this.rede.getElosDisponiveis());
-        this.CTIFase = new BigDecimal("0.2");
-        this.CTINeutro = new BigDecimal("0.2");
         this.orderElos();
     }
 
@@ -186,15 +182,14 @@ public class Criterios_Rele_Elo {
             AjusteRele ajusteRele = this.getAjusteReleSeletividade(fase);
             BigDecimal i2 = this.getI2Seletividade(fase);
             BigDecimal i1 = this.getI1Seletividade(fase);
-            BigDecimal tempoRele1 = ajusteRele.calculaTempo(i1);
-            BigDecimal tempoRele2 = ajusteRele.calculaTempo(i2);
+            BigDecimal tempoRele1 = ajusteRele.calculaTempo(i1).multiply(BigDecimal.valueOf(0.9));
+            BigDecimal tempoRele2 = ajusteRele.calculaTempo(i2).multiply(BigDecimal.valueOf(0.9));
             BigDecimal tempoElo1 = BigDecimal.valueOf(elo.tempoDaCorrente(i1.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
             BigDecimal tempoElo2 = BigDecimal.valueOf(elo.tempoDaCorrente(i2.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
             BigDecimal diff1 = tempoRele1.subtract(tempoElo1);
             BigDecimal diff2 = tempoRele2.subtract(tempoElo2);
-            BigDecimal cti = this.getCTI(fase);
             LOGGER.debug("calculaSeletividade - diff1 = " + diff1.toString() + " diff2 = " + diff2);
-            return diff1.compareTo(cti) >= 0 && diff2.compareTo(cti) >= 0;
+            return diff1.compareTo(BigDecimal.ZERO) >= 0 && diff2.compareTo(BigDecimal.ZERO) >= 0;
         } catch (CorrenteForaDoAlcanceException ex) {
             LOGGER.error("ELO NAO TEM ALCANCE PARA AS CORRENTES NECESSARIAS (SELETIVIDADE)" + ex.getLocalizedMessage());
             return false;
@@ -205,12 +200,11 @@ public class Criterios_Rele_Elo {
         try {
             AjusteRele ajusteRele = this.getAjusteReleSeletividade(true);
             BigDecimal i2 = original ? this.getI2Seletividade(true) : BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pontoRede, Corrente.ICC2F));
-            BigDecimal tempoRele2 = ajusteRele.calculaTempo(i2);
+            BigDecimal tempoRele2 = ajusteRele.calculaTempo(i2).multiply(BigDecimal.valueOf(0.9));
             BigDecimal tempoElo2 = BigDecimal.valueOf(elo.tempoDaCorrente(i2.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
             BigDecimal diff2 = tempoRele2.subtract(tempoElo2);
-            BigDecimal cti = this.getCTI(true);
             LOGGER.debug("calculaSeletividade - diff2 = " + diff2);
-            return diff2.compareTo(cti) >= 0;
+            return diff2.compareTo(BigDecimal.ZERO) >= 0;
         } catch (CorrenteForaDoAlcanceException ex) {
             LOGGER.error("ELO NAO TEM ALCANCE PARA A CORRENTE NECESSARIA (SELETIVIDADEFASEPONTO)" + ex.getLocalizedMessage());
             return false;
@@ -221,23 +215,14 @@ public class Criterios_Rele_Elo {
         try {
             AjusteRele ajusteRele = this.getAjusteReleSeletividade(true);
             BigDecimal i1 = original ? this.getI1Seletividade(true) : BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pontoRede, Corrente.ICC2F));
-            BigDecimal tempoRele1 = ajusteRele.calculaTempo(i1);
+            BigDecimal tempoRele1 = ajusteRele.calculaTempo(i1).multiply(BigDecimal.valueOf(0.9));
             BigDecimal tempoElo1 = BigDecimal.valueOf(elo.tempoDaCorrente(i1.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
             BigDecimal diff1 = tempoRele1.subtract(tempoElo1);
-            BigDecimal cti = this.getCTI(true);
             LOGGER.debug("calculaSeletividade - diff1 = " + diff1.toString());
-            return diff1.compareTo(cti) >= 0;
+            return diff1.compareTo(BigDecimal.ZERO) >= 0;
         } catch (CorrenteForaDoAlcanceException ex) {
             LOGGER.error("ELO NAO TEM ALCANCE PARA A CORRENTE NECESSARIA (SELETIVIDADEFASEABAIXO)" + ex.getLocalizedMessage());
             return false;
-        }
-    }
-
-    private BigDecimal getCTI(boolean fase) {
-        if (fase) {
-            return this.CTIFase;
-        } else {
-            return this.CTINeutro;
         }
     }
 
@@ -263,21 +248,5 @@ public class Criterios_Rele_Elo {
         } else {
             return this.relePai.getAjusteNeutro();
         }
-    }
-
-    public BigDecimal getCTIFase() {
-        return CTIFase;
-    }
-
-    public void setCTIFase(BigDecimal CTIFase) {
-        this.CTIFase = CTIFase;
-    }
-
-    public BigDecimal getCTINeutro() {
-        return CTINeutro;
-    }
-
-    public void setCTINeutro(BigDecimal CTINeutro) {
-        this.CTINeutro = CTINeutro;
     }
 }
