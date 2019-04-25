@@ -57,7 +57,7 @@ public class CriteriosReligador {
     private void ajustarCurvaRapida(boolean fase) throws ValorATImposivelException {
         AjusteRele ajusteLenta = fase ? this.religador.getAjusteFase() : this.religador.getAjusteNeutro();
         AjusteRele ajusteRapida = new AjusteRele(ajusteLenta);
-        BigDecimal iInrush = BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.ponto, Corrente.IINRUSH));
+        BigDecimal iInrush = BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.ponto, Corrente.IINRUSH)).multiply(BigDecimal.valueOf(1.1), MathContext.DECIMAL128);
         BigDecimal at;
         if (ajusteLenta.getAc().compareTo(iInrush) < 0) {
             at = iInrush.divide(ajusteLenta.getAc(), MathContext.DECIMAL128);
