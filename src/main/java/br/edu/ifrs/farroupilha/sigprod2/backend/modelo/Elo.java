@@ -252,7 +252,7 @@ public class Elo implements Curvas, Equipamento {
                 sai = true;
                 break;
             } else if (correnteEntrada == curva[i][0]) {
-                return curva[i][0];
+                return curva[i][1];
             }
         }
         if (sai == true) {

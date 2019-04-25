@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -35,9 +34,9 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
 
     private static final Logger LOGGER = LogManager.getLogger(PanelAjusteReligadorElo.class.getName());
     private List<MetricasReligadorElo> metricas;
-    private Religador religadorPai;
+    private final Religador religadorPai;
     private Elo selecionado;
-    private Ponto ponto;
+    private final Ponto ponto;
     private Coordenograma coordenograma;
 
     private JComboBox<MetricasReligadorElo> lista;
@@ -55,7 +54,7 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
     private JTextField campoCorrente;
     private JButton botaoMostrar;
     private JButton botaoLimpar;
-    private List<String> nomePontos;
+    private final List<String> nomePontos;
 
     public PanelAjusteReligadorElo(Ponto p, Rede rede, Ponto pOrigem) {
         LOGGER.trace("Cria Panel AjusteReleElo");
