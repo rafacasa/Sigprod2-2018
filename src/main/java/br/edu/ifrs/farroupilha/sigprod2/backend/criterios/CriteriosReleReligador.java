@@ -26,14 +26,14 @@ import org.apache.logging.log4j.Logger;
 public class CriteriosReleReligador {
 
     private static final Logger LOGGER = LogManager.getLogger(CriteriosReleReligador.class.getName());
-    private Rele relePai;
-    private Religador religador;
-    private Ponto pontoRede;
-    private Rede rede;
+    private final Rele relePai;
+    private final Religador religador;
+    private final Ponto pontoRede;
+    private final Rede rede;
     private BigDecimal CTIFase = new BigDecimal("0.2");
     private BigDecimal CTINeutro = new BigDecimal("0.2");
     private BigDecimal fatorDesbalanco = new BigDecimal("0.3");
-    private BigDecimal tempoMinCurvaRapida = new BigDecimal("0.1");
+    private final BigDecimal tempoMinCurvaRapida = new BigDecimal("0.1");
 
     public CriteriosReleReligador(Rele relePai, Ponto pontoRede, Rede rede, Religador religador) {
         this.relePai = relePai;

@@ -17,6 +17,8 @@ public class Rele implements Equipamento {
     protected CurvaRele eINeutro;
     protected AjusteRele ajusteNeutro;
     protected AjusteRele ajusteFase;
+    protected List<ACDisponivel> acsFase;
+    protected List<ACDisponivel> acsNeutro;
     protected String modelo;
     protected String fabricante;
 
@@ -103,6 +105,22 @@ public class Rele implements Equipamento {
 
     public void setAjusteFase(AjusteRele ajusteFase) {
         this.ajusteFase = ajusteFase;
+    }
+
+    public List<ACDisponivel> getAcsFase() {
+        return acsFase;
+    }
+
+    public void setAcsFase(List<ACDisponivel> acsFase) {
+        this.acsFase = acsFase;
+    }
+
+    public List<ACDisponivel> getAcsNeutro() {
+        return acsNeutro;
+    }
+
+    public void setAcsNeutro(List<ACDisponivel> acsNeutro) {
+        this.acsNeutro = acsNeutro;
     }
 
     public boolean ajustado() {

@@ -1,5 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.criterios;
 
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.ACDisponivel;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.ValorATImposivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.AjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Corrente;
@@ -25,9 +26,11 @@ import org.apache.logging.log4j.Logger;
 public class Criterios_Rele {
 
     private static final Logger LOGGER = LogManager.getLogger(Criterios_Rele.class.getName());
-    private Rede rede;
-    private Ponto ponto;
-    private Rele rele;
+    private final Rede rede;
+    private final Ponto ponto;
+    private final Rele rele;
+    private List<ACDisponivel> listaAcFase;
+    private List<ACDisponivel> listaAcNeutro;
     private BigDecimal tempoMaxPPFase = new BigDecimal("5");
     private BigDecimal tempoMaxPRFase = new BigDecimal("10");
     private BigDecimal tempoMaxPPNeutro = new BigDecimal("2.5");
@@ -38,6 +41,8 @@ public class Criterios_Rele {
         this.rede = rede;
         this.ponto = ponto;
         this.rele = rele;
+        this.listaAcFase = new ArrayList<>();
+        this.listaAcNeutro = new ArrayList<>();
     }
 
     public Criterios_Rele(Rede rede, Ponto ponto, Rele rele, BigDecimal tempoMaxPPFase, BigDecimal tempoMaxPRFase, BigDecimal tempoMaxPPNeutro, BigDecimal tempoMaxPRNeutro, BigDecimal fatorDesbalanco) {
@@ -55,6 +60,8 @@ public class Criterios_Rele {
         List<AjusteRele> ajustesFase = ajustaFase();
         List<AjusteRele> ajustesNeutro = ajustaNeutro();
 
+        this.rele.setAcsFase(this.listaAcFase);
+        this.rele.setAcsNeutro(this.listaAcNeutro);
         this.rele.setAjusteFase(ajustesFase.get(0));
         this.rele.setAjusteNeutro(ajustesNeutro.get(0));
     }
@@ -111,6 +118,12 @@ public class Criterios_Rele {
             BigDecimal fm = this.calcularFM(curva, d, at, iMinFFPP, iMinFFPR, fase);
             AjusteRele metrica = new AjusteRele(fm, at, d, curva);
             ajustesPossiveis.add(metrica);
+            ACDisponivel aCDisponivel = new ACDisponivel(d, at, curva.getMenorAT(), curva.getPassoAT());
+            if (fase) {
+                this.listaAcFase.add(aCDisponivel);
+            } else {
+                this.listaAcNeutro.add(aCDisponivel);
+            }
         }
         return LOGGER.traceExit(ajustesPossiveis);
     }
