@@ -15,8 +15,10 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -59,6 +61,7 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
         LOGGER.trace("Cria Panel AjusteReleElo");
         this.religadorPai = (Religador) pOrigem.getEquipamentoInstalado();
         this.ponto = p;
+        this.nomePontos = new ArrayList<>();
         this.calculaAjustes(rede, pOrigem);
         this.initComponents();
         this.addItens();
@@ -157,27 +160,58 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
         return selecionado;
     }
 
-    public void botaoMostrarActionPerformed(java.awt.event.ActionEvent evt) {
+    public int botaoMostrarActionPerformed(java.awt.event.ActionEvent evt) {
         LOGGER.trace(evt.getActionCommand());
         this.limparPontos();
         String numeroDigitado = this.campoCorrente.getText();
+        BigDecimal corrente;
         try {
-            BigDecimal corrente = new BigDecimal(numeroDigitado);
-            BigDecimal tempoFaseLenta = religadorPai.getAjusteFase().calculaTempo(corrente);
-            BigDecimal tempoNeutroLenta = religadorPai.getAjusteNeutro().calculaTempo(corrente);
-            BigDecimal tempoFaseRapida = religadorPai.getAjusteRapidaFase().calculaTempo(corrente);
-            BigDecimal tempoNeutroRapida = religadorPai.getAjusteRapidaNeutro().calculaTempo(corrente);
-            BigDecimal tempoMaximaElo = BigDecimal.valueOf(this.lista.getItemAt(this.lista.getSelectedIndex()).getElo().tempoDaCorrente(corrente.doubleValue(), CurvasElo.MAXIMA));
-            BigDecimal tempoMinimaElo = BigDecimal.valueOf(this.lista.getItemAt(this.lista.getSelectedIndex()).getElo().tempoDaCorrente(corrente.doubleValue(), CurvasElo.MINIMA));
-            this.nomePontos = this.coordenograma.add(corrente, Arrays.asList(tempoFaseLenta, tempoNeutroLenta, tempoFaseRapida, tempoNeutroRapida, tempoMaximaElo, tempoMinimaElo), "pontoDigitado", Arrays.asList(Color.BLACK, Color.RED, Color.DARK_GRAY, Color.ORANGE, Color.BLUE, Color.BLUE));
+            corrente = new BigDecimal(numeroDigitado);
         } catch (NumberFormatException e) {
             Erro.entradaInvalida(this);
             LOGGER.error("STRING INVÁLIDA" + e.getMessage());
+            return 1;
+        }
+
+        try {
+            BigDecimal tempoFaseLenta = religadorPai.getAjusteFase().calculaTempo(corrente);
+            if (tempoFaseLenta.compareTo(BigDecimal.ZERO) >= 1) {
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoFaseLenta), "tempoFaseLenta", Arrays.asList(Color.BLACK)));
+            }
+
+            BigDecimal tempoNeutroLenta = religadorPai.getAjusteNeutro().calculaTempo(corrente);
+            if (tempoNeutroLenta.compareTo(BigDecimal.ZERO) >= 1) {
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoNeutroLenta), "tempoNeutroLenta", Arrays.asList(Color.RED)));
+            }
+
+            BigDecimal tempoFaseRapida = religadorPai.getAjusteRapidaFase().calculaTempo(corrente);
+            if (tempoFaseRapida.compareTo(BigDecimal.ZERO) >= 1) {
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoFaseRapida), "tempoFaseRapida", Arrays.asList(Color.DARK_GRAY)));
+            }
+
+            BigDecimal tempoNeutroRapida = religadorPai.getAjusteRapidaNeutro().calculaTempo(corrente);
+            if (tempoNeutroRapida.compareTo(BigDecimal.ZERO) >= 1) {
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoNeutroRapida), "tempoNeutroRapida", Arrays.asList(Color.ORANGE)));
+            }
+
+            try {
+                BigDecimal tempoMaximaElo = BigDecimal.valueOf(this.lista.getItemAt(this.lista.getSelectedIndex()).getElo().tempoDaCorrente(corrente.doubleValue(), CurvasElo.MAXIMA));
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoMaximaElo), "tempoMaximaElo", Arrays.asList(Color.BLUE)));
+            } catch (CorrenteForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE PARA CORRENTE DIGITADA " + ex.getLocalizedMessage());
+            }
+
+            try {
+                BigDecimal tempoMinimaElo = BigDecimal.valueOf(this.lista.getItemAt(this.lista.getSelectedIndex()).getElo().tempoDaCorrente(corrente.doubleValue(), CurvasElo.MINIMA));
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoMinimaElo), "tempoMinimaElo", Arrays.asList(Color.BLUE)));
+            } catch (CorrenteForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE PARA CORRENTE DIGITADA " + ex.getLocalizedMessage());
+            }
         } catch (NullPointerException e) {
             LOGGER.error("COORDENOGRAMA NAO ABERTO" + e.getMessage());
-        } catch (CorrenteForaDoAlcanceException ex) {
-            LOGGER.error("ELO NAO TEM ALCANCE PARA CORRENTE DIGITADA " + ex.getLocalizedMessage());
+            return 1;
         }
+        return 0;
     }
 
     public void botaoLimparActionPerformed(java.awt.event.ActionEvent evt) {
@@ -190,6 +224,7 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
             this.nomePontos.forEach(s -> {
                 this.coordenograma.remove(s);
             });
+            this.nomePontos.clear();
         }
     }
 
