@@ -9,28 +9,50 @@ import java.math.BigDecimal;
  */
 public class MetricasReligadorElo extends MetricasReleElo {
 
-    private boolean seletividadeRapida;
+    private boolean seletividadeRapidaFase;
+    private boolean seletividadeRapidaNeutro;
 
     public MetricasReligadorElo(BigDecimal alcance, boolean seletividade, boolean seletividadeRapida, Elo elo) {
         super(alcance, seletividade, elo);
-        this.seletividadeRapida = seletividadeRapida;
+        this.seletividadeRapidaFase = seletividadeRapida;
     }
 
     public MetricasReligadorElo(MetricasReleElo releElo) {
         super(releElo);
-        this.seletividadeRapida = true;
+        this.seletividadeRapidaFase = true;
+        this.seletividadeRapidaNeutro = true;
     }
 
     @Override
     public boolean isSeletividade() {
-        return ((super.isSeletividade()) && this.seletividadeRapida);
+        return ((super.isSeletividade()) && this.isSeletividadeRapida());
     }
 
     public boolean isSeletividadeRapida() {
-        return seletividadeRapida;
+        return seletividadeRapidaFase && this.seletividadeRapidaNeutro;
     }
 
-    public void setSeletividadeRapida(boolean seletividadeRapida) {
-        this.seletividadeRapida = seletividadeRapida;
+    public void setSeletividadeRapida(boolean seletividadeRapida, boolean fase) {
+        if (fase) {
+            this.seletividadeRapidaFase = seletividadeRapida;
+        } else {
+            this.seletividadeRapidaNeutro = seletividadeRapida;
+        }
+    }
+
+    public boolean isSeletividadeRapidaFase() {
+        return seletividadeRapidaFase;
+    }
+
+    public void setSeletividadeRapidaFase(boolean seletividadeRapidaFase) {
+        this.seletividadeRapidaFase = seletividadeRapidaFase;
+    }
+
+    public boolean isSeletividadeRapidaNeutro() {
+        return seletividadeRapidaNeutro;
+    }
+
+    public void setSeletividadeRapidaNeutro(boolean seletividadeRapidaNeutro) {
+        this.seletividadeRapidaNeutro = seletividadeRapidaNeutro;
     }
 }

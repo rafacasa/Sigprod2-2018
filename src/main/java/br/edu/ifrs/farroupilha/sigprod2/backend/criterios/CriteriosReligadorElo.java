@@ -23,11 +23,11 @@ import org.apache.logging.log4j.Logger;
 public class CriteriosReligadorElo {
 
     private static final Logger LOGGER = LogManager.getLogger(CriteriosReligadorElo.class.getName());
-    private Religador religadorPai;
-    private Ponto pontoRede;
-    private Rede rede;
-    private Criterios_Rele_Elo criteriosReleElo;
-    private List<BigDecimal> fatorK;
+    private final Religador religadorPai;
+    private final Ponto pontoRede;
+    private final Rede rede;
+    private final Criterios_Rele_Elo criteriosReleElo;
+    private final List<BigDecimal> fatorK;
 
     public CriteriosReligadorElo(Religador religadorPai, Ponto pontoRede, Rede rede) {
         this.fatorK = new ArrayList<>();
@@ -66,9 +66,9 @@ public class CriteriosReligadorElo {
         AjusteRele curvaRapida = fase ? this.religadorPai.getAjusteRapidaFase() : this.religadorPai.getAjusteRapidaNeutro();
         BigDecimal correnteMin = this.getCorrenteMin(fase);
         BigDecimal correnteMax = this.getCorrenteMax(fase);
-        BigDecimal fatorK = this.getFatorK();
-        BigDecimal tempoCorrenteMax = curvaRapida.calculaTempo(correnteMax).multiply(fatorK);
-        BigDecimal tempoCorrenteMin = curvaRapida.calculaTempo(correnteMin).multiply(fatorK);
+        BigDecimal fatorKAtual = this.getFatorK();
+        BigDecimal tempoCorrenteMax = curvaRapida.calculaTempo(correnteMax).multiply(fatorKAtual);
+        BigDecimal tempoCorrenteMin = curvaRapida.calculaTempo(correnteMin).multiply(fatorKAtual);
 
         LOGGER.debug("RELE ");
         LOGGER.debug("tempoCorrenteMax = " + tempoCorrenteMax);
@@ -84,10 +84,11 @@ public class CriteriosReligadorElo {
                 LOGGER.debug("tempoEloMax = " + tempoEloMaxd);
                 BigDecimal tempoEloMax = BigDecimal.valueOf(tempoEloMaxd);
                 BigDecimal tempoEloMin = BigDecimal.valueOf(tempoEloMind);
-                ajuste.setSeletividadeRapida((tempoCorrenteMax.compareTo(tempoEloMax) < 0) && (tempoCorrenteMin.compareTo(tempoEloMin) < 0));
+                ajuste.setSeletividadeRapida((tempoCorrenteMax.compareTo(tempoEloMax) < 0) && (tempoCorrenteMin.compareTo(tempoEloMin) < 0), fase);
                 //}
             } catch (CorrenteForaDoAlcanceException ex) {
                 LOGGER.error("ELO NAO TEM ALCANCE PARA AS CORRENTES NECESSARIAS (VERIFICACURVARAPIDAELO)" + ex.getLocalizedMessage());
+                ajuste.setSeletividadeRapida(false, fase);
             }
         });
     }

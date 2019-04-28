@@ -43,8 +43,10 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
     private JButton botaoSelecionar;
     private JLabel nomeAlcance;
     private JLabel labelAlcance;
-    private JLabel nomeSeletividadeRapida;
-    private JLabel labelSeletividadeRapida;
+    private JLabel nomeSeletividadeRapidaFase;
+    private JLabel labelSeletividadeRapidaFase;
+    private JLabel nomeSeletividadeRapidaNeutro;
+    private JLabel labelSeletividadeRapidaNeutro;
     private JLabel nomeSeletividadeNeutro;
     private JLabel labelSeletividadeNeutro;
     private JLabel nomeSeletividadeFasePonto;
@@ -99,13 +101,15 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
         this.lista.addActionListener(this::listaActionPerformed);
 
         this.labelAlcance = new JLabel();
-        this.labelSeletividadeRapida = new JLabel();
+        this.labelSeletividadeRapidaFase = new JLabel();
+        this.labelSeletividadeRapidaNeutro = new JLabel();
         this.labelSeletividadeNeutro = new JLabel();
         this.labelSeletividadeFasePonto = new JLabel();
         this.labelSeletividadeFaseAbaixo = new JLabel();
 
         this.nomeAlcance = new JLabel("Porcentagem de Alcançe: ");
-        this.nomeSeletividadeRapida = new JLabel("Seletividade Rapida: ");
+        this.nomeSeletividadeRapidaFase = new JLabel("Seletividade Rapida Fase: ");
+        this.nomeSeletividadeRapidaNeutro = new JLabel("Seletividade Rapida Neutro: ");
         this.nomeSeletividadeNeutro = new JLabel("Seletividade Neutro: ");
         this.nomeSeletividadeFasePonto = new JLabel("Seletividade Fase Ponto: ");
         this.nomeSeletividadeFaseAbaixo = new JLabel("Seletividade Fase Abaixo: ");
@@ -124,8 +128,10 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
         this.add(this.nomeAlcance);
         this.add(this.labelAlcance, "wrap");
 
-        this.add(this.nomeSeletividadeRapida);
-        this.add(this.labelSeletividadeRapida, "wrap");
+        this.add(this.nomeSeletividadeRapidaFase);
+        this.add(this.labelSeletividadeRapidaFase, "wrap");
+        this.add(this.nomeSeletividadeRapidaNeutro);
+        this.add(this.labelSeletividadeRapidaNeutro, "wrap");
         this.add(this.nomeSeletividadeNeutro);
         this.add(this.labelSeletividadeNeutro, "wrap");
         this.add(this.nomeSeletividadeFasePonto);
@@ -148,7 +154,8 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
         LOGGER.trace(evt.getActionCommand());
         MetricasReligadorElo metrica = this.lista.getItemAt(this.lista.getSelectedIndex());
         this.labelAlcance.setText(metrica.getAlcance().toString());
-        this.labelSeletividadeRapida.setText(metrica.isSeletividadeRapida() ? "TRUE" : "FALSE");
+        this.labelSeletividadeRapidaFase.setText(metrica.isSeletividadeRapidaFase()? "TRUE" : "FALSE");
+        this.labelSeletividadeRapidaNeutro.setText(metrica.isSeletividadeRapidaNeutro()? "TRUE" : "FALSE");
         this.labelSeletividadeNeutro.setText(metrica.isSeletividadeNeutro() ? "TRUE" : "FALSE");
         this.labelSeletividadeFasePonto.setText(metrica.isSeletividadeFasePonto() ? "TRUE" : "FALSE");
         this.labelSeletividadeFaseAbaixo.setText(metrica.isSeletividadeFaseAbaixo() ? "TRUE" : "FALSE");
