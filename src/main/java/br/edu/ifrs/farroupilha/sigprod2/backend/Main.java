@@ -25,6 +25,7 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjust
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReleElo;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReleReligador;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReleTemp;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReligador;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReligadorElo;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Informacoes;
@@ -111,7 +112,7 @@ public class Main {
                 Rele rele = Criterios_Rele.getReleTeste(); //COMO DEFINIR QUAL EQUIPAMENTO ESTA INSTALADO NO PONTO
                 Criterios_Rele criteriosRele = new Criterios_Rele(rede, ponto, rele);
                 criteriosRele.ajuste();
-                frame.setAjuste(new PanelAjusteRele(rele));
+                frame.setAjuste(new PanelAjusteReleTemp(rele));
                 selecionaEquipamento(ponto, rele);
                 break;
             case RELIGADOR:

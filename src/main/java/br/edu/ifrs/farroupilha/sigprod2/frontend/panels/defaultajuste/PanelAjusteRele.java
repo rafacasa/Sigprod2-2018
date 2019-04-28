@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 public class PanelAjusteRele extends PanelAjuste {
 
     private static final Logger LOGGER = LogManager.getLogger(PanelAjusteRele.class.getName());
-    private Rele rele;
+    private final Rele rele;
     private List<String> nomePontos;
     private Coordenograma coordenograma;
     private JTextField campoCorrente;

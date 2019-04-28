@@ -42,4 +42,8 @@ public class ACDisponivel {
         return listaAt;
     }
 
+    @Override
+    public String toString() {
+        return ac.toString();
+    }
 }

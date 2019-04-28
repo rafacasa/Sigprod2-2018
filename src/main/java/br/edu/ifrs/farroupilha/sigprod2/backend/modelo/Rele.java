@@ -17,8 +17,12 @@ public class Rele implements Equipamento {
     protected CurvaRele eINeutro;
     protected AjusteRele ajusteNeutro;
     protected AjusteRele ajusteFase;
-    protected List<ACDisponivel> acsFase;
-    protected List<ACDisponivel> acsNeutro;
+    protected List<ACDisponivel> acsNIFase;
+    protected List<ACDisponivel> acsMIFase;
+    protected List<ACDisponivel> acsEIFase;
+    protected List<ACDisponivel> acsNINeutro;
+    protected List<ACDisponivel> acsMINeutro;
+    protected List<ACDisponivel> acsEINeutro;
     protected String modelo;
     protected String fabricante;
 
@@ -107,22 +111,54 @@ public class Rele implements Equipamento {
         this.ajusteFase = ajusteFase;
     }
 
-    public List<ACDisponivel> getAcsFase() {
-        return acsFase;
+    public List<ACDisponivel> getAcsNIFase() {
+        return acsNIFase;
     }
 
-    public void setAcsFase(List<ACDisponivel> acsFase) {
-        this.acsFase = acsFase;
+    public void setAcsNIFase(List<ACDisponivel> acsNIFase) {
+        this.acsNIFase = acsNIFase;
     }
 
-    public List<ACDisponivel> getAcsNeutro() {
-        return acsNeutro;
+    public List<ACDisponivel> getAcsMIFase() {
+        return acsMIFase;
     }
 
-    public void setAcsNeutro(List<ACDisponivel> acsNeutro) {
-        this.acsNeutro = acsNeutro;
+    public void setAcsMIFase(List<ACDisponivel> acsMIFase) {
+        this.acsMIFase = acsMIFase;
     }
 
+    public List<ACDisponivel> getAcsEIFase() {
+        return acsEIFase;
+    }
+
+    public void setAcsEIFase(List<ACDisponivel> acsEIFase) {
+        this.acsEIFase = acsEIFase;
+    }
+
+    public List<ACDisponivel> getAcsNINeutro() {
+        return acsNINeutro;
+    }
+
+    public void setAcsNINeutro(List<ACDisponivel> acsNINeutro) {
+        this.acsNINeutro = acsNINeutro;
+    }
+
+    public List<ACDisponivel> getAcsMINeutro() {
+        return acsMINeutro;
+    }
+
+    public void setAcsMINeutro(List<ACDisponivel> acsMINeutro) {
+        this.acsMINeutro = acsMINeutro;
+    }
+
+    public List<ACDisponivel> getAcsEINeutro() {
+        return acsEINeutro;
+    }
+
+    public void setAcsEINeutro(List<ACDisponivel> acsEINeutro) {
+        this.acsEINeutro = acsEINeutro;
+    }
+    
     public boolean ajustado() {
         return (this.ajusteFase != null) && (this.ajusteNeutro != null);
     }
