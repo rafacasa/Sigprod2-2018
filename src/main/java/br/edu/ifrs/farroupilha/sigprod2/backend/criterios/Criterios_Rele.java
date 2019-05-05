@@ -292,9 +292,9 @@ public class Criterios_Rele {
 
     public static Rele getReleTeste() {
         Rele teste = new Rele("modelo1", "fabricante1");
-        CurvaRele ni = new CurvaRele("0.14", "0", "0.02", "1", "1000", "1", "0.01", "1", "0.01");
-        CurvaRele mi = new CurvaRele("13.5", "0", "1", "1", "1000", "1", "0.01", "1", "0.01");
-        CurvaRele ei = new CurvaRele("80", "0", "2", "1", "1000", "1", "0.01", "1", "0.01");
+        CurvaRele ni = CurvaRele.NI;
+        CurvaRele mi = CurvaRele.MI;
+        CurvaRele ei = CurvaRele.EI;
         teste.setnIFase(ni);
         teste.setmIFase(mi);
         teste.seteIFase(ei);

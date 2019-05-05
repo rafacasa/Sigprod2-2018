@@ -4,6 +4,7 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.Main;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.ACDisponivel;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.AjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvaRele;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import java.awt.Color;
@@ -16,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import net.miginfocom.swing.MigLayout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -80,7 +82,7 @@ public class PanelAjusteReleTemp extends PanelAjuste {
                 LOGGER.error("setPanelsAjuste - erro curva fase");
                 throw new RuntimeException("setPanelsAjuste - erro curva fase");
         }
-        this.ajusteFase = new PanelDadosAjusteRele(this.rele.getAcsNIFase(), this.rele.getAcsMIFase(), this.rele.getAcsEIFase(), this.rele.getAjusteFase(), index);
+        this.ajusteFase = new PanelDadosAjusteRele(this.rele.getAcsNIFase(), this.rele.getAcsMIFase(), this.rele.getAcsEIFase(), this.rele.getAjusteFase(), index, this.rele, true, this);
 
         switch (this.rele.getNomeCurva(this.rele.getAjusteNeutro().getCurva(), false)) {
             case "Curva Normalmente Inversa":
@@ -96,7 +98,7 @@ public class PanelAjusteReleTemp extends PanelAjuste {
                 LOGGER.error("setPanelsAjuste - erro curva neutro");
                 throw new RuntimeException("setPanelsAjuste - erro curva neutro");
         }
-        this.ajusteNeutro = new PanelDadosAjusteRele(this.rele.getAcsNINeutro(), this.rele.getAcsMINeutro(), this.rele.getAcsEINeutro(), this.rele.getAjusteNeutro(), index);
+        this.ajusteNeutro = new PanelDadosAjusteRele(this.rele.getAcsNINeutro(), this.rele.getAcsMINeutro(), this.rele.getAcsEINeutro(), this.rele.getAjusteNeutro(), index, rele, false, this);
     }
 
     private void addItens() {
@@ -148,6 +150,9 @@ public class PanelAjusteReleTemp extends PanelAjuste {
 
     class PanelDadosAjusteRele extends JPanel {
 
+        private final Rele rele;
+        private final boolean fase;
+        private final PanelAjuste panelAjuste;
         private final int indexCurvaInicial;
         private final List<ACDisponivel> acsNI;
         private final List<ACDisponivel> acsMI;
@@ -156,11 +161,14 @@ public class PanelAjusteReleTemp extends PanelAjuste {
         private JComboBox<ACDisponivel> listaAC;
         private JComboBox<BigDecimal> listaAT;
         private final AjusteRele ajusteInicial;
-        private JButton salvar;
         private JButton reset;
+        private JToggleButton ajustesImpossiveis;
 
-        public PanelDadosAjusteRele(List<ACDisponivel> acsNI, List<ACDisponivel> acsMI, List<ACDisponivel> acsEI, AjusteRele ajusteInical, int indexCurvaInicial) {
+        public PanelDadosAjusteRele(List<ACDisponivel> acsNI, List<ACDisponivel> acsMI, List<ACDisponivel> acsEI, AjusteRele ajusteInical, int indexCurvaInicial, Rele rele, boolean fase, PanelAjuste panelAjuste) {
             this.indexCurvaInicial = indexCurvaInicial;
+            this.rele = rele;
+            this.fase = fase;
+            this.panelAjuste = panelAjuste;
             this.acsNI = acsNI;
             this.acsMI = acsMI;
             this.acsEI = acsEI;
@@ -174,9 +182,9 @@ public class PanelAjusteReleTemp extends PanelAjuste {
             this.listaCurvas = new JComboBox<>();
             this.listaAC = new JComboBox<>();
             this.listaAT = new JComboBox<>();
-            this.salvar = new JButton("Salvar Ajuste");
             this.reset = new JButton("Resetar Ajustes");
             this.reset.addActionListener(this::botaoResetActionPerformed);
+            this.ajustesImpossiveis = new JToggleButton("Permitir ajustes impossiveis");
             this.listaCurvas.addItem("Normalmente Inversa");
             this.listaCurvas.addItem("Muito Inversa");
             this.listaCurvas.addItem("Extremamente Inversa");
@@ -193,12 +201,16 @@ public class PanelAjusteReleTemp extends PanelAjuste {
             this.add(this.listaAC, "wrap");
             this.add(new JLabel("AT: "));
             this.add(this.listaAT, "wrap");
-            this.add(this.reset);
-            this.add(this.salvar, "wrap");
+            this.add(this.reset, "wrap");
         }
 
         private void botaoResetActionPerformed(java.awt.event.ActionEvent evt) {
             this.setValoresIniciais();
+            LOGGER.debug(evt.getActionCommand());
+        }
+
+        private void botaoAjustesImpossiveisActionPerformed(java.awt.event.ActionEvent evt) {
+            LOGGER.debug(evt.getActionCommand());
         }
 
         private void setValoresIniciais() {
@@ -240,15 +252,47 @@ public class PanelAjusteReleTemp extends PanelAjuste {
         private void listaACActionPerformed(java.awt.event.ActionEvent evt) {
             this.listaAT.removeAllItems();
             ACDisponivel ac = this.listaAC.getItemAt(this.listaAC.getSelectedIndex());
-            ac.getListaAt().forEach(at -> {
-                this.listaAT.addItem(at);
-            });
-            LOGGER.trace(evt.getActionCommand());
+            if (ac != null) {
+                ac.getListaAt().forEach(at -> {
+                    this.listaAT.addItem(at);
+                });
+                LOGGER.trace(evt.getActionCommand());
+            }
         }
 
         private void listaATActionPerformed(java.awt.event.ActionEvent evt) {
             ACDisponivel ac = this.listaAC.getItemAt(this.listaAC.getSelectedIndex());
             BigDecimal at = this.listaAT.getItemAt(this.listaAT.getSelectedIndex());
+            if (ac != null && at != null) {
+                this.salvarAjusteSelecionadoNoRele();
+            }
         }
+
+        private void salvarAjusteSelecionadoNoRele() {
+            int indexCurva = this.listaCurvas.getSelectedIndex();
+            CurvaRele curva = null;
+            switch (indexCurva) {
+                case 0:
+                    curva = CurvaRele.NI;
+                    break;
+                case 1:
+                    curva = CurvaRele.MI;
+                    break;
+                case 2:
+                    curva = CurvaRele.EI;
+                    break;
+                default:
+                    LOGGER.error("INDEX NAO EXISTENTE SALVAR AJUSTE RELE");
+            }
+            ACDisponivel ac = this.listaAC.getItemAt(this.listaAC.getSelectedIndex());
+            BigDecimal at = this.listaAT.getItemAt(this.listaAT.getSelectedIndex());
+            if (this.fase) {
+                this.rele.setAjusteFase(new AjusteRele(BigDecimal.ZERO, at, ac.getAc(), curva));
+            } else {
+                this.rele.setAjusteNeutro(new AjusteRele(BigDecimal.ZERO, at, ac.getAc(), curva));
+            }
+            Main.setCoordenograma(this.panelAjuste.geraCoordenograma());
+        }
+
     }
 }
