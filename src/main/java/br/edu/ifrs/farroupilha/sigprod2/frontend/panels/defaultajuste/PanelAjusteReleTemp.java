@@ -152,6 +152,7 @@ public class PanelAjusteReleTemp extends PanelAjuste {
 
         private final Rele rele;
         private final boolean fase;
+        private boolean impossiveis;
         private final PanelAjuste panelAjuste;
         private final int indexCurvaInicial;
         private final List<ACDisponivel> acsNI;
@@ -173,6 +174,7 @@ public class PanelAjusteReleTemp extends PanelAjuste {
             this.acsMI = acsMI;
             this.acsEI = acsEI;
             this.ajusteInicial = ajusteInical;
+            this.impossiveis = false;
             this.initComponents();
             this.setValoresIniciais();
             this.addItens();
@@ -185,6 +187,7 @@ public class PanelAjusteReleTemp extends PanelAjuste {
             this.reset = new JButton("Resetar Ajustes");
             this.reset.addActionListener(this::botaoResetActionPerformed);
             this.ajustesImpossiveis = new JToggleButton("Permitir ajustes impossiveis");
+            this.ajustesImpossiveis.addActionListener(this::botaoAjustesImpossiveisActionPerformed);
             this.listaCurvas.addItem("Normalmente Inversa");
             this.listaCurvas.addItem("Muito Inversa");
             this.listaCurvas.addItem("Extremamente Inversa");
@@ -201,6 +204,7 @@ public class PanelAjusteReleTemp extends PanelAjuste {
             this.add(this.listaAC, "wrap");
             this.add(new JLabel("AT: "));
             this.add(this.listaAT, "wrap");
+            this.add(this.ajustesImpossiveis);
             this.add(this.reset, "wrap");
         }
 
@@ -211,41 +215,85 @@ public class PanelAjusteReleTemp extends PanelAjuste {
 
         private void botaoAjustesImpossiveisActionPerformed(java.awt.event.ActionEvent evt) {
             LOGGER.debug(evt.getActionCommand());
+            this.listaAC.removeAllItems();
+            this.listaAT.removeAllItems();
+            if (this.ajustesImpossiveis.getModel().isSelected()) {
+                preencheDadosImpossiveis();
+                this.impossiveis = true;
+            } else {
+                this.impossiveis = false;
+                this.listaCurvaActionPerformed(evt);
+            }
+        }
+
+        private void preencheDadosImpossiveis() {
+            int index = this.listaCurvas.getSelectedIndex();
+            CurvaRele curva = null;
+            switch (index) {
+                case 0:
+                    curva = this.fase ? this.rele.getnIFase() : this.rele.getnINeutro();
+                    break;
+                case 1:
+                    curva = this.fase ? this.rele.getmIFase() : this.rele.getmINeutro();
+                    break;
+                case 2:
+                    curva = this.fase ? this.rele.geteIFase() : this.rele.geteINeutro();
+                    break;
+                default:
+                    LOGGER.error("Index inexistente - listaCurvaActionPerformed");
+            }
+            BigDecimal maiorAt = curva.getMaiorAT();
+            BigDecimal menorAt = curva.getMenorAT();
+            BigDecimal passoAt = curva.getPassoAT();
+
+            curva.gerarAC().forEach(ac -> {
+                this.listaAC.addItem(new ACDisponivel(ac, maiorAt, menorAt, passoAt));
+            });
         }
 
         private void setValoresIniciais() {
             this.listaCurvas.setSelectedIndex(this.indexCurvaInicial);
-            this.listaAC.setSelectedItem(this.ajusteInicial.getAc());
+            for (int i = 0; i < this.listaAC.getItemCount(); i++) {
+                ACDisponivel acD = this.listaAC.getItemAt(i);
+                if (this.ajusteInicial.getAc().equals(acD.getAc())) {
+                    this.listaAC.setSelectedIndex(i);
+                    break;
+                }
+            }
             this.listaAT.setSelectedItem(this.ajusteInicial.getAt());
         }
 
         private void listaCurvaActionPerformed(java.awt.event.ActionEvent evt) {
-            int index = this.listaCurvas.getSelectedIndex();
-            switch (index) {
-                case 0:
-                    this.listaAT.removeAllItems();
-                    this.listaAC.removeAllItems();
-                    this.acsNI.forEach(ac -> {
-                        this.listaAC.addItem(ac);
-                    });
-                    break;
-                case 1:
-                    this.listaAT.removeAllItems();
-                    this.listaAC.removeAllItems();
-                    this.acsMI.forEach(ac -> {
-                        this.listaAC.addItem(ac);
-                    });
-                    break;
-                case 2:
-                    this.listaAT.removeAllItems();
-                    this.listaAC.removeAllItems();
-                    this.acsEI.forEach(ac -> {
-                        this.listaAC.addItem(ac);
-                    });
-                    break;
-                default:
-                    LOGGER.error("Index inexistente - listaCurvaActionPerformed");
-                    LOGGER.error(evt.getActionCommand());
+            if (!this.impossiveis) {
+                int index = this.listaCurvas.getSelectedIndex();
+                switch (index) {
+                    case 0:
+                        this.listaAT.removeAllItems();
+                        this.listaAC.removeAllItems();
+                        this.acsNI.forEach(ac -> {
+                            this.listaAC.addItem(ac);
+                        });
+                        break;
+                    case 1:
+                        this.listaAT.removeAllItems();
+                        this.listaAC.removeAllItems();
+                        this.acsMI.forEach(ac -> {
+                            this.listaAC.addItem(ac);
+                        });
+                        break;
+                    case 2:
+                        this.listaAT.removeAllItems();
+                        this.listaAC.removeAllItems();
+                        this.acsEI.forEach(ac -> {
+                            this.listaAC.addItem(ac);
+                        });
+                        break;
+                    default:
+                        LOGGER.error("Index inexistente - listaCurvaActionPerformed");
+                        LOGGER.error(evt.getActionCommand());
+                }
+            } else {
+                preencheDadosImpossiveis();
             }
         }
 
