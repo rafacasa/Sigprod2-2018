@@ -197,15 +197,15 @@ public class PanelAjusteReleTemp extends PanelAjuste {
         }
 
         private void addItens() {
-            this.setLayout(new MigLayout());
+            this.setLayout(new MigLayout("wrap 2"));
             this.add(new JLabel("Curva: "));
-            this.add(this.listaCurvas, "wrap");
+            this.add(this.listaCurvas);
             this.add(new JLabel("AC: "));
-            this.add(this.listaAC, "wrap");
+            this.add(this.listaAC);
             this.add(new JLabel("AT: "));
-            this.add(this.listaAT, "wrap");
-            this.add(this.ajustesImpossiveis);
-            this.add(this.reset, "wrap");
+            this.add(this.listaAT);
+            this.add(this.ajustesImpossiveis, "span");
+            this.add(this.reset, "span");
         }
 
         private void botaoResetActionPerformed(java.awt.event.ActionEvent evt) {
