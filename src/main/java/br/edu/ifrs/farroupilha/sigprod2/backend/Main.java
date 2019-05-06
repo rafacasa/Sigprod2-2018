@@ -21,12 +21,7 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.RelativeMainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.CorrentesPonto;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.Navegacao;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteEloElo;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReleElo;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReleReligador;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReleTemp;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReligador;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReligadorElo;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.*;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Informacoes;
 import java.awt.Color;
 import java.awt.Component;
@@ -68,7 +63,7 @@ public class Main {
     }
 
     private static Arquivo getArquivoRedeInicial() {
-        return new Arquivo("redeReleReligador1.ABCEEE");
+        return new Arquivo("redeReligador.ABCEEE");
     }
 
     private static void setupMainFrame(MainFrame frame) throws BancoDeDadosException {
@@ -118,7 +113,7 @@ public class Main {
                 Religador religador = CriteriosReligador.getReligadorTeste(); //DEFINIR QUAL RELIGADOR ESTA INSTALADO NO PONTO
                 CriteriosReligador criteriosReligador = new CriteriosReligador(Main.rede, ponto, religador);
                 criteriosReligador.ajuste();
-                frame.setAjuste(new PanelAjusteReligador(religador));
+                frame.setAjuste(new PanelAjusteReligadorTemp(religador));
                 selecionaEquipamento(ponto, religador);
                 break;
             default:

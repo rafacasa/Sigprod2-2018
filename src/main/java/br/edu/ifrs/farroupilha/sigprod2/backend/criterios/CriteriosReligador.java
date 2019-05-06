@@ -42,7 +42,28 @@ public class CriteriosReligador {
     public void ajuste() {
         this.criteriosRele.ajuste();
         this.ajustarCurvaRapida();
+        this.preencherAcsDisponiveis();
+    }
 
+    private void preencherAcsDisponiveis() {
+        this.religador.getAcsNIFase().forEach(ac -> {
+            ac.addAtRapida(CurvaRele.NI.gerarAT());
+        });
+        this.religador.getAcsNINeutro().forEach(ac -> {
+            ac.addAtRapida(CurvaRele.NI.gerarAT());
+        });
+        this.religador.getAcsMIFase().forEach(ac -> {
+            ac.addAtRapida(CurvaRele.MI.gerarAT());
+        });
+        this.religador.getAcsMINeutro().forEach(ac -> {
+            ac.addAtRapida(CurvaRele.MI.gerarAT());
+        });
+        this.religador.getAcsEIFase().forEach(ac -> {
+            ac.addAtRapida(CurvaRele.EI.gerarAT());
+        });
+        this.religador.getAcsEINeutro().forEach(ac -> {
+            ac.addAtRapida(CurvaRele.EI.gerarAT());
+        });
     }
 
     private void ajustarCurvaRapida() {

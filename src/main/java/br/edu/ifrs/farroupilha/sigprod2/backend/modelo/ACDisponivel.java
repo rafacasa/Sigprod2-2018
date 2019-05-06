@@ -16,11 +16,7 @@ public class ACDisponivel {
 
     private BigDecimal ac;
     private List<BigDecimal> listaAt;
-
-    public ACDisponivel(BigDecimal ac, List<BigDecimal> listaAt) {
-        this.ac = ac;
-        this.listaAt = Collections.unmodifiableList(listaAt);
-    }
+    private List<BigDecimal> listaAtRapida;
 
     public ACDisponivel(BigDecimal ac, BigDecimal maxAt, BigDecimal minAt, BigDecimal passoAt) {
         this.ac = ac;
@@ -28,6 +24,20 @@ public class ACDisponivel {
         Iterator<BigDecimal> it = BigDecimalStream.rangeClosed(minAt, maxAt, passoAt, MathContext.DECIMAL128).iterator();
         while (it.hasNext()) {
             this.listaAt.add(it.next());
+        }
+    }
+
+    public ACDisponivel(BigDecimal ac, BigDecimal maxAt, BigDecimal minAt, BigDecimal passoAt, boolean religador) {
+        if(religador) {
+            this.ac = ac;
+            this.listaAt = new ArrayList<>();
+            this.listaAtRapida = new ArrayList<>();
+            Iterator<BigDecimal> it = BigDecimalStream.rangeClosed(minAt, maxAt, passoAt, MathContext.DECIMAL128).iterator();
+            while (it.hasNext()) {
+                BigDecimal temp = it.next();
+                this.listaAt.add(temp);
+                this.listaAtRapida.add(temp);
+            }
         }
     }
 
@@ -40,6 +50,14 @@ public class ACDisponivel {
 
     public List<BigDecimal> getListaAt() {
         return listaAt;
+    }
+
+    public List<BigDecimal> getListaAtRapida() {
+        return this.listaAtRapida;
+    }
+
+    public void addAtRapida(List<BigDecimal> listaAtRapida) {
+        this.listaAtRapida = Collections.unmodifiableList(listaAtRapida);
     }
 
     @Override
