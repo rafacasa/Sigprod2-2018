@@ -1,20 +1,8 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend;
 
-import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.CriteriosReleReligador;
-import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.CriteriosReligador;
-import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Rele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.*;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Arquivo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Equipamento;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Religador;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.TipoEquipamento;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
@@ -23,17 +11,15 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.CorrentesPonto;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.Navegacao;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.*;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Informacoes;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.graphstream.graph.Node;
+
+import javax.swing.*;
+import java.awt.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe Principal do Sistema
@@ -63,7 +49,7 @@ public class Main {
     }
 
     private static Arquivo getArquivoRedeInicial() {
-        return new Arquivo("redeReligador.ABCEEE");
+        return new Arquivo("redeReleReligador1.ABCEEE");
     }
 
     private static void setupMainFrame(MainFrame frame) throws BancoDeDadosException {
@@ -167,7 +153,7 @@ public class Main {
                         CriteriosReleReligador criterios = new CriteriosReleReligador(relePai, ponto, rede, religador);
                         criterios.ajuste();
                         selecionaEquipamento(ponto, religador);
-                        frame.setAjuste(new PanelAjusteReleReligador(ponto, pOrigem));
+                        frame.setAjuste(new PanelAjusteReleReligadorTemp(ponto, pOrigem));
                         break;
                     default:
                         LOGGER.error("DEFAULT CLAUSE");
