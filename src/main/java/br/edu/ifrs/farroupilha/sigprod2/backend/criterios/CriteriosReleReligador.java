@@ -1,23 +1,18 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.criterios;
 
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.AjusteRele;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Corrente;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvaRele;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Religador;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.ValorATImposivelException;
 import ch.obermuhlner.math.big.BigDecimalMath;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -61,9 +56,16 @@ public class CriteriosReleReligador {
         CurvaRele mi = this.religador.getmIFase();
         CurvaRele ei = this.religador.geteIFase();
         List<AjusteRele> ajustesPossiveis = new ArrayList<>();
-        ajustesPossiveis.addAll(calculaAjustesPossiveis(ni, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo));
-        ajustesPossiveis.addAll(calculaAjustesPossiveis(mi, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo));
-        ajustesPossiveis.addAll(calculaAjustesPossiveis(ei, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo));
+        List<ACDisponivel> acDisponiveis = new ArrayList<>();
+        ajustesPossiveis.addAll(calculaAjustesPossiveis(ni, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo, acDisponiveis));
+        this.religador.setAcsNIFase(new ArrayList<>(acDisponiveis));
+        acDisponiveis.clear();
+        ajustesPossiveis.addAll(calculaAjustesPossiveis(mi, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo, acDisponiveis));
+        this.religador.setAcsMIFase(new ArrayList<>(acDisponiveis));
+        acDisponiveis.clear();
+        ajustesPossiveis.addAll(calculaAjustesPossiveis(ei, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo, acDisponiveis));
+        this.religador.setAcsEIFase(new ArrayList<>(acDisponiveis));
+        acDisponiveis.clear();
         ajustesPossiveis.sort(null);
         return LOGGER.traceExit(ajustesPossiveis);
     }
@@ -77,9 +79,16 @@ public class CriteriosReleReligador {
         CurvaRele mi = this.religador.getmINeutro();
         CurvaRele ei = this.religador.geteINeutro();
         List<AjusteRele> ajustesPossiveis = new ArrayList<>();
-        ajustesPossiveis.addAll(calculaAjustesPossiveis(ni, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo));
-        ajustesPossiveis.addAll(calculaAjustesPossiveis(mi, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo));
-        ajustesPossiveis.addAll(calculaAjustesPossiveis(ei, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo));
+        List<ACDisponivel> acDisponiveis = new ArrayList<>();
+        ajustesPossiveis.addAll(calculaAjustesPossiveis(ni, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo, acDisponiveis));
+        this.religador.setAcsNINeutro(new ArrayList<>(acDisponiveis));
+        acDisponiveis.clear();
+        ajustesPossiveis.addAll(calculaAjustesPossiveis(mi, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo, acDisponiveis));
+        this.religador.setAcsMINeutro(new ArrayList<>(acDisponiveis));
+        acDisponiveis.clear();
+        ajustesPossiveis.addAll(calculaAjustesPossiveis(ei, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo, acDisponiveis));
+        this.religador.setAcsEINeutro(new ArrayList<>(acDisponiveis));
+        acDisponiveis.clear();
         ajustesPossiveis.sort(null);
         return LOGGER.traceExit(ajustesPossiveis);
     }
@@ -96,7 +105,7 @@ public class CriteriosReleReligador {
         return Arrays.asList(i1, tempoReligador1, i2, tempoReligador2);
     }
 
-    private List<AjusteRele> calculaAjustesPossiveis(CurvaRele curva, BigDecimal corrente1, BigDecimal corrente2, BigDecimal tempo1, BigDecimal tempo2, BigDecimal limiteMaximo, BigDecimal limiteMinimo) {
+    private List<AjusteRele> calculaAjustesPossiveis(CurvaRele curva, BigDecimal corrente1, BigDecimal corrente2, BigDecimal tempo1, BigDecimal tempo2, BigDecimal limiteMaximo, BigDecimal limiteMinimo, List<ACDisponivel> acDisponiveis) {
         List<AjusteRele> ajustesPossiveis = new ArrayList<>();
         List<BigDecimal> ac = restringeAC(curva, limiteMaximo, limiteMinimo);
         for (int i = 0; i < ac.size(); i++) {
@@ -111,6 +120,8 @@ public class CriteriosReleReligador {
             BigDecimal fm = this.calcularFM(curva, d, at, corrente1, corrente2, tempo1, tempo2);
             AjusteRele metrica = new AjusteRele(fm, at, d, curva);
             ajustesPossiveis.add(metrica);
+            ACDisponivel aCDisponivel = new ACDisponivel(d, at, curva.getMenorAT(), curva.getPassoAT());
+            acDisponiveis.add(aCDisponivel);
         }
         return ajustesPossiveis;
     }
@@ -267,9 +278,31 @@ public class CriteriosReleReligador {
         try {
             this.ajustarCurvaRapida(true);
             this.ajustarCurvaRapida(false);
+            this.preencherAcsDisponiveis();
         } catch (ValorATImposivelException ex) {
             LOGGER.error("AT IMPOSSIVEL - " + ex.getLocalizedMessage());
         }
+    }
+
+    private void preencherAcsDisponiveis() {
+        this.religador.getAcsNIFase().forEach(ac -> {
+            ac.addAtRapida(CurvaRele.NI.gerarAT());
+        });
+        this.religador.getAcsNINeutro().forEach(ac -> {
+            ac.addAtRapida(CurvaRele.NI.gerarAT());
+        });
+        this.religador.getAcsMIFase().forEach(ac -> {
+            ac.addAtRapida(CurvaRele.MI.gerarAT());
+        });
+        this.religador.getAcsMINeutro().forEach(ac -> {
+            ac.addAtRapida(CurvaRele.MI.gerarAT());
+        });
+        this.religador.getAcsEIFase().forEach(ac -> {
+            ac.addAtRapida(CurvaRele.EI.gerarAT());
+        });
+        this.religador.getAcsEINeutro().forEach(ac -> {
+            ac.addAtRapida(CurvaRele.EI.gerarAT());
+        });
     }
 
     private void ajustarCurvaRapida(boolean fase) throws ValorATImposivelException {

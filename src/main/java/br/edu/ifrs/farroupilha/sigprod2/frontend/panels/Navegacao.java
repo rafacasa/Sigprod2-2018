@@ -3,16 +3,12 @@ package br.edu.ifrs.farroupilha.sigprod2.frontend.panels;
 import br.edu.ifrs.farroupilha.sigprod2.backend.Main;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.util.List;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
 
 /**
  *
@@ -143,6 +139,7 @@ public class Navegacao extends JPanel {
                 atual.resetAtributos();
             }
         } catch (java.lang.NullPointerException ex) {
+            ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "O equipamento superior não foi definido antecipadamente", "ERRO", JOptionPane.ERROR_MESSAGE);
             Main.irPara(atual, this.camadaAtual == 1);
             this.atualizarPontoAtual();
