@@ -1,16 +1,15 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.modelo;
 
+import br.edu.ifrs.farroupilha.sigprod2.backend.bd.dao.EloKDao;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.RedeNaoRadialException;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.listeners.NodeClickDefaultListener;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.listeners.NodeClickMouseManager;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.RedeNaoRadialException;
-import br.edu.ifrs.farroupilha.sigprod2.backend.bd.dao.EloKDao;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.DefaultGraph;
@@ -18,9 +17,11 @@ import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -47,7 +48,7 @@ public class Rede {
         String[] linhas = dadosRede.split("\r");
         this.pontosRede = new ArrayList();
         String nome;
-        double coordX, coordY, icc3f, icc2f, iccft, iccftmin, icarga;
+        double coordX, coordY, icc3f, icc2f, iccft, iccftmin, icarga, iinrush;
         int equip, indice;
         Ponto origem, destino;
         Trecho trecho;
@@ -81,6 +82,7 @@ public class Rede {
             iccft = Double.parseDouble(dados[23].replace(",", "."));
             iccftmin = Double.parseDouble(dados[24].replace(",", "."));
             icarga = Double.parseDouble(dados[25].replace(",", "."));
+            iinrush = Double.parseDouble(dados[28].replace(",", "."));
             indice = pontosRede.indexOf(new Ponto(nome));
             if (indice == -1) {
                 destino = new Ponto(nome, coordX, coordY, TipoEquipamento.converte(equip), icc3f, icc2f, iccft, iccftmin, icarga, 0);
