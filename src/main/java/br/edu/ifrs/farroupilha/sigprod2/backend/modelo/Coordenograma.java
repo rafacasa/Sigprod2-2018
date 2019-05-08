@@ -95,7 +95,7 @@ public class Coordenograma {
         serie.setLineColor(cor);
         serie.setMarker(SeriesMarkers.CIRCLE);
         serie.setMarkerColor(cor);
-        String[] tooltips = {"Tempo: " + y};
+        String[] tooltips = {nomeCurva + " - Tempo: " + y};
         serie.setToolTips(tooltips);
         serie.setShowInLegend(false);
         this.chartPanel.revalidate();
@@ -115,6 +115,34 @@ public class Coordenograma {
             dadosNeutroDouble.add(this.convertToDouble(dadosNeutro.get(0)));
             dadosNeutroDouble.add(this.convertToDouble(dadosNeutro.get(1)));
             this.addCurva(dadosNeutroDouble, "Curva de Neutro", corNeutro, true);
+        }
+    }
+
+    public void add(Religador religador, Color corFase, Color corNeutro, Color corFaseRap, Color corNeutroRap) {
+        if (religador.ajustado()) {
+            List<List<BigDecimal>> dadosFase = religador.getDadosAjuste(true);
+            List<List<Double>> dadosFaseDouble = new ArrayList<>();
+            dadosFaseDouble.add(this.convertToDouble(dadosFase.get(0)));
+            dadosFaseDouble.add(this.convertToDouble(dadosFase.get(1)));
+            this.addCurva(dadosFaseDouble, "Curva de Fase Lenta", corFase, true);
+
+            List<List<BigDecimal>> dadosNeutro = religador.getDadosAjuste(false);
+            List<List<Double>> dadosNeutroDouble = new ArrayList<>();
+            dadosNeutroDouble.add(this.convertToDouble(dadosNeutro.get(0)));
+            dadosNeutroDouble.add(this.convertToDouble(dadosNeutro.get(1)));
+            this.addCurva(dadosNeutroDouble, "Curva de Neutro Lenta", corNeutro, true);
+
+            List<List<BigDecimal>> dadosFaseRapida = religador.getDadosAjusteRapida(true);
+            List<List<Double>> dadosFaseDoubleRapida = new ArrayList<>();
+            dadosFaseDoubleRapida.add(this.convertToDouble(dadosFaseRapida.get(0)));
+            dadosFaseDoubleRapida.add(this.convertToDouble(dadosFaseRapida.get(1)));
+            this.addCurva(dadosFaseDoubleRapida, "Curva de Fase Rápida", corFaseRap, true);
+
+            List<List<BigDecimal>> dadosNeutroRapida = religador.getDadosAjusteRapida(false);
+            List<List<Double>> dadosNeutroDoubleRapida = new ArrayList<>();
+            dadosNeutroDoubleRapida.add(this.convertToDouble(dadosNeutroRapida.get(0)));
+            dadosNeutroDoubleRapida.add(this.convertToDouble(dadosNeutroRapida.get(1)));
+            this.addCurva(dadosNeutroDoubleRapida, "Curva de Neutro Rápida", corNeutroRap, true);
         }
     }
 

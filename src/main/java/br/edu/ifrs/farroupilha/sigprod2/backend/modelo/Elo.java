@@ -1,5 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.modelo;
 
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.CorrenteForaDoAlcanceException;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.TempoForaDoAlcanceException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -203,11 +205,11 @@ public class Elo implements Curvas, Equipamento {
         return TipoEquipamento.ELO;
     }
 
-    public double correnteDoTempo(double tempoEntrada, CurvasElo curva) {
+    public double correnteDoTempo(double tempoEntrada, CurvasElo curva) throws TempoForaDoAlcanceException {
         return correnteDoTempo(getCurvaMatrix(curva), tempoEntrada);
     }
 
-    private double correnteDoTempo(double curva[][], double tempoEntrada) {
+    private double correnteDoTempo(double curva[][], double tempoEntrada) throws TempoForaDoAlcanceException {
         double corrente1 = 0, corrente2 = 0, tempo1 = 0, tempo2 = 0;
         boolean sai = false;
         for (int i = 0; i < curva.length; i++) {
@@ -230,18 +232,18 @@ public class Elo implements Curvas, Equipamento {
             double b1 = (tempo1 - (((tempo2 - tempo1) / (corrente2 - corrente1)) * corrente1));
             return ((tempoEntrada - b1) / a1);
         } else {
-            return -1;
+            throw new TempoForaDoAlcanceException(tempoEntrada > curva[0][1], "TEMPO ENTRADO: " + tempoEntrada);
         }
     }
 
-    public double tempoDaCorrente(double correnteEntrada, CurvasElo curva) {
+    public double tempoDaCorrente(double correnteEntrada, CurvasElo curva) throws CorrenteForaDoAlcanceException {
         return tempoDaCorrente(getCurvaMatrix(curva), correnteEntrada);
     }
 
-    private double tempoDaCorrente(double curva[][], double correnteEntrada) {
+    private double tempoDaCorrente(double curva[][], double correnteEntrada) throws CorrenteForaDoAlcanceException {
         double corrente1 = 0, corrente2 = 0, tempo1 = 0, tempo2 = 0;
         boolean sai = false;
-        for (int i = 0; i < curva.length; i++) {
+        for (int i = 0; i < curva.length - 1; i++) {
             if ((correnteEntrada > curva[i][0]) && (correnteEntrada < curva[i + 1][0])) {
                 corrente1 = curva[i][0]; //corrente Menor
                 corrente2 = curva[i + 1][0]; //corrente Maior
@@ -250,7 +252,7 @@ public class Elo implements Curvas, Equipamento {
                 sai = true;
                 break;
             } else if (correnteEntrada == curva[i][0]) {
-                return curva[i][0];
+                return curva[i][1];
             }
         }
         if (sai == true) {
@@ -259,7 +261,7 @@ public class Elo implements Curvas, Equipamento {
             double b1 = (tempo1 - (((tempo2 - tempo1) / (corrente2 - corrente1)) * corrente1));
             return (correnteEntrada * a1) + b1;
         } else {
-            return -1;
+            throw new CorrenteForaDoAlcanceException(correnteEntrada > curva[0][0], "CORRENTE ENTRADA: " + correnteEntrada);
         }
     }
 

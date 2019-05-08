@@ -1,20 +1,21 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.Main;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
+import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.CriteriosReligadorElo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.MetricasReligadorElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
-import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Rele_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.MetricasReleElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvasElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Religador;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.CorrenteForaDoAlcanceException;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.JButton;
@@ -29,19 +30,23 @@ import org.apache.logging.log4j.Logger;
  *
  * @author Rafael Luiz Casa
  */
-public class PanelAjusteReleElo extends PanelAjuste {
+public class PanelAjusteReligadorElo extends PanelAjuste {
 
-    private static final Logger LOGGER = LogManager.getLogger(PanelAjusteReleElo.class.getName());
-    private List<MetricasReleElo> metricas;
-    private Rele relePai;
+    private static final Logger LOGGER = LogManager.getLogger(PanelAjusteReligadorElo.class.getName());
+    private List<MetricasReligadorElo> metricas;
+    private final Religador religadorPai;
     private Elo selecionado;
-    private Ponto ponto;
+    private final Ponto ponto;
     private Coordenograma coordenograma;
 
-    private JComboBox<MetricasReleElo> lista;
+    private JComboBox<MetricasReligadorElo> lista;
     private JButton botaoSelecionar;
     private JLabel nomeAlcance;
     private JLabel labelAlcance;
+    private JLabel nomeSeletividadeRapidaFase;
+    private JLabel labelSeletividadeRapidaFase;
+    private JLabel nomeSeletividadeRapidaNeutro;
+    private JLabel labelSeletividadeRapidaNeutro;
     private JLabel nomeSeletividadeNeutro;
     private JLabel labelSeletividadeNeutro;
     private JLabel nomeSeletividadeFasePonto;
@@ -51,12 +56,13 @@ public class PanelAjusteReleElo extends PanelAjuste {
     private JTextField campoCorrente;
     private JButton botaoMostrar;
     private JButton botaoLimpar;
-    private List<String> nomePontos;
+    private final List<String> nomePontos;
 
-    public PanelAjusteReleElo(Ponto p, Rede rede, Ponto pOrigem) {
+    public PanelAjusteReligadorElo(Ponto p, Rede rede, Ponto pOrigem) {
         LOGGER.trace("Cria Panel AjusteReleElo");
-        this.relePai = (Rele) pOrigem.getEquipamentoInstalado();
+        this.religadorPai = (Religador) pOrigem.getEquipamentoInstalado();
         this.ponto = p;
+        this.nomePontos = new ArrayList<>();
         this.calculaAjustes(rede, pOrigem);
         this.initComponents();
         this.addItens();
@@ -65,7 +71,7 @@ public class PanelAjusteReleElo extends PanelAjuste {
 
     private void calculaAjustes(Rede rede, Ponto pOrigem) {
         this.ponto.resetAtributos(true);
-        Criterios_Rele_Elo criterios = new Criterios_Rele_Elo(this.relePai, this.ponto, rede);
+        CriteriosReligadorElo criterios = new CriteriosReligadorElo(this.religadorPai, this.ponto, rede);
         try {
             this.metricas = criterios.ajuste();
         } catch (AjusteImpossivelException ex) {
@@ -95,11 +101,15 @@ public class PanelAjusteReleElo extends PanelAjuste {
         this.lista.addActionListener(this::listaActionPerformed);
 
         this.labelAlcance = new JLabel();
+        this.labelSeletividadeRapidaFase = new JLabel();
+        this.labelSeletividadeRapidaNeutro = new JLabel();
         this.labelSeletividadeNeutro = new JLabel();
         this.labelSeletividadeFasePonto = new JLabel();
         this.labelSeletividadeFaseAbaixo = new JLabel();
 
         this.nomeAlcance = new JLabel("Porcentagem de Alcançe: ");
+        this.nomeSeletividadeRapidaFase = new JLabel("Seletividade Rapida Fase: ");
+        this.nomeSeletividadeRapidaNeutro = new JLabel("Seletividade Rapida Neutro: ");
         this.nomeSeletividadeNeutro = new JLabel("Seletividade Neutro: ");
         this.nomeSeletividadeFasePonto = new JLabel("Seletividade Fase Ponto: ");
         this.nomeSeletividadeFaseAbaixo = new JLabel("Seletividade Fase Abaixo: ");
@@ -113,9 +123,15 @@ public class PanelAjusteReleElo extends PanelAjuste {
 
     private void addItens() {
         this.setLayout(new MigLayout());
+
         this.add(this.lista, "wrap");
         this.add(this.nomeAlcance);
         this.add(this.labelAlcance, "wrap");
+
+        this.add(this.nomeSeletividadeRapidaFase);
+        this.add(this.labelSeletividadeRapidaFase, "wrap");
+        this.add(this.nomeSeletividadeRapidaNeutro);
+        this.add(this.labelSeletividadeRapidaNeutro, "wrap");
         this.add(this.nomeSeletividadeNeutro);
         this.add(this.labelSeletividadeNeutro, "wrap");
         this.add(this.nomeSeletividadeFasePonto);
@@ -136,8 +152,10 @@ public class PanelAjusteReleElo extends PanelAjuste {
 
     private void listaActionPerformed(java.awt.event.ActionEvent evt) {
         LOGGER.trace(evt.getActionCommand());
-        MetricasReleElo metrica = this.lista.getItemAt(this.lista.getSelectedIndex());
+        MetricasReligadorElo metrica = this.lista.getItemAt(this.lista.getSelectedIndex());
         this.labelAlcance.setText(metrica.getAlcance().toString());
+        this.labelSeletividadeRapidaFase.setText(metrica.isSeletividadeRapidaFase()? "TRUE" : "FALSE");
+        this.labelSeletividadeRapidaNeutro.setText(metrica.isSeletividadeRapidaNeutro()? "TRUE" : "FALSE");
         this.labelSeletividadeNeutro.setText(metrica.isSeletividadeNeutro() ? "TRUE" : "FALSE");
         this.labelSeletividadeFasePonto.setText(metrica.isSeletividadeFasePonto() ? "TRUE" : "FALSE");
         this.labelSeletividadeFaseAbaixo.setText(metrica.isSeletividadeFaseAbaixo() ? "TRUE" : "FALSE");
@@ -148,25 +166,58 @@ public class PanelAjusteReleElo extends PanelAjuste {
         return selecionado;
     }
 
-    public void botaoMostrarActionPerformed(java.awt.event.ActionEvent evt) {
+    public int botaoMostrarActionPerformed(java.awt.event.ActionEvent evt) {
         LOGGER.trace(evt.getActionCommand());
         this.limparPontos();
         String numeroDigitado = this.campoCorrente.getText();
+        BigDecimal corrente;
         try {
-            BigDecimal corrente = new BigDecimal(numeroDigitado);
-            BigDecimal tempoFaseLenta = this.relePai.getAjusteFase().calculaTempo(corrente);
-            BigDecimal tempoNeutroLenta = this.relePai.getAjusteNeutro().calculaTempo(corrente);
-            BigDecimal tempoMaximaElo = BigDecimal.valueOf(this.lista.getItemAt(this.lista.getSelectedIndex()).getElo().tempoDaCorrente(corrente.doubleValue(), CurvasElo.MAXIMA));
-            BigDecimal tempoMinimaElo = BigDecimal.valueOf(this.lista.getItemAt(this.lista.getSelectedIndex()).getElo().tempoDaCorrente(corrente.doubleValue(), CurvasElo.MINIMA));
-            this.nomePontos = this.coordenograma.add(corrente, Arrays.asList(tempoFaseLenta, tempoNeutroLenta, tempoMaximaElo, tempoMinimaElo), "pontoDigitado", Arrays.asList(Color.RED, Color.RED, Color.BLUE, Color.BLUE));
+            corrente = new BigDecimal(numeroDigitado);
         } catch (NumberFormatException e) {
             Erro.entradaInvalida(this);
             LOGGER.error("STRING INVÁLIDA" + e.getMessage());
+            return 1;
+        }
+
+        try {
+            BigDecimal tempoFaseLenta = religadorPai.getAjusteFase().calculaTempo(corrente);
+            if (tempoFaseLenta.compareTo(BigDecimal.ZERO) >= 1) {
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoFaseLenta), "tempoFaseLenta", Arrays.asList(Color.BLACK)));
+            }
+
+            BigDecimal tempoNeutroLenta = religadorPai.getAjusteNeutro().calculaTempo(corrente);
+            if (tempoNeutroLenta.compareTo(BigDecimal.ZERO) >= 1) {
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoNeutroLenta), "tempoNeutroLenta", Arrays.asList(Color.RED)));
+            }
+
+            BigDecimal tempoFaseRapida = religadorPai.getAjusteRapidaFase().calculaTempo(corrente);
+            if (tempoFaseRapida.compareTo(BigDecimal.ZERO) >= 1) {
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoFaseRapida), "tempoFaseRapida", Arrays.asList(Color.DARK_GRAY)));
+            }
+
+            BigDecimal tempoNeutroRapida = religadorPai.getAjusteRapidaNeutro().calculaTempo(corrente);
+            if (tempoNeutroRapida.compareTo(BigDecimal.ZERO) >= 1) {
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoNeutroRapida), "tempoNeutroRapida", Arrays.asList(Color.ORANGE)));
+            }
+
+            try {
+                BigDecimal tempoMaximaElo = BigDecimal.valueOf(this.lista.getItemAt(this.lista.getSelectedIndex()).getElo().tempoDaCorrente(corrente.doubleValue(), CurvasElo.MAXIMA));
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoMaximaElo), "tempoMaximaElo", Arrays.asList(Color.BLUE)));
+            } catch (CorrenteForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE PARA CORRENTE DIGITADA " + ex.getLocalizedMessage());
+            }
+
+            try {
+                BigDecimal tempoMinimaElo = BigDecimal.valueOf(this.lista.getItemAt(this.lista.getSelectedIndex()).getElo().tempoDaCorrente(corrente.doubleValue(), CurvasElo.MINIMA));
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoMinimaElo), "tempoMinimaElo", Arrays.asList(Color.BLUE)));
+            } catch (CorrenteForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE PARA CORRENTE DIGITADA " + ex.getLocalizedMessage());
+            }
         } catch (NullPointerException e) {
             LOGGER.error("COORDENOGRAMA NAO ABERTO" + e.getMessage());
-        } catch (CorrenteForaDoAlcanceException ex) {
-            LOGGER.error("ELO NAO TEM ALCANCE PARA CORRENTE DIGITADA " + ex.getLocalizedMessage());
+            return 1;
         }
+        return 0;
     }
 
     public void botaoLimparActionPerformed(java.awt.event.ActionEvent evt) {
@@ -179,20 +230,20 @@ public class PanelAjusteReleElo extends PanelAjuste {
             this.nomePontos.forEach(s -> {
                 this.coordenograma.remove(s);
             });
+            this.nomePontos.clear();
         }
     }
 
     @Override
     public final Coordenograma geraCoordenograma() {
-        MetricasReleElo metricaselo = this.lista.getItemAt(this.lista.getSelectedIndex());
+        MetricasReligadorElo metricaselo = this.lista.getItemAt(this.lista.getSelectedIndex());
         if (metricaselo != null) {
             Elo elo = metricaselo.getElo();
             this.coordenograma = new Coordenograma("Coordenograma");
-            this.coordenograma.add(this.relePai, Color.RED, Color.RED);
+            this.coordenograma.add(this.religadorPai, Color.BLACK, Color.RED, Color.DARK_GRAY, Color.ORANGE);
             this.coordenograma.add(elo, "Elo Selecionado", Color.BLUE);
             return this.coordenograma;
         }
         return null;
     }
-
 }

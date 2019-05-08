@@ -1,5 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.criterios;
 
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.ACDisponivel;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.ValorATImposivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.AjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Corrente;
@@ -25,9 +26,9 @@ import org.apache.logging.log4j.Logger;
 public class Criterios_Rele {
 
     private static final Logger LOGGER = LogManager.getLogger(Criterios_Rele.class.getName());
-    private Rede rede;
-    private Ponto ponto;
-    private Rele rele;
+    private final Rede rede;
+    private final Ponto ponto;
+    private final Rele rele;
     private BigDecimal tempoMaxPPFase = new BigDecimal("5");
     private BigDecimal tempoMaxPRFase = new BigDecimal("10");
     private BigDecimal tempoMaxPPNeutro = new BigDecimal("2.5");
@@ -40,6 +41,17 @@ public class Criterios_Rele {
         this.rele = rele;
     }
 
+    public Criterios_Rele(Rede rede, Ponto ponto, Rele rele, BigDecimal tempoMaxPPFase, BigDecimal tempoMaxPRFase, BigDecimal tempoMaxPPNeutro, BigDecimal tempoMaxPRNeutro, BigDecimal fatorDesbalanco) {
+        this.rede = rede;
+        this.ponto = ponto;
+        this.rele = rele;
+        this.tempoMaxPPFase = tempoMaxPPFase;
+        this.tempoMaxPRFase = tempoMaxPRFase;
+        this.tempoMaxPPNeutro = tempoMaxPPNeutro;
+        this.tempoMaxPRNeutro = tempoMaxPRNeutro;
+        this.fatorDesbalanco = fatorDesbalanco;
+    }
+
     public void ajuste() {
         List<AjusteRele> ajustesFase = ajustaFase();
         List<AjusteRele> ajustesNeutro = ajustaNeutro();
@@ -48,41 +60,55 @@ public class Criterios_Rele {
         this.rele.setAjusteNeutro(ajustesNeutro.get(0));
     }
 
-    public List<AjusteRele> ajustaFase() {
+    private List<AjusteRele> ajustaFase() {
         LOGGER.traceEntry();
         BigDecimal iMinFFPP = BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.ponto, Corrente.ICC2F));
         BigDecimal iMinFFPR = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(this.ponto, Corrente.ICC2F));
-        BigDecimal limiteMaximo = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(ponto, Corrente.ICC2F));
-        BigDecimal limiteMinimo = BigDecimal.valueOf(this.rede.buscaCorrentePonto(ponto, Corrente.ICARGA));
+        BigDecimal limiteMaximo = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(ponto, Corrente.ICC2F)).divide(BigDecimal.valueOf(1.1), MathContext.DECIMAL128);
+        BigDecimal limiteMinimo = BigDecimal.valueOf(this.rede.buscaCorrentePonto(ponto, Corrente.ICARGA)).multiply(BigDecimal.valueOf(1.1), MathContext.DECIMAL128);
         CurvaRele ni = this.rele.getnIFase();
         CurvaRele mi = this.rele.getmIFase();
         CurvaRele ei = this.rele.geteIFase();
         List<AjusteRele> ajustesPossiveis = new ArrayList<>();
-        ajustesPossiveis.addAll(calculaAcerto(ni, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
-        ajustesPossiveis.addAll(calculaAcerto(mi, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
-        ajustesPossiveis.addAll(calculaAcerto(ei, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true));
+        List<ACDisponivel> acDisponiveis = new ArrayList<>();
+        ajustesPossiveis.addAll(calculaAcerto(ni, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true, acDisponiveis));
+        this.rele.setAcsNIFase(new ArrayList<>(acDisponiveis));
+        acDisponiveis.clear();
+        ajustesPossiveis.addAll(calculaAcerto(mi, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true, acDisponiveis));
+        this.rele.setAcsMIFase(new ArrayList<>(acDisponiveis));
+        acDisponiveis.clear();
+        ajustesPossiveis.addAll(calculaAcerto(ei, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, true, acDisponiveis));
+        this.rele.setAcsEIFase(new ArrayList<>(acDisponiveis));
+        acDisponiveis.clear();
         ajustesPossiveis.sort(null);
         return LOGGER.traceExit(ajustesPossiveis);
     }
 
-    public List<AjusteRele> ajustaNeutro() {
+    private List<AjusteRele> ajustaNeutro() {
         LOGGER.traceEntry();
         BigDecimal iMinFFPP = BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.ponto, Corrente.ICCFTMIN));
         BigDecimal iMinFFPR = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(this.ponto, Corrente.ICCFTMIN));
-        BigDecimal limiteMaximo = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(ponto, Corrente.ICCFTMIN));
-        BigDecimal limiteMinimo = this.fatorDesbalanco.multiply(BigDecimal.valueOf(this.rede.buscaCorrentePonto(ponto, Corrente.ICARGA)));
+        BigDecimal limiteMaximo = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(ponto, Corrente.ICCFTMIN)).divide(BigDecimal.valueOf(1.1), MathContext.DECIMAL128);
+        BigDecimal limiteMinimo = this.fatorDesbalanco.multiply(BigDecimal.valueOf(this.rede.buscaCorrentePonto(ponto, Corrente.ICARGA))).multiply(BigDecimal.valueOf(1.1), MathContext.DECIMAL128);
         CurvaRele ni = this.rele.getnINeutro();
         CurvaRele mi = this.rele.getmINeutro();
         CurvaRele ei = this.rele.geteINeutro();
         List<AjusteRele> ajustesPossiveis = new ArrayList<>();
-        ajustesPossiveis.addAll(calculaAcerto(ni, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, false));
-        ajustesPossiveis.addAll(calculaAcerto(mi, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, false));
-        ajustesPossiveis.addAll(calculaAcerto(ei, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, false));
+        List<ACDisponivel> acDisponiveis = new ArrayList<>();
+        ajustesPossiveis.addAll(calculaAcerto(ni, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, false, acDisponiveis));
+        this.rele.setAcsNINeutro(new ArrayList<>(acDisponiveis));
+        acDisponiveis.clear();
+        ajustesPossiveis.addAll(calculaAcerto(mi, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, false, acDisponiveis));
+        this.rele.setAcsMINeutro(new ArrayList<>(acDisponiveis));
+        acDisponiveis.clear();
+        ajustesPossiveis.addAll(calculaAcerto(ei, iMinFFPP, iMinFFPR, limiteMaximo, limiteMinimo, false, acDisponiveis));
+        this.rele.setAcsEINeutro(new ArrayList<>(acDisponiveis));
+        acDisponiveis.clear();
         ajustesPossiveis.sort(null);
         return LOGGER.traceExit(ajustesPossiveis);
     }
 
-    private List<AjusteRele> calculaAcerto(CurvaRele curva, BigDecimal iMinFFPP, BigDecimal iMinFFPR, BigDecimal limiteMaximo, BigDecimal limiteMinimo, boolean fase) {
+    private List<AjusteRele> calculaAcerto(CurvaRele curva, BigDecimal iMinFFPP, BigDecimal iMinFFPR, BigDecimal limiteMaximo, BigDecimal limiteMinimo, boolean fase, List<ACDisponivel> acDisponiveis) {
         LOGGER.traceEntry();
         List<AjusteRele> ajustesPossiveis = new ArrayList<>();
         List<BigDecimal> ac = restringeAC(curva, limiteMaximo, limiteMinimo);
@@ -100,6 +126,8 @@ public class Criterios_Rele {
             BigDecimal fm = this.calcularFM(curva, d, at, iMinFFPP, iMinFFPR, fase);
             AjusteRele metrica = new AjusteRele(fm, at, d, curva);
             ajustesPossiveis.add(metrica);
+            ACDisponivel aCDisponivel = new ACDisponivel(d, at, curva.getMenorAT(), curva.getPassoAT());
+            acDisponiveis.add(aCDisponivel);
         }
         return LOGGER.traceExit(ajustesPossiveis);
     }
@@ -264,9 +292,9 @@ public class Criterios_Rele {
 
     public static Rele getReleTeste() {
         Rele teste = new Rele("modelo1", "fabricante1");
-        CurvaRele ni = new CurvaRele("0.14", "0", "0.02", "1", "1000", "1", "0.01", "1", "0.01");
-        CurvaRele mi = new CurvaRele("13.5", "0", "1", "1", "1000", "1", "0.01", "1", "0.01");
-        CurvaRele ei = new CurvaRele("80", "0", "2", "1", "1000", "1", "0.01", "1", "0.01");
+        CurvaRele ni = CurvaRele.NI;
+        CurvaRele mi = CurvaRele.MI;
+        CurvaRele ei = CurvaRele.EI;
         teste.setnIFase(ni);
         teste.setmIFase(mi);
         teste.seteIFase(ei);

@@ -1,6 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.modelo;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,20 +10,32 @@ import java.util.List;
  */
 public class Rele implements Equipamento {
 
-    private CurvaRele nIFase;
-    private CurvaRele mIFase;
-    private CurvaRele eIFase;
-    private CurvaRele nINeutro;
-    private CurvaRele mINeutro;
-    private CurvaRele eINeutro;
-    private AjusteRele ajusteNeutro;
-    private AjusteRele ajusteFase;
-    private String modelo;
-    private String fabricante;
+    protected CurvaRele nIFase;
+    protected CurvaRele mIFase;
+    protected CurvaRele eIFase;
+    protected CurvaRele nINeutro;
+    protected CurvaRele mINeutro;
+    protected CurvaRele eINeutro;
+    protected AjusteRele ajusteNeutro;
+    protected AjusteRele ajusteFase;
+    protected List<ACDisponivel> acsNIFase;
+    protected List<ACDisponivel> acsMIFase;
+    protected List<ACDisponivel> acsEIFase;
+    protected List<ACDisponivel> acsNINeutro;
+    protected List<ACDisponivel> acsMINeutro;
+    protected List<ACDisponivel> acsEINeutro;
+    protected String modelo;
+    protected String fabricante;
 
     public Rele(String modelo, String fabricante) {
         this.modelo = modelo;
         this.fabricante = fabricante;
+        this.acsNIFase = new ArrayList<>();
+        this.acsMIFase = new ArrayList<>();
+        this.acsEIFase = new ArrayList<>();
+        this.acsNINeutro = new ArrayList<>();
+        this.acsMINeutro = new ArrayList<>();
+        this.acsEINeutro = new ArrayList<>();
     }
 
     public CurvaRele getnIFase() {
@@ -105,6 +118,54 @@ public class Rele implements Equipamento {
         this.ajusteFase = ajusteFase;
     }
 
+    public List<ACDisponivel> getAcsNIFase() {
+        return acsNIFase;
+    }
+
+    public void setAcsNIFase(List<ACDisponivel> acsNIFase) {
+        this.acsNIFase = acsNIFase;
+    }
+
+    public List<ACDisponivel> getAcsMIFase() {
+        return acsMIFase;
+    }
+
+    public void setAcsMIFase(List<ACDisponivel> acsMIFase) {
+        this.acsMIFase = acsMIFase;
+    }
+
+    public List<ACDisponivel> getAcsEIFase() {
+        return acsEIFase;
+    }
+
+    public void setAcsEIFase(List<ACDisponivel> acsEIFase) {
+        this.acsEIFase = acsEIFase;
+    }
+
+    public List<ACDisponivel> getAcsNINeutro() {
+        return acsNINeutro;
+    }
+
+    public void setAcsNINeutro(List<ACDisponivel> acsNINeutro) {
+        this.acsNINeutro = acsNINeutro;
+    }
+
+    public List<ACDisponivel> getAcsMINeutro() {
+        return acsMINeutro;
+    }
+
+    public void setAcsMINeutro(List<ACDisponivel> acsMINeutro) {
+        this.acsMINeutro = acsMINeutro;
+    }
+
+    public List<ACDisponivel> getAcsEINeutro() {
+        return acsEINeutro;
+    }
+
+    public void setAcsEINeutro(List<ACDisponivel> acsEINeutro) {
+        this.acsEINeutro = acsEINeutro;
+    }
+    
     public boolean ajustado() {
         return (this.ajusteFase != null) && (this.ajusteNeutro != null);
     }

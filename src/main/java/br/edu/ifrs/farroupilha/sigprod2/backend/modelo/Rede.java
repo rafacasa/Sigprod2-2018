@@ -1,20 +1,15 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.modelo;
 
-import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
+import br.edu.ifrs.farroupilha.sigprod2.backend.bd.dao.EloKDao;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.RedeNaoRadialException;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.listeners.NodeClickDefaultListener;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.listeners.NodeClickMouseManager;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.RedeNaoRadialException;
-import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Rele;
-import br.edu.ifrs.farroupilha.sigprod2.backend.bd.dao.EloKDao;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.DefaultMainFrame;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.DefaultGraph;
@@ -22,12 +17,11 @@ import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.EscolheEloElo;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Informacoes;
-import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -54,7 +48,7 @@ public class Rede {
         String[] linhas = dadosRede.split("\r");
         this.pontosRede = new ArrayList();
         String nome;
-        double coordX, coordY, icc3f, icc2f, iccft, iccftmin, icarga;
+        double coordX, coordY, icc3f, icc2f, iccft, iccftmin, icarga, iinrush;
         int equip, indice;
         Ponto origem, destino;
         Trecho trecho;
@@ -88,9 +82,10 @@ public class Rede {
             iccft = Double.parseDouble(dados[23].replace(",", "."));
             iccftmin = Double.parseDouble(dados[24].replace(",", "."));
             icarga = Double.parseDouble(dados[25].replace(",", "."));
+            iinrush = Double.parseDouble(dados[28].replace(",", "."));
             indice = pontosRede.indexOf(new Ponto(nome));
             if (indice == -1) {
-                destino = new Ponto(nome, coordX, coordY, TipoEquipamento.converte(equip), icc3f, icc2f, iccft, iccftmin, icarga);
+                destino = new Ponto(nome, coordX, coordY, TipoEquipamento.converte(equip), icc3f, icc2f, iccft, iccftmin, icarga, 0);
                 pontosRede.add(destino);
             } else {
                 destino = pontosRede.get(indice);
@@ -105,6 +100,7 @@ public class Rede {
         this.verificaFimdeTrechos();
         this.criaRedeReduzida();
         //Rede.verMapa(this.redeReduzida);
+        LOGGER.debug("REDE CRIADA");
     }
 
     private void geraMapa() {
@@ -421,8 +417,11 @@ public class Rede {
                 return p.getIccft();
             case ICCFTMIN:
                 return p.getIccftmin();
+            case IINRUSH:
+                return p.getiInRush();
+            default:
+                return 0;
         }
-        return 0;
     }
 
     public double buscaCorrentePonto(String s, Corrente c) {
@@ -539,137 +538,5 @@ public class Rede {
         }.getType();
         String s = gson.toJson(this.getTrechosRede(), listType);
         arquivo.escreverArquivo(s);
-    }
-
-    public void ajuste() throws AjusteImpossivelException {
-        for (int i = 0; i < redeReduzida.size(); i++) {
-            Trecho t = redeReduzida.get(i);
-            Ponto pAjuste = t.getDestino();
-            Ponto pOrigem = t.getOrigem();
-            TipoEquipamento equip = pAjuste.getTipoEquipamentoInstalado();
-            if (i == 0) {
-                switch (equip) {
-                    case ELO:
-                        this.ajusteElo(pAjuste);
-                        break;
-                    case RELE:
-                        this.ajusteRele(pAjuste);
-                        break;
-                    case RELIGADOR:
-
-                        break;
-                }
-            } else {
-                switch (equip) {
-                    case ELO:
-                        switch (pOrigem.getTipoEquipamentoInstalado()) {
-                            case ELO:
-                                ajusteEloElo(pAjuste, pOrigem);
-                                break;
-                            case RELE:
-
-                                break;
-                            case RELIGADOR:
-
-                                break;
-                        }
-                        break;
-                    case RELE:
-                        switch (pOrigem.getTipoEquipamentoInstalado()) {
-                            case ELO:
-
-                                break;
-                            case RELE:
-
-                                break;
-                            case RELIGADOR:
-
-                                break;
-                        }
-                        break;
-                    case RELIGADOR:
-                        switch (pOrigem.getTipoEquipamentoInstalado()) {
-                            case ELO:
-
-                                break;
-                            case RELE:
-
-                                break;
-                            case RELIGADOR:
-
-                                break;
-                        }
-                        break;
-                }
-            }
-
-        }
-    }
-
-    public void ajusteElo(Ponto p) throws AjusteImpossivelException {
-        Elo ajuste = Criterios_Elo.criterio_elo(elosDisponiveis, p, this);
-        p.setEquipamentoInstalado(ajuste);
-        Ponto.addAttribute(this.getMapa().getNode(p.getNome()), "ui.class", "equipamentoSelecionado");
-    }
-
-    public void ajusteEloElo(Ponto pontoRede, Ponto pontoOrigem) throws AjusteImpossivelException {
-//        int numeroDeElosAbaixo = this.contaElosAbaixo(pontoRede);
-//        int index = elosDisponiveis.indexOf(pontoOrigem.getEquipamentoInstalado());
-//        List<Elo> elos = elosDisponiveis.subList(index + 1, elosDisponiveis.size());
-//
-//        if (elos.size() < numeroDeElosAbaixo) {
-//            throw new AjusteImpossivelException();
-//        }
-//        
-//        try {
-//            Criterios_Elo.criterio_elo_elo_1(elos, pontoRede, this, pontoOrigem);
-//        } catch (AjusteImpossivelException ex) {
-//            try {
-//                Criterios_Elo.criterio_elo_elo_2(elos, pontoRede, this, pontoOrigem);
-//            } catch (AjusteImpossivelException ex1) {
-//                try {
-//                    Criterios_Elo.criterio_elo_elo_3(elos, pontoRede, this, pontoOrigem);
-//                } catch (AjusteImpossivelException ex2) {
-//                    reajusteEloElo();
-//                }
-//            }
-//        }
-
-        //Elo ajuste = Criterios_Elo.criterio_elo_elo(elosDisponiveis, pontoRede, this, pontoOrigem);
-        //pontoRede.setEquipamentoInstalado(ajuste);
-        //Ponto.addAttribute(this.getMapa().getNode(pontoRede.getNome()), "ui.class", "equipamentoSelecionado");
-        StringBuilder sb = new StringBuilder();
-        sb.append(pontoRede.getNome()).append(",");
-        Criterios_Elo_Elo criteriosEloElo = new Criterios_Elo_Elo(elosDisponiveis, pontoRede, this, pontoOrigem);
-        List<Metricas_Elo_Elo> metricas = criteriosEloElo.ajuste();
-        for (Metricas_Elo_Elo metrica : metricas) {
-            sb.append(metrica.getElo().getCorrenteNominal()).append(",").append(metrica.gettProtetorProtegido1()).append(",").append(metrica.getiFTMinI300()).append(",").append(metrica.gettProtetorProtegido1()).append(",").append(metrica.getiFTMinSelI300()).append(",").append(metrica.gettProtetorProtegido2()).append(",").append(metrica.getiFTMinSelI300()).append(",").append(metrica.getPorcentagemProtegida()).append(",");
-        }
-        System.out.println(sb.toString());
-        Ponto.addAttribute(this.getMapa().getNode(pontoRede.getNome()), "ui.class", "equipamentoSendoAjustado");
-        Informacoes info = new Informacoes(this.getMapa().getNode(pontoRede.getNome()));
-        DefaultMainFrame.frame.setInfoPanel(info);
-        EscolheEloElo escolhe = new EscolheEloElo(metricas);
-        Elo ajuste = escolhe.getSelecionado();
-        pontoRede.setEquipamentoInstalado(ajuste);
-        Ponto.removeAttribute(this.getMapa().getNode(pontoRede.getNome()), "ui.class", "equipamentoSendoAjustado");
-        Ponto.addAttribute(this.getMapa().getNode(pontoRede.getNome()), "ui.class", "equipamentoSelecionado");
-    }
-
-    public void reajusteEloElo() {
-
-    }
-
-    public void ajusteRele(Ponto pontoRede) {
-        LOGGER.traceEntry();
-        Rele rele = Criterios_Rele.getReleTeste(); //COMO DEFINIR QUAL EQUIPAMENTO ESTA INSTALADO NO PONTO
-        Criterios_Rele criteriosRele = new Criterios_Rele(this, pontoRede, rele);
-        List<AjusteRele> ajustesPossiveis = criteriosRele.ajustaFase();
-        AjusteRele menorFm = ajustesPossiveis.get(0);
-        LOGGER.debug("MENOR FM - " + menorFm.getFm());
-        LOGGER.debug("AC - " + menorFm.getAc());
-        LOGGER.debug("AT - " + menorFm.getAt());
-        LOGGER.debug("CURVA a/b/p - " + menorFm.getCurva().getA() + " / " + menorFm.getCurva().getB() + " / " + menorFm.getCurva().getP());
-        LOGGER.debug("MENOR FM - " + menorFm.getFm());
     }
 }

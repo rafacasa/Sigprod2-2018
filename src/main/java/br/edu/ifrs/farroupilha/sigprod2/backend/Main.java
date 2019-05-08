@@ -1,38 +1,26 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend;
 
-import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Elo_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.Criterios_Rele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.*;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Arquivo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Equipamento;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.TipoEquipamento;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.RelativeMainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.CorrentesPonto;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.Navegacao;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteEloElo;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteRele;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjusteReleElo;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.*;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Informacoes;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.graphstream.graph.Node;
+
+import javax.swing.*;
+import java.awt.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe Principal do Sistema
@@ -62,10 +50,10 @@ public class Main {
     }
 
     private static Arquivo getArquivoRedeInicial() {
-        return new Arquivo("redeRele.ABCEEE");
+        return new Arquivo("redeExemploGED.ABCEEEE");
     }
 
-    private static void setupMainFrame(MainFrame frame) throws BancoDeDadosException {
+    private static void setupMainFrame(MainFrame frame) throws BancoDeDadosException, AjusteImpossivelException {
         rede = getRedeInicial();
         Component c = (Component) rede.getMapaView();
         c.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
@@ -80,7 +68,7 @@ public class Main {
         irPara(navegacao.getPontoAtual(), true);
     }
 
-    public static boolean irPara(Ponto ponto, boolean inicioRede) {
+    public static boolean irPara(Ponto ponto, boolean inicioRede) throws AjusteImpossivelException {
         if (inicioRede) {
             return irParaInicioRede(ponto);
         } else {
@@ -105,11 +93,15 @@ public class Main {
                 Rele rele = Criterios_Rele.getReleTeste(); //COMO DEFINIR QUAL EQUIPAMENTO ESTA INSTALADO NO PONTO
                 Criterios_Rele criteriosRele = new Criterios_Rele(rede, ponto, rele);
                 criteriosRele.ajuste();
-                frame.setAjuste(new PanelAjusteRele(rele));
+                frame.setAjuste(new PanelAjusteReleTemp(rele));
                 selecionaEquipamento(ponto, rele);
                 break;
             case RELIGADOR:
-
+                Religador religador = CriteriosReligador.getReligadorTeste(); //DEFINIR QUAL RELIGADOR ESTA INSTALADO NO PONTO
+                CriteriosReligador criteriosReligador = new CriteriosReligador(Main.rede, ponto, religador);
+                criteriosReligador.ajuste();
+                frame.setAjuste(new PanelAjusteReligadorTemp(religador));
+                selecionaEquipamento(ponto, religador);
                 break;
             default:
                 LOGGER.error("DEFAULT CLAUSE");
@@ -118,7 +110,7 @@ public class Main {
         return true;
     }
 
-    private static boolean irParaMeioRede(Ponto ponto) {
+    private static boolean irParaMeioRede(Ponto ponto) throws AjusteImpossivelException {
         Ponto pOrigem = rede.getParentRedeReduzida(ponto);
         TipoEquipamento tipoEquipamento = ponto.getTipoEquipamentoInstalado();
         TipoEquipamento tipoOrigem = pOrigem.getTipoEquipamentoInstalado();
@@ -157,7 +149,12 @@ public class Main {
 
                         break;
                     case RELIGADOR:
-
+                        Rele relePai = (Rele) pOrigem.getEquipamentoInstalado();
+                        Religador religador = CriteriosReligador.getReligadorTeste(); //DEFINIR QUAL RELIGADOR ESTA INSTALADO NO PONTO
+                        CriteriosReleReligador criterios = new CriteriosReleReligador(relePai, ponto, rede, religador);
+                        criterios.ajuste();
+                        selecionaEquipamento(ponto, religador);
+                        frame.setAjuste(new PanelAjusteReleReligadorTemp(ponto, pOrigem));
                         break;
                     default:
                         LOGGER.error("DEFAULT CLAUSE");
@@ -167,7 +164,7 @@ public class Main {
             case RELIGADOR:
                 switch (tipoEquipamento) {
                     case ELO:
-
+                        frame.setAjuste(new PanelAjusteReligadorElo(ponto, rede, pOrigem));
                         break;
                     case RELE:
 
@@ -278,7 +275,7 @@ public class Main {
             }
             try {
                 for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                    if ("Windows".equals(info.getName())) {
+                    if ("GTK+".equals(info.getName())) {
                         javax.swing.UIManager.setLookAndFeel(info.getClassName());
                         break;
                     }
@@ -293,6 +290,9 @@ public class Main {
             LOGGER.info("over");
         } catch (BancoDeDadosException ex) {
             LOGGER.error("ERRO DE BANCO DE DADOS" + ex.getMessage());
+        } catch (AjusteImpossivelException e) {
+            Erro.mostraMensagemErro((JFrame) frame, "Nao ha ajustes disponiveis para iniciar a rede");
+            LOGGER.error("ERRO AJUSTE + " + e.getMessage());
         }
     }
 }

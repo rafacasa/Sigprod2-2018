@@ -3,8 +3,11 @@ package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste;
 import br.edu.ifrs.farroupilha.sigprod2.backend.Main;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.AjusteRele;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Religador;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import java.awt.Color;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -22,10 +25,11 @@ import org.apache.logging.log4j.Logger;
  *
  * @author Rafael Luiz Casa
  */
-public class PanelAjusteRele extends PanelAjuste {
+public class PanelAjusteReleReligador extends PanelAjuste {
 
-    private static final Logger LOGGER = LogManager.getLogger(PanelAjusteRele.class.getName());
-    private final Rele rele;
+    private static final Logger LOGGER = LogManager.getLogger(PanelAjusteReleReligador.class.getName());
+    private Religador religador;
+    private Rele relePai;
     private List<String> nomePontos;
     private Coordenograma coordenograma;
     private JTextField campoCorrente;
@@ -37,9 +41,10 @@ public class PanelAjusteRele extends PanelAjuste {
     private JPanel ajusteFase;
     private JPanel ajusteNeutro;
 
-    public PanelAjusteRele(Rele rele) {
-        this.rele = rele;
-        this.dadosRele();
+    public PanelAjusteReleReligador(Ponto p, Ponto pOrigem) {
+        this.relePai = (Rele) pOrigem.getEquipamentoInstalado();
+        this.religador = (Religador) p.getEquipamentoInstalado();
+        this.dadosReligador();
         this.initComponents();
         this.placeComponents();
         Main.setCoordenograma(this.geraCoordenograma());
@@ -53,13 +58,13 @@ public class PanelAjusteRele extends PanelAjuste {
         this.botaoLimpar.addActionListener(this::botaoLimparActionPerformed);
     }
 
-    private void dadosRele() {
-        this.fabricante = new JLabel("Fabricante: " + this.rele.getFabricante());
-        this.modelo = new JLabel("Modelo: " + this.rele.getModelo());
+    private void dadosReligador() {
+        this.fabricante = new JLabel("Fabricante: " + this.religador.getFabricante());
+        this.modelo = new JLabel("Modelo: " + this.religador.getModelo());
         this.ajustes = new JTabbedPane(JTabbedPane.TOP);
         this.setPanelsAjuste();
-        this.ajustes.addTab("Fase", null, this.ajusteFase, "Ajustes de Fase do Rele");
-        this.ajustes.addTab("Neutro", null, this.ajusteNeutro, "Ajustes de Neutro do Rele");
+        this.ajustes.addTab("Fase", null, this.ajusteFase, "Ajustes de Fase do Religador");
+        this.ajustes.addTab("Neutro", null, this.ajusteNeutro, "Ajustes de Neutro do Religador");
     }
 
     private void setPanelsAjuste() {
@@ -68,14 +73,21 @@ public class PanelAjusteRele extends PanelAjuste {
     }
 
     private JPanel getPanelDadosAjuste(boolean fase) {
-        AjusteRele ajuste = fase ? this.rele.getAjusteFase() : this.rele.getAjusteNeutro();
+        AjusteRele ajuste = fase ? this.religador.getAjusteFase() : this.religador.getAjusteNeutro();
+        AjusteRele ajusteRap = fase ? this.religador.getAjusteRapidaFase() : this.religador.getAjusteRapidaNeutro();
         JPanel panel = new JPanel(new MigLayout());
-        JLabel tipo = new JLabel(this.rele.getNomeCurva(ajuste.getCurva(), fase));
+        JLabel tipo = new JLabel(this.religador.getNomeCurva(ajuste.getCurva(), fase));
+        JLabel lenta = new JLabel("Curva Lenta");
         JLabel labelAT = new JLabel("AT: " + ajuste.getAt());
         JLabel labelAC = new JLabel("AC: " + ajuste.getAc());
+        JLabel rapida = new JLabel("Curva Rápida");
+        JLabel labelATRap = new JLabel("AT: " + ajusteRap.getAt());
+        panel.add(lenta, "wrap");
         panel.add(tipo, "wrap");
-        panel.add(labelAT, "wrap");
         panel.add(labelAC, "wrap");
+        panel.add(labelAT, "wrap");
+        panel.add(rapida, "wrap");
+        panel.add(labelATRap, "wrap");
         return panel;
     }
 
@@ -94,15 +106,19 @@ public class PanelAjusteRele extends PanelAjuste {
         this.limparPontos();
         String numeroDigitado = this.campoCorrente.getText();
         try {
-            BigDecimal corrente = new BigDecimal(numeroDigitado); //MARCAR ESTA CORRENTE COM TEMPO CALCULADO
-            BigDecimal tempoFase = rele.getAjusteFase().calculaTempo(corrente);
-            BigDecimal tempoNeutro = rele.getAjusteNeutro().calculaTempo(corrente);
-            this.nomePontos = this.coordenograma.add(corrente, Arrays.asList(tempoFase, tempoNeutro), "pontoDigitado", Arrays.asList(Color.BLUE, Color.RED));
+            BigDecimal corrente = new BigDecimal(numeroDigitado);
+            BigDecimal tempoFaseLenta = religador.getAjusteFase().calculaTempo(corrente);
+            BigDecimal tempoNeutroLenta = religador.getAjusteNeutro().calculaTempo(corrente);
+            BigDecimal tempoFaseRapida = religador.getAjusteRapidaFase().calculaTempo(corrente);
+            BigDecimal tempoNeutroRapida = religador.getAjusteRapidaNeutro().calculaTempo(corrente);
+            BigDecimal tempoFaseRele = this.relePai.getAjusteFase().calculaTempo(corrente);
+            BigDecimal tempoNeutroRele = this.relePai.getAjusteNeutro().calculaTempo(corrente);
+            this.nomePontos = this.coordenograma.add(corrente, Arrays.asList(tempoFaseLenta, tempoNeutroLenta, tempoFaseRapida, tempoNeutroRapida, tempoFaseRele, tempoNeutroRele), "pontoDigitado", Arrays.asList(Color.RED, Color.RED, Color.RED, Color.RED, Color.BLACK, Color.BLACK));
         } catch (NumberFormatException e) {
             Erro.entradaInvalida(this);
-            LOGGER.trace("STRING INVÁLIDA" + e.getMessage());
+            LOGGER.error("STRING INVÁLIDA" + e.getMessage());
         } catch (NullPointerException e) {
-            LOGGER.trace("COORDENOGRAMA NAO ABERTO" + e.getMessage());
+            LOGGER.error("COORDENOGRAMA NAO ABERTO" + e.getMessage());
         }
     }
 
@@ -121,8 +137,9 @@ public class PanelAjusteRele extends PanelAjuste {
 
     @Override
     public final Coordenograma geraCoordenograma() {
-        this.coordenograma = new Coordenograma("Relé");
-        this.coordenograma.add(this.rele, Color.BLUE, Color.RED);
+        this.coordenograma = new Coordenograma("Religador");
+        this.coordenograma.add(this.religador, Color.RED, Color.RED, Color.RED, Color.RED);
+        this.coordenograma.add(this.relePai, Color.BLACK, Color.BLACK);
         return this.coordenograma;
     }
 

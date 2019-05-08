@@ -29,3 +29,5 @@ build/
 lib/
 test/
 /target/
+
+*.ini

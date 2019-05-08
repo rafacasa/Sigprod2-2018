@@ -9,6 +9,8 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.CorrenteForaDoAlcanceException;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.TempoForaDoAlcanceException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
@@ -28,18 +30,12 @@ public class Criterios_Rele_Elo {
     private List<Elo> elosDisponiveis;
     private Ponto pontoRede;
     private Rede rede;
-    private Ponto pOrigem;
-    private BigDecimal CTIFase;
-    private BigDecimal CTINeutro;
 
-    public Criterios_Rele_Elo(Rele relePai, Ponto pontoRede, Rede rede, Ponto pOrigem) {
+    public Criterios_Rele_Elo(Rele relePai, Ponto pontoRede, Rede rede) {
         this.relePai = relePai;
         this.pontoRede = pontoRede;
         this.rede = rede;
-        this.pOrigem = pOrigem;
         this.elosDisponiveis = new ArrayList<>(this.rede.getElosDisponiveis());
-        this.CTIFase = new BigDecimal("0.2");
-        this.CTINeutro = new BigDecimal("0.2");
         this.orderElos();
     }
 
@@ -49,9 +45,12 @@ public class Criterios_Rele_Elo {
         this.verificaCorrenteCarga();
         this.verificaIInrush();
         List<BigDecimal> alcances = this.calculaAlcances();
-        List<Boolean> seletividades = this.calculaSeletividades();
+        //List<Boolean> seletividades = this.calculaSeletividades();
+        List<Boolean> seletividadesNeutro = this.calculaSeletividadesNeutro();
+        List<Boolean> seletividadesFasePonto = this.calculaSeletividadesFasePonto();
+        List<Boolean> seletividadesFaseAbaixo = this.calculaSeletividadesFaseAbaixo();
         for (int i = 0; i < this.elosDisponiveis.size(); i++) {
-            metricas.add(new MetricasReleElo(alcances.get(i), seletividades.get(i), this.elosDisponiveis.get(i)));
+            metricas.add(new MetricasReleElo(alcances.get(i), seletividadesNeutro.get(i), seletividadesFasePonto.get(i), seletividadesFaseAbaixo.get(i), this.elosDisponiveis.get(i)));
         }
         return metricas;
     }
@@ -99,10 +98,15 @@ public class Criterios_Rele_Elo {
         Iterator<Elo> it = this.elosDisponiveis.iterator();
 
         while (it.hasNext()) {
-            Elo elo = it.next();
-            iInrushElo = BigDecimal.valueOf(elo.correnteDoTempo(0.1, CurvasElo.MINIMA)); //PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
-            if (iInrushElo.compareTo(iInrush) <= 0) {
+            try {
+                Elo elo = it.next();
+                iInrushElo = BigDecimal.valueOf(elo.correnteDoTempo(0.1, CurvasElo.MINIMA)); //PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
+                if (iInrushElo.compareTo(iInrush) <= 0) {
+                    it.remove();
+                }
+            } catch (TempoForaDoAlcanceException ex) {
                 it.remove();
+                LOGGER.error("Elo nao tem alcance para o tempo 0.1 (IINRUSH)" + ex.getLocalizedMessage());
             }
         }
 
@@ -119,14 +123,21 @@ public class Criterios_Rele_Elo {
         BigDecimal iFTMin2Camadas = BigDecimal.valueOf(rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
 
         for (int i = 0; i < this.elosDisponiveis.size(); i++) {
-            elo = this.elosDisponiveis.get(i);
-            i300 = BigDecimal.valueOf(elo.correnteDoTempo(300, CurvasElo.MAXIMA));
-            alcances.add(this.calculaAlcance(iFTMinProximo, iFTMin2Camadas, i300));
+            try {
+                elo = this.elosDisponiveis.get(i);
+                i300 = BigDecimal.valueOf(elo.correnteDoTempo(300, CurvasElo.MAXIMA));
+                alcances.add(this.calculaAlcance(iFTMinProximo, iFTMin2Camadas, i300));
+            } catch (TempoForaDoAlcanceException ex) {
+                LOGGER.error("ELO NAO TEM ALCANCE PARA O TEMPO 300 (ALCANCES)" + ex.getLocalizedMessage());
+            }
         }
         return alcances;
     }
 
     private BigDecimal calculaAlcance(BigDecimal iFTMinProximo, BigDecimal iFTMin2Camadas, BigDecimal i300) {
+        if (iFTMinProximo.compareTo(iFTMin2Camadas) == 0) {
+            return BigDecimal.ZERO;
+        }
         return iFTMinProximo.multiply(iFTMin2Camadas, MathContext.DECIMAL128).subtract(iFTMin2Camadas.multiply(i300, MathContext.DECIMAL128)).divide(i300.multiply(iFTMinProximo.subtract(iFTMin2Camadas), MathContext.DECIMAL128), MathContext.DECIMAL128);
     }
 
@@ -138,46 +149,96 @@ public class Criterios_Rele_Elo {
         return seletividade;
     }
 
+    private List<Boolean> calculaSeletividadesNeutro() {
+        List<Boolean> seletividade = new ArrayList<>();
+        this.elosDisponiveis.forEach(elo -> {
+            seletividade.add(this.calculaSeletividade(elo, false));
+        });
+        return seletividade;
+    }
+
+    private List<Boolean> calculaSeletividadesFasePonto() {
+        List<Boolean> seletividade = new ArrayList<>();
+        this.elosDisponiveis.forEach(elo -> {
+            seletividade.add(this.calculaSeletividadeFasePonto(elo, true));
+        });
+        return seletividade;
+    }
+
+    private List<Boolean> calculaSeletividadesFaseAbaixo() {
+        List<Boolean> seletividade = new ArrayList<>();
+        this.elosDisponiveis.forEach(elo -> {
+            seletividade.add(this.calculaSeletividadeFaseAbaixo(elo, true));
+        });
+        return seletividade;
+    }
+
     private boolean calculaSeletividade(Elo elo) {
         return this.calculaSeletividade(elo, true) && this.calculaSeletividade(elo, false);
     }
 
     private boolean calculaSeletividade(Elo elo, boolean fase) {
-        AjusteRele ajusteRele = this.getAjusteReleSeletividade(fase);
-        BigDecimal i2 = this.getI2Seletividade(fase);
-        BigDecimal i1 = this.getI1Seletividade(fase);
-        BigDecimal tempoRele1 = ajusteRele.calculaTempo(i1);
-        BigDecimal tempoRele2 = ajusteRele.calculaTempo(i2);
-        BigDecimal tempoElo1 = BigDecimal.valueOf(elo.tempoDaCorrente(i1.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
-        BigDecimal tempoElo2 = BigDecimal.valueOf(elo.tempoDaCorrente(i2.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
-        BigDecimal diff1 = tempoRele1.subtract(tempoElo1);
-        BigDecimal diff2 = tempoRele2.subtract(tempoElo2);
-        BigDecimal cti = this.getCTI(fase);
-        LOGGER.debug("calculaSeletividade - diff1 = " + diff1.toString() + " diff2 = " + diff2);
-        return diff1.compareTo(cti) >= 0 && diff2.compareTo(cti) >= 0;
+        try {
+            AjusteRele ajusteRele = this.getAjusteReleSeletividade(fase);
+            BigDecimal i2 = this.getI2Seletividade(fase);
+            BigDecimal i1 = this.getI1Seletividade(fase);
+            BigDecimal tempoRele1 = ajusteRele.calculaTempo(i1).multiply(BigDecimal.valueOf(0.9));
+            BigDecimal tempoRele2 = ajusteRele.calculaTempo(i2).multiply(BigDecimal.valueOf(0.9));
+            BigDecimal tempoElo1 = BigDecimal.valueOf(elo.tempoDaCorrente(i1.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
+            BigDecimal tempoElo2 = BigDecimal.valueOf(elo.tempoDaCorrente(i2.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
+            BigDecimal diff1 = tempoRele1.subtract(tempoElo1);
+            BigDecimal diff2 = tempoRele2.subtract(tempoElo2);
+            LOGGER.debug("calculaSeletividade - diff1 = " + diff1.toString() + " diff2 = " + diff2);
+            return diff1.compareTo(BigDecimal.ZERO) >= 0 && diff2.compareTo(BigDecimal.ZERO) >= 0;
+        } catch (CorrenteForaDoAlcanceException ex) {
+            LOGGER.error("ELO NAO TEM ALCANCE PARA AS CORRENTES NECESSARIAS (SELETIVIDADE)" + ex.getLocalizedMessage());
+            return false;
+        }
     }
 
-    private BigDecimal getCTI(boolean fase) {
-        if (fase) {
-            return this.CTIFase;
-        } else {
-            return this.CTINeutro;
+    private boolean calculaSeletividadeFasePonto(Elo elo, boolean original) {
+        try {
+            AjusteRele ajusteRele = this.getAjusteReleSeletividade(true);
+            BigDecimal i2 = original ? this.getI2Seletividade(true) : BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pontoRede, Corrente.ICC2F));
+            BigDecimal tempoRele2 = ajusteRele.calculaTempo(i2).multiply(BigDecimal.valueOf(0.9));
+            BigDecimal tempoElo2 = BigDecimal.valueOf(elo.tempoDaCorrente(i2.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
+            BigDecimal diff2 = tempoRele2.subtract(tempoElo2);
+            LOGGER.debug("calculaSeletividade - diff2 = " + diff2);
+            return diff2.compareTo(BigDecimal.ZERO) >= 0;
+        } catch (CorrenteForaDoAlcanceException ex) {
+            LOGGER.error("ELO NAO TEM ALCANCE PARA A CORRENTE NECESSARIA (SELETIVIDADEFASEPONTO)" + ex.getLocalizedMessage());
+            return false;
+        }
+    }
+
+    private boolean calculaSeletividadeFaseAbaixo(Elo elo, boolean original) {
+        try {
+            AjusteRele ajusteRele = this.getAjusteReleSeletividade(true);
+            BigDecimal i1 = original ? this.getI1Seletividade(true) : BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pontoRede, Corrente.ICC2F));
+            BigDecimal tempoRele1 = ajusteRele.calculaTempo(i1).multiply(BigDecimal.valueOf(0.9));
+            BigDecimal tempoElo1 = BigDecimal.valueOf(elo.tempoDaCorrente(i1.doubleValue(), CurvasElo.MAXIMA));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
+            BigDecimal diff1 = tempoRele1.subtract(tempoElo1);
+            LOGGER.debug("calculaSeletividade - diff1 = " + diff1.toString());
+            return diff1.compareTo(BigDecimal.ZERO) >= 0;
+        } catch (CorrenteForaDoAlcanceException ex) {
+            LOGGER.error("ELO NAO TEM ALCANCE PARA A CORRENTE NECESSARIA (SELETIVIDADEFASEABAIXO)" + ex.getLocalizedMessage());
+            return false;
         }
     }
 
     private BigDecimal getI2Seletividade(boolean fase) {
         if (fase) {
-            return BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pOrigem, Corrente.ICC3F));
+            return BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pontoRede, Corrente.ICC3F));
         } else {
-            return BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pOrigem, Corrente.ICCFT));
+            return BigDecimal.valueOf(this.rede.buscaCorrentePonto(this.pontoRede, Corrente.ICCFT));
         }
     }
 
     private BigDecimal getI1Seletividade(boolean fase) {
         if (fase) {
-            return BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pOrigem, Corrente.ICC2F));
+            return BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pontoRede, Corrente.ICC2F));
         } else {
-            return BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pOrigem, Corrente.ICCFTMIN));
+            return BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.pontoRede, Corrente.ICCFTMIN));
         }
     }
 
@@ -187,21 +248,5 @@ public class Criterios_Rele_Elo {
         } else {
             return this.relePai.getAjusteNeutro();
         }
-    }
-
-    public BigDecimal getCTIFase() {
-        return CTIFase;
-    }
-
-    public void setCTIFase(BigDecimal CTIFase) {
-        this.CTIFase = CTIFase;
-    }
-
-    public BigDecimal getCTINeutro() {
-        return CTINeutro;
-    }
-
-    public void setCTINeutro(BigDecimal CTINeutro) {
-        this.CTINeutro = CTINeutro;
     }
 }

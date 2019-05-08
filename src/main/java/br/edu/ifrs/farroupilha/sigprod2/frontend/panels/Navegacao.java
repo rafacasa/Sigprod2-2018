@@ -3,16 +3,14 @@ package br.edu.ifrs.farroupilha.sigprod2.frontend.panels;
 import br.edu.ifrs.farroupilha.sigprod2.backend.Main;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.util.List;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
 
 /**
  *
@@ -118,11 +116,20 @@ public class Navegacao extends JPanel {
 
     private void subirCamada(java.awt.event.ActionEvent evt) {
         LOGGER.debug(evt.getActionCommand());
+        boolean erro = false;
         this.desabilitarBotoes();
         Ponto atual = this.getPontoAtual();
         Ponto target = rede.getParentRedeReduzida(atual);
         boolean inicioRede = this.camadaAtual == 2;
-        if (Main.irPara(target, inicioRede)) {
+        try {
+            erro = Main.irPara(target, inicioRede);
+        } catch (AjusteImpossivelException e) {
+            Erro.mostraMensagemErro(this, "Houve problema ao se movimentar na rede");
+            LOGGER.error("ERRO DO TRY CATCH DO IF ERRO - " + e.getMessage());
+            this.atualizarPontoAtual();
+            atual.resetAtributos(true);
+        }
+        if (erro) {
             this.camadaAtual--;
             this.pontoAtual = this.camadasRedeReduzida.get(this.camadaAtual).indexOf(target);
             this.atualizarPontoAtual();
@@ -132,6 +139,7 @@ public class Navegacao extends JPanel {
 
     private void descerCamada(java.awt.event.ActionEvent evt) {
         LOGGER.debug(evt.getActionCommand());
+        boolean erro = false;
         this.desabilitarBotoes();
         Ponto atual = this.getPontoAtual();
         Ponto target = rede.getDestinosRedeReduzida(atual).get(0);
@@ -143,8 +151,21 @@ public class Navegacao extends JPanel {
                 atual.resetAtributos();
             }
         } catch (java.lang.NullPointerException ex) {
+            ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "O equipamento superior não foi definido antecipadamente", "ERRO", JOptionPane.ERROR_MESSAGE);
-            Main.irPara(atual, this.camadaAtual == 1);
+            erro = true;
+        } catch (AjusteImpossivelException e) {
+            Erro.mostraMensagemErro(this, "Nao ha ajustes disponiveis para o equipamento abaixo");
+            LOGGER.error("ERRO AO DESCER CAMADA - " + e.getMessage());
+            erro = true;
+        }
+        if (erro) {
+            try {
+                Main.irPara(atual, this.camadaAtual == 1);
+            } catch (AjusteImpossivelException e) {
+                Erro.mostraMensagemErro(this, "Houve problema ao se movimentar na rede");
+                LOGGER.error("ERRO DO TRY CATCH DO IF ERRO - " + e.getMessage());
+            }
             this.atualizarPontoAtual();
             atual.resetAtributos(true);
         }
@@ -152,6 +173,7 @@ public class Navegacao extends JPanel {
 
     private void proximoPonto(java.awt.event.ActionEvent evt) {
         LOGGER.debug(evt.getActionCommand());
+        boolean erro = false;
         this.desabilitarBotoes();
         Ponto atual = this.getPontoAtual();
         Ponto target = this.camadasRedeReduzida.get(this.camadaAtual).get(this.pontoAtual + 1);
@@ -164,7 +186,19 @@ public class Navegacao extends JPanel {
             }
         } catch (java.lang.NullPointerException ex) {
             JOptionPane.showMessageDialog(null, "O equipamento superior não foi definido antecipadamente", "ERRO", JOptionPane.ERROR_MESSAGE);
-            Main.irPara(atual, inicioRede);
+            erro = true;
+        } catch (AjusteImpossivelException e) {
+            Erro.mostraMensagemErro(this, "Nao ha ajustes disponiveis para o equipamento abaixo");
+            LOGGER.error("ERRO AO DESCER CAMADA - " + e.getMessage());
+            erro = true;
+        }
+        if (erro) {
+            try {
+                Main.irPara(atual, inicioRede);
+            } catch (AjusteImpossivelException e) {
+                Erro.mostraMensagemErro(this, "Houve problema ao se movimentar na rede");
+                LOGGER.error("ERRO DO TRY CATCH DO IF ERRO PROXIMO PONTO - " + e.getMessage());
+            }
             this.atualizarPontoAtual();
             atual.resetAtributos(true);
         }
@@ -172,6 +206,7 @@ public class Navegacao extends JPanel {
 
     private void pontoAnterior(java.awt.event.ActionEvent evt) {
         LOGGER.debug(evt.getActionCommand());
+        boolean erro = false;
         this.desabilitarBotoes();
         Ponto atual = this.getPontoAtual();
         Ponto target = this.camadasRedeReduzida.get(this.camadaAtual).get(this.pontoAtual - 1);
@@ -184,7 +219,20 @@ public class Navegacao extends JPanel {
             }
         } catch (java.lang.NullPointerException ex) {
             JOptionPane.showMessageDialog(null, "O equipamento superior não foi definido antecipadamente", "ERRO", JOptionPane.ERROR_MESSAGE);
-            Main.irPara(atual, inicioRede);
+            erro = true;
+
+        } catch (AjusteImpossivelException e) {
+            Erro.mostraMensagemErro(this, "Nao ha ajustes disponiveis para o equipamento abaixo");
+            LOGGER.error("ERRO AO DESCER CAMADA - " + e.getMessage());
+            erro = true;
+        }
+        if (erro) {
+            try {
+                Main.irPara(atual, inicioRede);
+            } catch (AjusteImpossivelException e) {
+                Erro.mostraMensagemErro(this, "Houve problema ao se movimentar na rede");
+                LOGGER.error("ERRO DO TRY CATCH DO IF ERRO PONTO PONTO ANTERIOR - " + e.getMessage());
+            }
             this.atualizarPontoAtual();
             atual.resetAtributos(true);
         }
