@@ -1,6 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.criterios;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.ValorATImposivelException;
 import ch.obermuhlner.math.big.BigDecimalMath;
 import org.apache.logging.log4j.Level;
@@ -37,9 +38,17 @@ public class CriteriosReleReligador {
         this.religador = religador;
     }
 
-    public void ajuste() {
+    public void ajuste() throws AjusteImpossivelException {
         List<AjusteRele> ajustesFase = ajusteSeletividadeFase();
         List<AjusteRele> ajustesNeutro = ajusteSeletividadeNeutro();
+
+        if (ajustesFase.isEmpty()) {
+            throw new AjusteImpossivelException("Nao ha ajustes disponiveis para o religador FASE");
+        }
+
+        if (ajustesNeutro.isEmpty()) {
+            throw new AjusteImpossivelException("Nao ha ajustes disponiveis para o religador NEUTRO");
+        }
 
         this.religador.setAjusteFase(ajustesFase.get(0));
         this.religador.setAjusteNeutro(ajustesNeutro.get(0));

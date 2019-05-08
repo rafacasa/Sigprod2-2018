@@ -1,7 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs;
 
-import java.awt.Component;
-import javax.swing.JOptionPane;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Esta classe tem métodos estáticos para apresentar mensagens de erro ao
@@ -89,5 +89,9 @@ public class Erro {
     
     public static void ajusteInvalido(Component janela) {
         mostraMensagem(janela, "Não há equipamentos para ajustar esta rede");
+    }
+
+    public static void mostraMensagemErro(Component janela, String texto) {
+        mostraMensagem(janela, texto);
     }
 }

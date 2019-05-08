@@ -1,6 +1,7 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.modelo;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,6 +30,12 @@ public class Rele implements Equipamento {
     public Rele(String modelo, String fabricante) {
         this.modelo = modelo;
         this.fabricante = fabricante;
+        this.acsNIFase = new ArrayList<>();
+        this.acsMIFase = new ArrayList<>();
+        this.acsEIFase = new ArrayList<>();
+        this.acsNINeutro = new ArrayList<>();
+        this.acsMINeutro = new ArrayList<>();
+        this.acsEINeutro = new ArrayList<>();
     }
 
     public CurvaRele getnIFase() {

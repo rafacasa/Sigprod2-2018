@@ -5,6 +5,7 @@ import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.RelativeMainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.CorrentesPonto;
@@ -52,7 +53,7 @@ public class Main {
         return new Arquivo("redeExemploGED.ABCEEEE");
     }
 
-    private static void setupMainFrame(MainFrame frame) throws BancoDeDadosException {
+    private static void setupMainFrame(MainFrame frame) throws BancoDeDadosException, AjusteImpossivelException {
         rede = getRedeInicial();
         Component c = (Component) rede.getMapaView();
         c.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
@@ -67,7 +68,7 @@ public class Main {
         irPara(navegacao.getPontoAtual(), true);
     }
 
-    public static boolean irPara(Ponto ponto, boolean inicioRede) {
+    public static boolean irPara(Ponto ponto, boolean inicioRede) throws AjusteImpossivelException {
         if (inicioRede) {
             return irParaInicioRede(ponto);
         } else {
@@ -109,7 +110,7 @@ public class Main {
         return true;
     }
 
-    private static boolean irParaMeioRede(Ponto ponto) {
+    private static boolean irParaMeioRede(Ponto ponto) throws AjusteImpossivelException {
         Ponto pOrigem = rede.getParentRedeReduzida(ponto);
         TipoEquipamento tipoEquipamento = ponto.getTipoEquipamentoInstalado();
         TipoEquipamento tipoOrigem = pOrigem.getTipoEquipamentoInstalado();
@@ -289,6 +290,9 @@ public class Main {
             LOGGER.info("over");
         } catch (BancoDeDadosException ex) {
             LOGGER.error("ERRO DE BANCO DE DADOS" + ex.getMessage());
+        } catch (AjusteImpossivelException e) {
+            Erro.mostraMensagemErro((JFrame) frame, "Nao ha ajustes disponiveis para iniciar a rede");
+            LOGGER.error("ERRO AJUSTE + " + e.getMessage());
         }
     }
 }

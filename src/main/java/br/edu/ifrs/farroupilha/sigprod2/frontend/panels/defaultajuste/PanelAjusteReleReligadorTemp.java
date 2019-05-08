@@ -140,12 +140,16 @@ public class PanelAjusteReleReligadorTemp extends PanelAjuste {
             this.impossiveis = false;
             this.ajusteInicial = fase ? this.religador.getAjusteFase() : this.religador.getAjusteNeutro();
             this.ajusteInicialRapida = fase ? this.religador.getAjusteRapidaFase() : this.religador.getAjusteRapidaNeutro();
-            if (this.ajusteInicial.getCurva().equals(CurvaRele.NI)) {
-                this.indexCurvaInicial = 0;
-            } else if (this.ajusteInicial.getCurva().equals(CurvaRele.MI)) {
-                this.indexCurvaInicial = 1;
+            if (this.ajusteInicial == null || this.ajusteInicialRapida == null) {
+                this.indexCurvaInicial = -1;
             } else {
-                this.indexCurvaInicial = 2;
+                if (this.ajusteInicial.getCurva().equals(CurvaRele.NI)) {
+                    this.indexCurvaInicial = 0;
+                } else if (this.ajusteInicial.getCurva().equals(CurvaRele.MI)) {
+                    this.indexCurvaInicial = 1;
+                } else {
+                    this.indexCurvaInicial = 2;
+                }
             }
             this.initComponents();
             this.setValoresIniciais();
@@ -237,8 +241,12 @@ public class PanelAjusteReleReligadorTemp extends PanelAjuste {
                     break;
                 }
             }
-            this.listaAT.setSelectedItem(this.ajusteInicial.getAt());
-            this.listaATRapida.setSelectedItem(this.ajusteInicialRapida.getAt());
+            if (this.ajusteInicial != null) {
+                this.listaAT.setSelectedItem(this.ajusteInicial.getAt());
+            }
+            if (this.ajusteInicialRapida != null) {
+                this.listaATRapida.setSelectedItem(this.ajusteInicialRapida.getAt());
+            }
         }
 
         private void listaCurvaActionPerformed(java.awt.event.ActionEvent evt) {
