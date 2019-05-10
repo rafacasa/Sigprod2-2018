@@ -1,26 +1,18 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.Main;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.ACDisponivel;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.AjusteRele;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvaRele;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
-import java.awt.Color;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import net.miginfocom.swing.MigLayout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import java.awt.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -43,6 +35,7 @@ public class PanelAjusteReleTemp extends PanelAjuste {
 
     public PanelAjusteReleTemp(Rele rele) {
         this.rele = rele;
+        this.nomePontos = new ArrayList<>();
         this.initComponents();
         this.preencheDados();
         this.addItens();
@@ -119,7 +112,16 @@ public class PanelAjusteReleTemp extends PanelAjuste {
             BigDecimal corrente = new BigDecimal(numeroDigitado); //MARCAR ESTA CORRENTE COM TEMPO CALCULADO
             BigDecimal tempoFase = rele.getAjusteFase().calculaTempo(corrente);
             BigDecimal tempoNeutro = rele.getAjusteNeutro().calculaTempo(corrente);
-            this.nomePontos = this.coordenograma.add(corrente, Arrays.asList(tempoFase, tempoNeutro), "pontoDigitado", Arrays.asList(Color.BLUE, Color.RED));
+            LOGGER.debug("tempoFase - " + tempoFase);
+            LOGGER.debug("tempoNeutro - " + tempoNeutro);
+            if (tempoFase.compareTo(BigDecimal.ZERO) > 0) {
+                LOGGER.debug("ENTROU FASE");
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoFase), "pontoFase", Arrays.asList(Color.BLUE)));
+            }
+            if (tempoNeutro.compareTo(BigDecimal.ZERO) > 0) {
+                LOGGER.debug("ENTROU NEUTRO");
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoNeutro), "tempoNeutro", Arrays.asList(Color.RED)));
+            }
         } catch (NumberFormatException e) {
             Erro.entradaInvalida(this);
             LOGGER.trace("STRING INVÁLIDA" + e.getMessage());
@@ -134,10 +136,11 @@ public class PanelAjusteReleTemp extends PanelAjuste {
     }
 
     public void limparPontos() {
-        if (this.nomePontos != null) {
+        if (this.nomePontos != null && !this.nomePontos.isEmpty()) {
             this.nomePontos.forEach(s -> {
                 this.coordenograma.remove(s);
             });
+            this.nomePontos.clear();
         }
     }
 

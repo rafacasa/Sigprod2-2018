@@ -12,9 +12,9 @@ import java.util.List;
  */
 public class CurvaRele {
 
-    public static final CurvaRele NI = new CurvaRele("0.14", "0", "0.02", "1", "1000", "1", "0.01", "1", "0.01");
-    public static final CurvaRele MI = new CurvaRele("13.5", "0", "1", "1", "1000", "1", "0.01", "1", "0.01");
-    public static final CurvaRele EI = new CurvaRele("80", "0", "2", "1", "1000", "1", "0.01", "1", "0.01");
+    public static final CurvaRele NI = new CurvaRele("0.14", "0", "0.02", "1", "1000", "1", "0.01", "10", "0.01");
+    public static final CurvaRele MI = new CurvaRele("13.5", "0", "1", "1", "1000", "1", "0.01", "10", "0.01");
+    public static final CurvaRele EI = new CurvaRele("80", "0", "2", "1", "1000", "1", "0.01", "10", "0.01");
     private BigDecimal a;
     private BigDecimal b;
     private BigDecimal p;
