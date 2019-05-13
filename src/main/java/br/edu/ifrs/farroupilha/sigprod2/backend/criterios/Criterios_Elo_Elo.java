@@ -1,18 +1,15 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.criterios;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Corrente;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvasElo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.CorrenteForaDoAlcanceException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.TempoForaDoAlcanceException;
 import org.apache.logging.log4j.LogManager;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -45,10 +42,14 @@ public class Criterios_Elo_Elo {
         this.orderElos();
     }
 
+    public List<Elo> getElosPossiveis() throws AjusteImpossivelException {
+        this.verificaElosDisponiveis();
+        this.verificaCriteriosIndiscutiveis();
+        return this.elos;
+    }
+
     private void orderElos() {
-        this.elos.sort((o1, o2) -> {
-            return -Integer.compare(o1.getCorrenteNominal(), o2.getCorrenteNominal());
-        });
+        this.elos.sort((o1, o2) -> -Integer.compare(o1.getCorrenteNominal(), o2.getCorrenteNominal()));
     }
 
     private void verificaElosDisponiveis() throws AjusteImpossivelException {
@@ -68,7 +69,7 @@ public class Criterios_Elo_Elo {
     private void verificaCriteriosIndiscutiveis() throws AjusteImpossivelException {
         int iElo;
         double iInrushMax;
-        double iInrush = 0;
+        double iInrush = this.pontoRede.getiInRush();
         double iCargaMax = this.pontoRede.getIcarga();
 
         Iterator<Elo> it = this.elos.iterator();
@@ -93,9 +94,7 @@ public class Criterios_Elo_Elo {
 
     private void iniciaMetricas() {
         this.metricas = new ArrayList<>(this.elos.size());
-        this.elos.forEach((elo) -> {
-            this.metricas.add(new Metricas_Elo_Elo(elo, pontoRede));
-        });
+        this.elos.forEach((elo) -> this.metricas.add(new Metricas_Elo_Elo(elo, pontoRede)));
     }
 
     private void metricas1() {

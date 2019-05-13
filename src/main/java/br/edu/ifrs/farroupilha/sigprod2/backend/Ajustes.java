@@ -1,6 +1,8 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.*;
+import br.edu.ifrs.farroupilha.sigprod2.backend.dadospreajuste.DadosPreAjusteReleElo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.dadospreajuste.DadosPreAjusteReligadorElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
@@ -9,6 +11,7 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Ajustes {
@@ -20,6 +23,78 @@ public class Ajustes {
     public Ajustes(Rede rede, MainFrame frame) { //Inicializa os dados da rede para os ajustes e realiza os pre-ajustes
         this.rede = rede;
         this.frame = frame;
+    }
+
+    private void preAjuste() throws AjusteImpossivelException {
+        List<List<Ponto>> camadas = this.rede.getCamadasRedeReduzida();
+        List<Ponto> camada;
+        for (int i = camadas.size() - 1; i > 0; i--) {
+            camada = camadas.get(i);
+            for (Ponto ponto : camada) {
+                realizarPreAjuste(ponto);
+            }
+        }
+    }
+
+    private void realizarPreAjuste(Ponto p) throws AjusteImpossivelException {
+        TipoEquipamento tipoFilho = p.getTipoEquipamentoInstalado();
+        Ponto pai = rede.getParentRedeReduzida(p);
+        TipoEquipamento tipoPai = pai.getTipoEquipamentoInstalado();
+
+        switch (tipoPai) {
+            case ELO:
+                if (tipoFilho == TipoEquipamento.ELO) {
+                    throw new UnsupportedOperationException();
+                } else {
+                    throw new UnsupportedOperationException();
+                }
+            case RELE:
+                switch (tipoFilho) {
+                    case ELO:
+                        Criterios_Rele_Elo criterios = new Criterios_Rele_Elo(null, p, this.rede);
+                        List<Elo> elosDisponiveis = criterios.getElosPossiveis();
+                        DadosPreAjusteReleElo dados = new DadosPreAjusteReleElo();
+                        dados.calculaPreAjuste(elosDisponiveis.get(elosDisponiveis.size() - 1), p, this.rede);
+                        Object listaPreAjuste = p.getNode().getAttribute("preajuste");
+                        if (listaPreAjuste != null) {
+                            List<DadosPreAjusteReleElo> dadosPreAjuste = (List<DadosPreAjusteReleElo>) listaPreAjuste;
+                            dadosPreAjuste.add(dados);
+                        } else {
+                            List<DadosPreAjusteReleElo> dadosPreAjuste = new ArrayList<>();
+                            dadosPreAjuste.add(dados);
+                            p.getNode().setAttribute("preajuste", dadosPreAjuste);
+                        }
+                        break;
+                    case RELIGADOR:
+
+                        break;
+                    default:
+                        throw new UnsupportedOperationException();
+                }
+                break;
+            case RELIGADOR:
+                if (tipoFilho == TipoEquipamento.ELO) {
+                    CriteriosReligadorElo criterios = new CriteriosReligadorElo(null, p, this.rede);
+                    List<Elo> elosDisponiveis = criterios.getElosPossiveis();
+                    DadosPreAjusteReligadorElo dados = new DadosPreAjusteReligadorElo();
+                    dados.calculaPreAjuste(elosDisponiveis.get(elosDisponiveis.size() - 1), p, this.rede);
+                    dados.calculaPreAjuste(elosDisponiveis.get(0), p, this.rede, criterios.getFatorK());
+                    Object listaPreAjuste = p.getNode().getAttribute("preajuste");
+                    if (listaPreAjuste != null) {
+                        List<DadosPreAjusteReligadorElo> dadosPreAjuste = (List<DadosPreAjusteReligadorElo>) listaPreAjuste;
+                        dadosPreAjuste.add(dados);
+                    } else {
+                        List<DadosPreAjusteReligadorElo> dadosPreAjuste = new ArrayList<>();
+                        dadosPreAjuste.add(dados);
+                        p.getNode().setAttribute("preajuste", dadosPreAjuste);
+                    }
+                } else {
+                    throw new UnsupportedOperationException();
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException();
+        }
     }
 
     public boolean irPara(Ponto ponto, boolean inicioRede) throws AjusteImpossivelException {

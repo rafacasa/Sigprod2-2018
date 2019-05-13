@@ -1,23 +1,18 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.criterios;
 
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.MetricasReleElo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.AjusteRele;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Corrente;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvasElo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.CorrenteForaDoAlcanceException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.TempoForaDoAlcanceException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -55,10 +50,15 @@ public class Criterios_Rele_Elo {
         return metricas;
     }
 
+    public List<Elo> getElosPossiveis() throws AjusteImpossivelException {
+        this.verificaElosDisponiveis();
+        this.verificaCorrenteCarga();
+        this.verificaIInrush();
+        return this.elosDisponiveis;
+    }
+
     private void orderElos() {
-        this.elosDisponiveis.sort((o1, o2) -> {
-            return -Integer.compare(o1.getCorrenteNominal(), o2.getCorrenteNominal());
-        });
+        this.elosDisponiveis.sort((o1, o2) -> -Integer.compare(o1.getCorrenteNominal(), o2.getCorrenteNominal()));
     }
 
     private void verificaElosDisponiveis() throws AjusteImpossivelException {
@@ -93,7 +93,7 @@ public class Criterios_Rele_Elo {
     }
 
     private void verificaIInrush() throws AjusteImpossivelException {
-        BigDecimal iInrush = BigDecimal.ZERO;
+        BigDecimal iInrush = BigDecimal.valueOf(this.pontoRede.getiInRush());
         BigDecimal iInrushElo;
         Iterator<Elo> it = this.elosDisponiveis.iterator();
 
@@ -116,15 +116,13 @@ public class Criterios_Rele_Elo {
     }
 
     private List<BigDecimal> calculaAlcances() {
-        Elo elo;
         List<BigDecimal> alcances = new ArrayList<>();
         BigDecimal i300;
         BigDecimal iFTMinProximo = BigDecimal.valueOf(rede.buscaCorrenteMinimaProximoPonto(pontoRede, Corrente.ICCFTMIN));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
         BigDecimal iFTMin2Camadas = BigDecimal.valueOf(rede.buscaCorrenteMinima2Camadas(pontoRede, Corrente.ICCFTMIN));//PROBLEMA AO CONVERTER TODO O SISTEMA PARA BIGDECIMAL
 
-        for (int i = 0; i < this.elosDisponiveis.size(); i++) {
+        for (Elo elo : this.elosDisponiveis) {
             try {
-                elo = this.elosDisponiveis.get(i);
                 i300 = BigDecimal.valueOf(elo.correnteDoTempo(300, CurvasElo.MAXIMA));
                 alcances.add(this.calculaAlcance(iFTMinProximo, iFTMin2Camadas, i300));
             } catch (TempoForaDoAlcanceException ex) {
@@ -141,40 +139,22 @@ public class Criterios_Rele_Elo {
         return iFTMinProximo.multiply(iFTMin2Camadas, MathContext.DECIMAL128).subtract(iFTMin2Camadas.multiply(i300, MathContext.DECIMAL128)).divide(i300.multiply(iFTMinProximo.subtract(iFTMin2Camadas), MathContext.DECIMAL128), MathContext.DECIMAL128);
     }
 
-    private List<Boolean> calculaSeletividades() {
-        List<Boolean> seletividade = new ArrayList<>();
-        this.elosDisponiveis.forEach(elo -> {
-            seletividade.add(this.calculaSeletividade(elo));
-        });
-        return seletividade;
-    }
-
     private List<Boolean> calculaSeletividadesNeutro() {
         List<Boolean> seletividade = new ArrayList<>();
-        this.elosDisponiveis.forEach(elo -> {
-            seletividade.add(this.calculaSeletividade(elo, false));
-        });
+        this.elosDisponiveis.forEach(elo -> seletividade.add(this.calculaSeletividade(elo, false)));
         return seletividade;
     }
 
     private List<Boolean> calculaSeletividadesFasePonto() {
         List<Boolean> seletividade = new ArrayList<>();
-        this.elosDisponiveis.forEach(elo -> {
-            seletividade.add(this.calculaSeletividadeFasePonto(elo, true));
-        });
+        this.elosDisponiveis.forEach(elo -> seletividade.add(this.calculaSeletividadeFasePonto(elo, true)));
         return seletividade;
     }
 
     private List<Boolean> calculaSeletividadesFaseAbaixo() {
         List<Boolean> seletividade = new ArrayList<>();
-        this.elosDisponiveis.forEach(elo -> {
-            seletividade.add(this.calculaSeletividadeFaseAbaixo(elo, true));
-        });
+        this.elosDisponiveis.forEach(elo -> seletividade.add(this.calculaSeletividadeFaseAbaixo(elo, true)));
         return seletividade;
-    }
-
-    private boolean calculaSeletividade(Elo elo) {
-        return this.calculaSeletividade(elo, true) && this.calculaSeletividade(elo, false);
     }
 
     private boolean calculaSeletividade(Elo elo, boolean fase) {

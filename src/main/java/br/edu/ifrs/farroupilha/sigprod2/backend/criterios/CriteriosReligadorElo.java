@@ -2,19 +2,15 @@ package br.edu.ifrs.farroupilha.sigprod2.backend.criterios;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.MetricasReleElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.MetricasReligadorElo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.AjusteRele;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Corrente;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvasElo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Religador;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.CorrenteForaDoAlcanceException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -41,6 +37,10 @@ public class CriteriosReligadorElo {
         this.criteriosReleElo = new Criterios_Rele_Elo(religadorPai, pontoRede, rede);
     }
 
+    public List<Elo> getElosPossiveis() throws AjusteImpossivelException {
+        return this.criteriosReleElo.getElosPossiveis();
+    }
+
     public List<MetricasReligadorElo> ajuste() throws AjusteImpossivelException {
         List<MetricasReleElo> ajustes = this.criteriosReleElo.ajuste();
         List<MetricasReligadorElo> ajustesReligador = this.convertMetricasReleElo(ajustes);
@@ -50,9 +50,7 @@ public class CriteriosReligadorElo {
 
     private List<MetricasReligadorElo> convertMetricasReleElo(List<MetricasReleElo> ajustes) {
         List<MetricasReligadorElo> retorno = new ArrayList<>();
-        ajustes.forEach(ajuste -> {
-            retorno.add(new MetricasReligadorElo(ajuste));
-        });
+        ajustes.forEach(ajuste -> retorno.add(new MetricasReligadorElo(ajuste)));
         return retorno;
     }
 
@@ -109,7 +107,7 @@ public class CriteriosReligadorElo {
         }
     }
 
-    private BigDecimal getFatorK() {
+    public BigDecimal getFatorK() {
         //PEGAR INFORMACOES SOBRE TEMPO DE RELIGAMENTO E QTD OPERACOES RAPIDAS
         //1 OP RAPIDA e tempo > 0,5s e < 5,0s .get(0)
         //1 OP RAPIDA e tempo < 0,5s .get(1)
