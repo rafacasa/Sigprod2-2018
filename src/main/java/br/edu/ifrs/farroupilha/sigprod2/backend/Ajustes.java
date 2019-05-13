@@ -11,7 +11,6 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Ajustes {
@@ -20,9 +19,10 @@ public class Ajustes {
     private Rede rede;
     private MainFrame frame;
 
-    public Ajustes(Rede rede, MainFrame frame) { //Inicializa os dados da rede para os ajustes e realiza os pre-ajustes
+    public Ajustes(Rede rede, MainFrame frame) throws AjusteImpossivelException { //Inicializa os dados da rede para os ajustes e realiza os pre-ajustes
         this.rede = rede;
         this.frame = frame;
+        this.preAjuste();
     }
 
     private void preAjuste() throws AjusteImpossivelException {
@@ -36,10 +36,13 @@ public class Ajustes {
         }
     }
 
-    private void realizarPreAjuste(Ponto p) throws AjusteImpossivelException {
+    private boolean realizarPreAjuste(Ponto p) throws AjusteImpossivelException {
         TipoEquipamento tipoFilho = p.getTipoEquipamentoInstalado();
         Ponto pai = rede.getParentRedeReduzida(p);
         TipoEquipamento tipoPai = pai.getTipoEquipamentoInstalado();
+
+        if (tipoFilho == TipoEquipamento.NENHUM) return false;
+        if (tipoPai == TipoEquipamento.NENHUM) return false;
 
         switch (tipoPai) {
             case ELO:
@@ -53,16 +56,14 @@ public class Ajustes {
                     case ELO:
                         Criterios_Rele_Elo criterios = new Criterios_Rele_Elo(null, p, this.rede);
                         List<Elo> elosDisponiveis = criterios.getElosPossiveis();
-                        DadosPreAjusteReleElo dados = new DadosPreAjusteReleElo();
-                        dados.calculaPreAjuste(elosDisponiveis.get(elosDisponiveis.size() - 1), p, this.rede);
-                        Object listaPreAjuste = p.getNode().getAttribute("preajuste");
-                        if (listaPreAjuste != null) {
-                            List<DadosPreAjusteReleElo> dadosPreAjuste = (List<DadosPreAjusteReleElo>) listaPreAjuste;
-                            dadosPreAjuste.add(dados);
+                        Object o = pai.getNode().getAttribute("preajuste");
+                        DadosPreAjusteReleElo dados;
+                        if (o == null) {
+                            dados = new DadosPreAjusteReleElo(elosDisponiveis.get(elosDisponiveis.size() - 1), p, this.rede);
+                            pai.getNode().setAttribute("preajuste", dados);
                         } else {
-                            List<DadosPreAjusteReleElo> dadosPreAjuste = new ArrayList<>();
-                            dadosPreAjuste.add(dados);
-                            p.getNode().setAttribute("preajuste", dadosPreAjuste);
+                            dados = (DadosPreAjusteReleElo) o;
+                            dados.addPreAjuste(elosDisponiveis.get(elosDisponiveis.size() - 1), p, this.rede);
                         }
                         break;
                     case RELIGADOR:
@@ -76,17 +77,14 @@ public class Ajustes {
                 if (tipoFilho == TipoEquipamento.ELO) {
                     CriteriosReligadorElo criterios = new CriteriosReligadorElo(null, p, this.rede);
                     List<Elo> elosDisponiveis = criterios.getElosPossiveis();
-                    DadosPreAjusteReligadorElo dados = new DadosPreAjusteReligadorElo();
-                    dados.calculaPreAjuste(elosDisponiveis.get(elosDisponiveis.size() - 1), p, this.rede);
-                    dados.calculaPreAjuste(elosDisponiveis.get(0), p, this.rede, criterios.getFatorK());
-                    Object listaPreAjuste = p.getNode().getAttribute("preajuste");
-                    if (listaPreAjuste != null) {
-                        List<DadosPreAjusteReligadorElo> dadosPreAjuste = (List<DadosPreAjusteReligadorElo>) listaPreAjuste;
-                        dadosPreAjuste.add(dados);
+                    Object o = pai.getNode().getAttribute("preajuste");
+                    DadosPreAjusteReligadorElo dados;
+                    if (o == null) {
+                        dados = new DadosPreAjusteReligadorElo(elosDisponiveis.get(0), p, this.rede, criterios.getFatorK(), elosDisponiveis.get(elosDisponiveis.size() - 1));
+                        pai.getNode().setAttribute("preajuste", dados);
                     } else {
-                        List<DadosPreAjusteReligadorElo> dadosPreAjuste = new ArrayList<>();
-                        dadosPreAjuste.add(dados);
-                        p.getNode().setAttribute("preajuste", dadosPreAjuste);
+                        dados = (DadosPreAjusteReligadorElo) o;
+                        dados.addPreAjuste(elosDisponiveis.get(0), p, this.rede, criterios.getFatorK(), elosDisponiveis.get(elosDisponiveis.size() - 1));
                     }
                 } else {
                     throw new UnsupportedOperationException();
@@ -95,10 +93,16 @@ public class Ajustes {
             default:
                 throw new UnsupportedOperationException();
         }
+        return true;
     }
 
     public boolean irPara(Ponto ponto, boolean inicioRede) throws AjusteImpossivelException {
-        Equipamento equipamento = this.calculaAjuste(ponto, inicioRede);
+        Equipamento equipamento = null;
+        try {
+            equipamento = this.calculaAjuste(ponto, inicioRede);
+        } catch (RuntimeException e) {
+            LOGGER.debug("Nao eh necessario passar pelo metodo calculaAjuste()");
+        }
         this.getAjustePanel(ponto, equipamento, inicioRede);
         return true;
     }
@@ -181,7 +185,7 @@ public class Ajustes {
     private void getAjustePanelMeioRede(Ponto ponto, Equipamento e) throws AjusteImpossivelException {
         Ponto pOrigem = rede.getParentRedeReduzida(ponto);
         Equipamento origem = pOrigem.getEquipamentoInstalado();
-        TipoEquipamento tipoEquipamento = e.getTipoEquipamento();
+        TipoEquipamento tipoEquipamento = ponto.getTipoEquipamentoInstalado();
         TipoEquipamento tipoOrigem = origem.getTipoEquipamento();
         switch (tipoOrigem) {
             case ELO:

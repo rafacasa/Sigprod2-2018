@@ -14,11 +14,10 @@ public class DadosPreAjusteReleElo {
     private BigDecimal tempoEloFTMinAbaixo;
     private BigDecimal tempoEloFFFPonto;
     private BigDecimal tempoEloFFAbaixo;
+    private Ponto ponto;
 
-    public DadosPreAjusteReleElo() {
-    }
-
-    public void calculaPreAjuste(Elo menorElo, Ponto p, Rede rede) {
+    public DadosPreAjusteReleElo(Elo menorElo, Ponto p, Rede rede) {
+        this.ponto = p;
         BigDecimal ftPonto = BigDecimal.valueOf(rede.buscaCorrentePonto(p, Corrente.ICCFT));
         BigDecimal ftMinAbaixo = BigDecimal.valueOf(rede.buscaCorrenteMinimaProximoPonto(p, Corrente.ICCFTMIN));
         BigDecimal fffPonto = BigDecimal.valueOf(rede.buscaCorrentePonto(p, Corrente.ICC3F));
@@ -37,6 +36,38 @@ public class DadosPreAjusteReleElo {
         }
     }
 
+    public void addPreAjuste(Elo menorElo, Ponto p, Rede rede) {
+        BigDecimal ftPonto = BigDecimal.valueOf(rede.buscaCorrentePonto(p, Corrente.ICCFT));
+        BigDecimal ftMinAbaixo = BigDecimal.valueOf(rede.buscaCorrenteMinimaProximoPonto(p, Corrente.ICCFTMIN));
+        BigDecimal fffPonto = BigDecimal.valueOf(rede.buscaCorrentePonto(p, Corrente.ICC3F));
+        BigDecimal ffAbaixo = BigDecimal.valueOf(rede.buscaCorrenteMinimaProximoPonto(p, Corrente.ICC2F));
+        try {
+            BigDecimal tempoEloFTPonto = BigDecimal.valueOf(menorElo.tempoDaCorrente(ftPonto.doubleValue(), CurvasElo.MAXIMA)).divide(new BigDecimal("0.9"), MathContext.DECIMAL128);
+            BigDecimal tempoEloFTMinAbaixo = BigDecimal.valueOf(menorElo.tempoDaCorrente(ftMinAbaixo.doubleValue(), CurvasElo.MAXIMA)).divide(new BigDecimal("0.9"), MathContext.DECIMAL128);
+            BigDecimal tempoEloFFFPonto = BigDecimal.valueOf(menorElo.tempoDaCorrente(fffPonto.doubleValue(), CurvasElo.MAXIMA)).divide(new BigDecimal("0.9"), MathContext.DECIMAL128);
+            BigDecimal tempoEloFFAbaixo = BigDecimal.valueOf(menorElo.tempoDaCorrente(ffAbaixo.doubleValue(), CurvasElo.MAXIMA)).divide(new BigDecimal("0.9"), MathContext.DECIMAL128);
+
+            if (tempoEloFFAbaixo.compareTo(this.tempoEloFFAbaixo) < 0) {
+                this.ponto = p;
+                this.tempoEloFFAbaixo = tempoEloFFAbaixo;
+            }
+            if (tempoEloFFFPonto.compareTo(this.tempoEloFFFPonto) < 0) {
+                this.ponto = p;
+                this.tempoEloFFFPonto = tempoEloFFFPonto;
+            }
+            if (tempoEloFTMinAbaixo.compareTo(this.tempoEloFTMinAbaixo) < 0) {
+                this.ponto = p;
+                this.tempoEloFTMinAbaixo = tempoEloFTMinAbaixo;
+            }
+            if (tempoEloFTPonto.compareTo(this.tempoEloFTPonto) < 0) {
+                this.ponto = p;
+                this.tempoEloFTPonto = tempoEloFTPonto;
+            }
+        } catch (CorrenteForaDoAlcanceException e) {
+            LOGGER.error("CORRENTE FORA DO ALCANCE " + e.getMessage());
+        }
+    }
+
     public BigDecimal getTempoEloFTPonto() {
         return tempoEloFTPonto;
     }
@@ -51,5 +82,9 @@ public class DadosPreAjusteReleElo {
 
     public BigDecimal getTempoEloFFAbaixo() {
         return tempoEloFFAbaixo;
+    }
+
+    public Ponto getPonto() {
+        return ponto;
     }
 }

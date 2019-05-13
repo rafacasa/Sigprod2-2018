@@ -220,7 +220,7 @@ public class Navegacao extends JPanel {
         } catch (java.lang.NullPointerException ex) {
             JOptionPane.showMessageDialog(null, "O equipamento superior não foi definido antecipadamente", "ERRO", JOptionPane.ERROR_MESSAGE);
             erro = true;
-
+            ex.printStackTrace();
         } catch (AjusteImpossivelException e) {
             Erro.mostraMensagemErro(this, "Nao ha ajustes disponiveis para o equipamento abaixo");
             LOGGER.error("ERRO AO DESCER CAMADA - " + e.getMessage());
