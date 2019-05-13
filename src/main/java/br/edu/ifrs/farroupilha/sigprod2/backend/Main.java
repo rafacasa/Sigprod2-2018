@@ -8,6 +8,7 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.RelativeMainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.CorrentesPonto;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.Navegacao;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjuste;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Informacoes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,6 +72,10 @@ public class Main {
         return ajustes.irPara(ponto, inicioRede);
     }
 
+    public static boolean irPara(Ponto ponto, boolean inicioRede, boolean useCache) throws AjusteImpossivelException {
+        return ajustes.irPara(ponto, inicioRede, useCache);
+    }
+
     public static void selecionaEquipamento(Ponto p, Equipamento e) {
         p.setEquipamentoInstalado(e);
         p.resetAtributos(true);
@@ -83,6 +88,10 @@ public class Main {
         } else {
             frame.setCoordenograma(new JPanel());
         }
+    }
+
+    public static void setPanelAjuste(PanelAjuste p) {
+        frame.setAjuste(p != null ? p : new JPanel());
     }
 
     public static void setTipoSelecao(int tipoSelecao) {

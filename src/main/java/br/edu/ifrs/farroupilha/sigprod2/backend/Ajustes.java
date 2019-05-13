@@ -23,118 +23,129 @@ public class Ajustes {
     }
 
     public boolean irPara(Ponto ponto, boolean inicioRede) throws AjusteImpossivelException {
+        Equipamento equipamento = this.calculaAjuste(ponto, inicioRede);
+        this.getAjustePanel(ponto, equipamento, inicioRede);
+        return true;
+    }
+
+    public boolean irPara(Ponto ponto, boolean inicioRede, boolean useCache) throws AjusteImpossivelException {
+        Equipamento equipamento = ponto.getEquipamentoInstalado();
+        this.getAjustePanel(ponto, equipamento, inicioRede);
+        return true;
+    }
+
+    private Equipamento calculaAjuste(Ponto ponto, boolean inicioRede) throws AjusteImpossivelException {
         if (inicioRede) {
-            return irParaInicioRede(ponto);
+            return calculaAjusteInicioRede(ponto);
         } else {
-            return irParaMeioRede(ponto);
+            return calculaAjusteMeioRede(ponto);
         }
     }
 
-    private boolean irParaInicioRede(Ponto ponto) {
+    private Equipamento calculaAjusteInicioRede(Ponto ponto) throws AjusteImpossivelException {
         TipoEquipamento tipoEquipamento = ponto.getTipoEquipamentoInstalado();
         switch (tipoEquipamento) {
             case ELO:
-                Elo ajuste;
-                try {
-                    ajuste = Criterios_Elo.criterio_elo(rede.getElosDisponiveis(), ponto, rede);
-                    Main.selecionaEquipamento(ponto, ajuste);
-                } catch (AjusteImpossivelException ex) {
-                    LOGGER.error("AJUSTE IMPOSSIVEL" + ex.getMessage());
-                    return false;
-                }
-                break;
+                return Criterios_Elo.criterio_elo(rede.getElosDisponiveis(), ponto, rede);
             case RELE:
                 Rele rele = Criterios_Rele.getReleTeste(); //COMO DEFINIR QUAL EQUIPAMENTO ESTA INSTALADO NO PONTO
                 Criterios_Rele criteriosRele = new Criterios_Rele(rede, ponto, rele);
                 criteriosRele.ajuste();
-                frame.setAjuste(new PanelAjusteReleTemp(rele));
-                Main.selecionaEquipamento(ponto, rele);
-                break;
+                return rele;
             case RELIGADOR:
                 Religador religador = CriteriosReligador.getReligadorTeste(); //DEFINIR QUAL RELIGADOR ESTA INSTALADO NO PONTO
                 CriteriosReligador criteriosReligador = new CriteriosReligador(rede, ponto, religador);
                 criteriosReligador.ajuste();
-                frame.setAjuste(new PanelAjusteReligadorTemp(religador));
-                Main.selecionaEquipamento(ponto, religador);
-                break;
+                return religador;
             default:
                 LOGGER.error("DEFAULT CLAUSE");
-                break;
+                throw new AjusteImpossivelException("DEFAULT CLAUSE - calculaAjusteInicial()");
         }
-        return true;
     }
 
-    private boolean irParaMeioRede(Ponto ponto) throws AjusteImpossivelException {
+    private Equipamento calculaAjusteMeioRede(Ponto ponto) throws AjusteImpossivelException {
         Ponto pOrigem = rede.getParentRedeReduzida(ponto);
         TipoEquipamento tipoEquipamento = ponto.getTipoEquipamentoInstalado();
         TipoEquipamento tipoOrigem = pOrigem.getTipoEquipamentoInstalado();
+        if (tipoOrigem == TipoEquipamento.RELE && tipoEquipamento == TipoEquipamento.RELIGADOR) {
+            Rele relePai = (Rele) pOrigem.getEquipamentoInstalado();
+            Religador religador = CriteriosReligador.getReligadorTeste(); //DEFINIR QUAL RELIGADOR ESTA INSTALADO NO PONTO
+            CriteriosReleReligador criterios = new CriteriosReleReligador(relePai, ponto, rede, religador);
+            criterios.ajuste();
+            return religador;
+        }
+        throw new RuntimeException("calculaAjusteMeioRede() nao era Rele-Religador");
+    }
+
+    private void getAjustePanel(Ponto p, Equipamento e, boolean inicioRede) throws AjusteImpossivelException {
+        if (inicioRede) {
+            this.getAjustePanelInicioRede(p, e);
+        } else {
+            this.getAjustePanelMeioRede(p, e);
+        }
+    }
+
+    private void getAjustePanelInicioRede(Ponto ponto, Equipamento e) {
+        TipoEquipamento tipoEquipamento = e.getTipoEquipamento();
+        switch (tipoEquipamento) {
+            case ELO:
+                Main.setPanelAjuste(null);
+                break;
+            case RELE:
+                Main.setPanelAjuste(new PanelAjusteReleTemp((Rele) e));
+                break;
+            case RELIGADOR:
+                Main.setPanelAjuste(new PanelAjusteReligadorTemp((Religador) e));
+                break;
+            default:
+                LOGGER.error("DEFAULT CLAUSE: getAjustePanelInicioRede");
+        }
+        Main.selecionaEquipamento(ponto, e);
+    }
+
+    private void getAjustePanelMeioRede(Ponto ponto, Equipamento e) throws AjusteImpossivelException {
+        Ponto pOrigem = rede.getParentRedeReduzida(ponto);
+        Equipamento origem = pOrigem.getEquipamentoInstalado();
+        TipoEquipamento tipoEquipamento = e.getTipoEquipamento();
+        TipoEquipamento tipoOrigem = origem.getTipoEquipamento();
         switch (tipoOrigem) {
             case ELO:
-                switch (tipoEquipamento) {
-                    case ELO:
-                        Criterios_Elo_Elo criteriosEloElo = new Criterios_Elo_Elo(rede, pOrigem, ponto);
-                        List<Metricas_Elo_Elo> metricas;
-                        try {
-                            metricas = criteriosEloElo.ajuste();
-                            ponto.resetAtributos(true);
-                            frame.setAjuste(new PanelAjusteEloElo(metricas, (Elo) pOrigem.getEquipamentoInstalado()));
-                        } catch (AjusteImpossivelException ex) {
-                            LOGGER.error("AJUSTE IMPOSSIVEL" + ex.getMessage());
-                            return false;
-                        }
-                        break;
-                    case RELE:
-
-                        break;
-                    case RELIGADOR:
-
-                        break;
-                    default:
-                        LOGGER.error("DEFAULT CLAUSE");
-                        break;
+                if (tipoEquipamento == TipoEquipamento.ELO) {
+                    Criterios_Elo_Elo criteriosEloElo = new Criterios_Elo_Elo(rede, pOrigem, ponto);
+                    List<Metricas_Elo_Elo> metricas;
+                    metricas = criteriosEloElo.ajuste();
+                    ponto.resetAtributos(true);
+                    Main.setPanelAjuste(new PanelAjusteEloElo(metricas, (Elo) pOrigem.getEquipamentoInstalado()));
+                } else {
+                    LOGGER.error("DEFAULT CLAUSE - getAjustePanelMeioRede - tipoOrigem = ELO");
+                    throw new UnsupportedOperationException();
                 }
                 break;
             case RELE:
                 switch (tipoEquipamento) {
                     case ELO:
-                        frame.setAjuste(new PanelAjusteReleElo(ponto, rede, pOrigem));
-                        break;
-                    case RELE:
-
+                        Main.setPanelAjuste(new PanelAjusteReleElo(ponto, rede, pOrigem));
                         break;
                     case RELIGADOR:
-                        Rele relePai = (Rele) pOrigem.getEquipamentoInstalado();
-                        Religador religador = CriteriosReligador.getReligadorTeste(); //DEFINIR QUAL RELIGADOR ESTA INSTALADO NO PONTO
-                        CriteriosReleReligador criterios = new CriteriosReleReligador(relePai, ponto, rede, religador);
-                        criterios.ajuste();
-                        Main.selecionaEquipamento(ponto, religador);
-                        frame.setAjuste(new PanelAjusteReleReligadorTemp(ponto, pOrigem));
+                        Main.selecionaEquipamento(ponto, e);
+                        Main.setPanelAjuste(new PanelAjusteReleReligadorTemp(ponto, pOrigem));
                         break;
                     default:
-                        LOGGER.error("DEFAULT CLAUSE");
-                        break;
+                        LOGGER.error("DEFAULT CLAUSE - getAjustePanelMeioRede - tipoOrigem = RELE");
+                        throw new UnsupportedOperationException();
                 }
                 break;
             case RELIGADOR:
-                switch (tipoEquipamento) {
-                    case ELO:
-                        frame.setAjuste(new PanelAjusteReligadorElo(ponto, rede, pOrigem));
-                        break;
-                    case RELE:
-
-                        break;
-                    case RELIGADOR:
-
-                        break;
-                    default:
-                        LOGGER.error("DEFAULT CLAUSE");
-                        break;
+                if (tipoEquipamento == TipoEquipamento.ELO) {
+                    Main.setPanelAjuste(new PanelAjusteReligadorElo(ponto, rede, pOrigem));
+                } else {
+                    LOGGER.error("DEFAULT CLAUSE - getAjustePanelMeioRede - tipoOrigem = RELIGADOR");
+                    throw new UnsupportedOperationException();
                 }
                 break;
             default:
-                LOGGER.error("DEFAULT CLAUSE");
-                break;
+                LOGGER.error("DEFAULT CLAUSE - getAjustePanelMeioRede");
+                throw new UnsupportedOperationException();
         }
-        return true;
     }
 }
