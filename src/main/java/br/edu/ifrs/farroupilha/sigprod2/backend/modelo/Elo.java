@@ -2,6 +2,7 @@ package br.edu.ifrs.farroupilha.sigprod2.backend.modelo;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.CorrenteForaDoAlcanceException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.TempoForaDoAlcanceException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -192,7 +193,7 @@ public class Elo implements Curvas, Equipamento {
         }
     }
 
-    public double[][] getCurvaMatrix(CurvasElo curva) {
+    private double[][] getCurvaMatrix(CurvasElo curva) {
         if (curva == CurvasElo.MAXIMA) {
             return getCurvaMatrix(1);
         } else {
@@ -209,7 +210,7 @@ public class Elo implements Curvas, Equipamento {
         return correnteDoTempo(getCurvaMatrix(curva), tempoEntrada);
     }
 
-    private double correnteDoTempo(double curva[][], double tempoEntrada) throws TempoForaDoAlcanceException {
+    private double correnteDoTempo(double[][] curva, double tempoEntrada) throws TempoForaDoAlcanceException {
         double corrente1 = 0, corrente2 = 0, tempo1 = 0, tempo2 = 0;
         boolean sai = false;
         for (int i = 0; i < curva.length; i++) {
@@ -226,11 +227,15 @@ public class Elo implements Curvas, Equipamento {
                 }
             }
         }
-        if (sai == true) {
+        if (sai) {
             //E estipula um valor de corrente para o tempoEntrada
             double a1 = ((tempo2 - tempo1) / (corrente2 - corrente1));
             double b1 = (tempo1 - (((tempo2 - tempo1) / (corrente2 - corrente1)) * corrente1));
             return ((tempoEntrada - b1) / a1);
+        }
+        double ultimoValor = curva[curva.length - 1][1];
+        if (tempoEntrada > ultimoValor) {
+            return ultimoValor;
         } else {
             throw new TempoForaDoAlcanceException(tempoEntrada > curva[0][1], "TEMPO ENTRADO: " + tempoEntrada);
         }
@@ -240,7 +245,7 @@ public class Elo implements Curvas, Equipamento {
         return tempoDaCorrente(getCurvaMatrix(curva), correnteEntrada);
     }
 
-    private double tempoDaCorrente(double curva[][], double correnteEntrada) throws CorrenteForaDoAlcanceException {
+    private double tempoDaCorrente(double[][] curva, double correnteEntrada) throws CorrenteForaDoAlcanceException {
         double corrente1 = 0, corrente2 = 0, tempo1 = 0, tempo2 = 0;
         boolean sai = false;
         for (int i = 0; i < curva.length - 1; i++) {
@@ -255,11 +260,15 @@ public class Elo implements Curvas, Equipamento {
                 return curva[i][1];
             }
         }
-        if (sai == true) {
+        if (sai) {
             //E estipula um valor de tempo para a correnteEntrada
             double a1 = ((tempo2 - tempo1) / (corrente2 - corrente1));
             double b1 = (tempo1 - (((tempo2 - tempo1) / (corrente2 - corrente1)) * corrente1));
             return (correnteEntrada * a1) + b1;
+        }
+        double ultimoValor = curva[curva.length - 1][0];
+        if (correnteEntrada > ultimoValor) {
+            return ultimoValor;
         } else {
             throw new CorrenteForaDoAlcanceException(correnteEntrada > curva[0][0], "CORRENTE ENTRADA: " + correnteEntrada);
         }
@@ -269,7 +278,7 @@ public class Elo implements Curvas, Equipamento {
         return GetMenorCorrente(getCurvaMatrix(curva));
     }
 
-    private double GetMenorCorrente(double curva[][]) {
+    private double GetMenorCorrente(double[][] curva) {
         double menorValor = curva[0][0];
         for (int i = 1; i < curva.length; i++) {
             if (curva[i][0] < menorValor) {
@@ -283,7 +292,7 @@ public class Elo implements Curvas, Equipamento {
         return GetMenorTempo(getCurvaMatrix(curva));
     }
 
-    private double GetMenorTempo(double curva[][]) {
+    private double GetMenorTempo(double[][] curva) {
         double menorValor = curva[0][1];
         for (int i = 1; i < curva.length; i++) {
             if (curva[i][1] < menorValor) {
@@ -297,7 +306,7 @@ public class Elo implements Curvas, Equipamento {
         return GetMaiorCorrente(getCurvaMatrix(curva));
     }
 
-    private double GetMaiorCorrente(double curva[][]) {
+    private double GetMaiorCorrente(double[][] curva) {
         double maiorValor = curva[0][0];
         for (int i = 1; i < curva.length; i++) {
             if (curva[i][0] > maiorValor) {
@@ -311,7 +320,7 @@ public class Elo implements Curvas, Equipamento {
         return GetMaiorTempo(getCurvaMatrix(curva));
     }
 
-    private double GetMaiorTempo(double curva[][]) {
+    private double GetMaiorTempo(double[][] curva) {
         double maiorValor = curva[0][1];
         for (int i = 1; i < curva.length; i++) {
             if (curva[i][1] > maiorValor) {
