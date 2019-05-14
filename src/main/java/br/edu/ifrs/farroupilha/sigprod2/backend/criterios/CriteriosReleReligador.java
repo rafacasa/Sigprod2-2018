@@ -57,52 +57,60 @@ public class CriteriosReleReligador {
         this.ajustarCurvaRapida();
     }
 
-    private AjusteRele verificarPreAjusteLentaFase(List<AjusteRele> ajustesFase) throws AjusteImpossivelException {
+    private AjusteRele verificarPreAjusteLentaFase(List<AjusteRele> ajustesFase) {
         Object o = this.pontoRede.getNode().getAttribute("preajuste");
         if (o != null) {
             DadosPreAjusteReligadorElo dados = (DadosPreAjusteReligadorElo) o;
             BigDecimal tempoEloFFFPonto = dados.getTempoEloFFFPonto();
             BigDecimal tempoEloFFAbaixo = dados.getTempoEloFFAbaixo();
-            BigDecimal correnteFFFPonto = BigDecimal.valueOf(this.rede.buscaCorrentePonto(dados.getPonto(), Corrente.ICC3F));
-            BigDecimal correnteFFAbaixo = BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(dados.getPonto(), Corrente.ICC2F));
+            BigDecimal correnteFFFPonto = dados.getCorrenteEloFFFPonto();
+            BigDecimal correnteFFAbaixo = dados.getCorrenteEloFFAbaixo();
             BigDecimal tempoReligadorFFFPonto;
             BigDecimal tempoReligadorFFAbaixo;
             AjusteRele ajuste;
-            for (int i = 0; i < ajustesFase.size(); i++) {
-                ajuste = ajustesFase.get(i);
+            LOGGER.info("VERIFICARPREAJUSTELENTAFASE " + tempoEloFFFPonto + " " + tempoEloFFAbaixo);
+            LOGGER.info("CORRENTES " + correnteFFFPonto + " " + correnteFFAbaixo);
+            for (AjusteRele ajusteRele : ajustesFase) {
+                ajuste = ajusteRele;
                 tempoReligadorFFFPonto = ajuste.calculaTempo(correnteFFFPonto);
                 tempoReligadorFFAbaixo = ajuste.calculaTempo(correnteFFAbaixo);
                 if (tempoEloFFFPonto.compareTo(tempoReligadorFFFPonto) < 0 && tempoEloFFAbaixo.compareTo(tempoReligadorFFAbaixo) < 0) {
                     LOGGER.info("VERIFICARPREAJUSTELENTAFASE " + tempoEloFFFPonto + " " + tempoReligadorFFFPonto + " " + tempoEloFFAbaixo + " " + tempoReligadorFFAbaixo);
+                    LOGGER.info("CORRENTES " + correnteFFFPonto + " " + correnteFFAbaixo);
                     return ajuste;
                 }
             }
-            throw new AjusteImpossivelException("Nenhum Ajuste Religador passa pelos pre ajustes fase");
+            LOGGER.error("Nenhum Ajuste Religador passa pelos pre ajustes fase");
+            return ajustesFase.get(0);
         }
         return ajustesFase.get(0);
     }
 
-    private AjusteRele verificarPreAjusteLentaNeutro(List<AjusteRele> ajustesNeutro) throws AjusteImpossivelException {
+    private AjusteRele verificarPreAjusteLentaNeutro(List<AjusteRele> ajustesNeutro) {
         Object o = this.pontoRede.getNode().getAttribute("preajuste");
         if (o != null) {
             DadosPreAjusteReligadorElo dados = (DadosPreAjusteReligadorElo) o;
             BigDecimal tempoEloFTPonto = dados.getTempoEloFTPonto();
             BigDecimal tempoEloFTMinAbaixo = dados.getTempoEloFTMinAbaixo();
-            BigDecimal correnteFTPonto = BigDecimal.valueOf(this.rede.buscaCorrentePonto(dados.getPonto(), Corrente.ICCFT));
-            BigDecimal correnteFTMinAbaixo = BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(dados.getPonto(), Corrente.ICCFTMIN));
+            BigDecimal correnteFTPonto = dados.getCorrenteEloFTPonto();
+            BigDecimal correnteFTMinAbaixo = dados.getCorrenteMinimaEloFTMinAbaixo();
             BigDecimal tempoReligadorFTPonto;
             BigDecimal tempoReligadorFTMinAbaixo;
             AjusteRele ajuste;
-            for (int i = 0; i < ajustesNeutro.size(); i++) {
-                ajuste = ajustesNeutro.get(i);
+            LOGGER.info("VERIFICARPREAJUSTELENTANEUTRO " + tempoEloFTPonto + " " + tempoEloFTMinAbaixo);
+            LOGGER.info("CORRENTES " + correnteFTPonto + " " + correnteFTMinAbaixo);
+            for (AjusteRele ajusteRele : ajustesNeutro) {
+                ajuste = ajusteRele;
                 tempoReligadorFTPonto = ajuste.calculaTempo(correnteFTPonto);
                 tempoReligadorFTMinAbaixo = ajuste.calculaTempo(correnteFTMinAbaixo);
                 if (tempoEloFTPonto.compareTo(tempoReligadorFTPonto) < 0 && tempoEloFTMinAbaixo.compareTo(tempoReligadorFTMinAbaixo) < 0) {
-                    LOGGER.info("VERIFICARPREAJUSTELENTAFASE " + tempoEloFTPonto + " " + tempoReligadorFTPonto + " " + tempoEloFTMinAbaixo + " " + tempoReligadorFTMinAbaixo);
+                    LOGGER.info("VERIFICARPREAJUSTELENTANEUTRO " + tempoEloFTPonto + " " + tempoReligadorFTPonto + " " + tempoEloFTMinAbaixo + " " + tempoReligadorFTMinAbaixo);
+                    LOGGER.info("CORRENTES " + correnteFTPonto + " " + correnteFTMinAbaixo);
                     return ajuste;
                 }
             }
-            throw new AjusteImpossivelException("Nenhum Ajuste Religador passa pelos pre ajustes neutro");
+            LOGGER.error("Nenhum Ajuste Religador passa pelos pre ajustes neutro");
+            return ajustesNeutro.get(0);
         }
         return ajustesNeutro.get(0);
     }

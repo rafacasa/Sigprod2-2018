@@ -235,7 +235,7 @@ public class Elo implements Curvas, Equipamento {
         }
         double ultimoValor = curva[curva.length - 1][1];
         if (tempoEntrada > ultimoValor) {
-            return ultimoValor;
+            return curva[curva.length - 1][0];
         } else {
             throw new TempoForaDoAlcanceException(tempoEntrada > curva[0][1], "TEMPO ENTRADO: " + tempoEntrada);
         }
@@ -268,7 +268,7 @@ public class Elo implements Curvas, Equipamento {
         }
         double ultimoValor = curva[curva.length - 1][0];
         if (correnteEntrada > ultimoValor) {
-            return ultimoValor;
+            return curva[curva.length - 1][1];
         } else {
             throw new CorrenteForaDoAlcanceException(correnteEntrada > curva[0][0], "CORRENTE ENTRADA: " + correnteEntrada);
         }
