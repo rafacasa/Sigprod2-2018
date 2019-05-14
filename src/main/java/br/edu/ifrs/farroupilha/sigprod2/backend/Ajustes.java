@@ -171,7 +171,7 @@ public class Ajustes {
                 Main.setPanelAjuste(null);
                 break;
             case RELE:
-                Main.setPanelAjuste(new PanelAjusteReleTemp((Rele) e));
+                Main.setPanelAjuste(new PanelAjusteReleTemp((Rele) e, this.rede, ponto));
                 break;
             case RELIGADOR:
                 Main.setPanelAjuste(new PanelAjusteReligadorTemp((Religador) e));

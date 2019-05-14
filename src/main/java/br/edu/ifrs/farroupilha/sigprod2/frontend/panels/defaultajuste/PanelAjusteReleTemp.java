@@ -21,6 +21,8 @@ import java.util.List;
 public class PanelAjusteReleTemp extends PanelAjuste {
 
     private static final Logger LOGGER = LogManager.getLogger(PanelAjusteReleTemp.class.getName());
+    private final Rede rede;
+    private final Ponto ponto;
     private final Rele rele;
     private List<String> nomePontos;
     private Coordenograma coordenograma;
@@ -33,8 +35,10 @@ public class PanelAjusteReleTemp extends PanelAjuste {
     private PanelDadosAjusteRele ajusteFase;
     private PanelDadosAjusteRele ajusteNeutro;
 
-    public PanelAjusteReleTemp(Rele rele) {
+    public PanelAjusteReleTemp(Rele rele, Rede rede, Ponto ponto) {
         this.rele = rele;
+        this.rede = rede;
+        this.ponto = ponto;
         this.nomePontos = new ArrayList<>();
         this.initComponents();
         this.preencheDados();
@@ -75,7 +79,7 @@ public class PanelAjusteReleTemp extends PanelAjuste {
                 LOGGER.error("setPanelsAjuste - erro curva fase");
                 throw new RuntimeException("setPanelsAjuste - erro curva fase");
         }
-        this.ajusteFase = new PanelDadosAjusteRele(this.rele.getAcsNIFase(), this.rele.getAcsMIFase(), this.rele.getAcsEIFase(), this.rele.getAjusteFase(), index, this.rele, true, this);
+        this.ajusteFase = new PanelDadosAjusteRele(this.rele.getAcsNIFase(), this.rele.getAcsMIFase(), this.rele.getAcsEIFase(), this.rele.getAjusteFase(), index, this.rele, true, this, this.rede, this.ponto);
 
         switch (this.rele.getNomeCurva(this.rele.getAjusteNeutro().getCurva(), false)) {
             case "Curva Normalmente Inversa":
@@ -91,7 +95,7 @@ public class PanelAjusteReleTemp extends PanelAjuste {
                 LOGGER.error("setPanelsAjuste - erro curva neutro");
                 throw new RuntimeException("setPanelsAjuste - erro curva neutro");
         }
-        this.ajusteNeutro = new PanelDadosAjusteRele(this.rele.getAcsNINeutro(), this.rele.getAcsMINeutro(), this.rele.getAcsEINeutro(), this.rele.getAjusteNeutro(), index, rele, false, this);
+        this.ajusteNeutro = new PanelDadosAjusteRele(this.rele.getAcsNINeutro(), this.rele.getAcsMINeutro(), this.rele.getAcsEINeutro(), this.rele.getAjusteNeutro(), index, rele, false, this, this.rede, this.ponto);
     }
 
     private void addItens() {
@@ -154,6 +158,8 @@ public class PanelAjusteReleTemp extends PanelAjuste {
     class PanelDadosAjusteRele extends JPanel {
 
         private final Rele rele;
+        private final Rede rede;
+        private final Ponto ponto;
         private final boolean fase;
         private boolean impossiveis;
         private final PanelAjuste panelAjuste;
@@ -168,9 +174,11 @@ public class PanelAjusteReleTemp extends PanelAjuste {
         private JButton reset;
         private JToggleButton ajustesImpossiveis;
 
-        public PanelDadosAjusteRele(List<ACDisponivel> acsNI, List<ACDisponivel> acsMI, List<ACDisponivel> acsEI, AjusteRele ajusteInical, int indexCurvaInicial, Rele rele, boolean fase, PanelAjuste panelAjuste) {
+        public PanelDadosAjusteRele(List<ACDisponivel> acsNI, List<ACDisponivel> acsMI, List<ACDisponivel> acsEI, AjusteRele ajusteInical, int indexCurvaInicial, Rele rele, boolean fase, PanelAjuste panelAjuste, Rede rede, Ponto ponto) {
             this.indexCurvaInicial = indexCurvaInicial;
             this.rele = rele;
+            this.rede = rede;
+            this.ponto = ponto;
             this.fase = fase;
             this.panelAjuste = panelAjuste;
             this.acsNI = acsNI;
@@ -337,11 +345,22 @@ public class PanelAjusteReleTemp extends PanelAjuste {
             }
             ACDisponivel ac = this.listaAC.getItemAt(this.listaAC.getSelectedIndex());
             BigDecimal at = this.listaAT.getItemAt(this.listaAT.getSelectedIndex());
+            AjusteRele ajuste = new AjusteRele(BigDecimal.ZERO, at, ac.getAc(), curva);
             if (this.fase) {
                 this.rele.setAjusteFase(new AjusteRele(BigDecimal.ZERO, at, ac.getAc(), curva));
             } else {
                 this.rele.setAjusteNeutro(new AjusteRele(BigDecimal.ZERO, at, ac.getAc(), curva));
             }
+            Corrente corrente = fase ? Corrente.ICC2F : Corrente.ICCFTMIN;
+            BigDecimal iMinFFPP = BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.ponto, corrente));
+            BigDecimal iMinFFPR = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(this.ponto, corrente));
+            BigDecimal tempo1 = ajuste.calculaTempo(iMinFFPP);
+            BigDecimal tempo2 = ajuste.calculaTempo(iMinFFPR);
+            LOGGER.info("TEMPOS AJUSTES RELE");
+            LOGGER.info("CORRENTE 1: " + iMinFFPP);
+            LOGGER.info("TEMPO 1: " + tempo1);
+            LOGGER.info("CORRENTE 2: " + iMinFFPR);
+            LOGGER.info("TEMPO 2: " + tempo2);
             Main.setCoordenograma(this.panelAjuste.geraCoordenograma());
         }
 
