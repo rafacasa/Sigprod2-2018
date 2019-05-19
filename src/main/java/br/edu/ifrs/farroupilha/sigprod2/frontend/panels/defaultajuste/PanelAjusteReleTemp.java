@@ -1,26 +1,18 @@
 package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.Main;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.ACDisponivel;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.AjusteRele;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvaRele;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
-import java.awt.Color;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import net.miginfocom.swing.MigLayout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import java.awt.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -29,6 +21,8 @@ import org.apache.logging.log4j.Logger;
 public class PanelAjusteReleTemp extends PanelAjuste {
 
     private static final Logger LOGGER = LogManager.getLogger(PanelAjusteReleTemp.class.getName());
+    private final Rede rede;
+    private final Ponto ponto;
     private final Rele rele;
     private List<String> nomePontos;
     private Coordenograma coordenograma;
@@ -41,8 +35,11 @@ public class PanelAjusteReleTemp extends PanelAjuste {
     private PanelDadosAjusteRele ajusteFase;
     private PanelDadosAjusteRele ajusteNeutro;
 
-    public PanelAjusteReleTemp(Rele rele) {
+    public PanelAjusteReleTemp(Rele rele, Rede rede, Ponto ponto) {
         this.rele = rele;
+        this.rede = rede;
+        this.ponto = ponto;
+        this.nomePontos = new ArrayList<>();
         this.initComponents();
         this.preencheDados();
         this.addItens();
@@ -82,7 +79,7 @@ public class PanelAjusteReleTemp extends PanelAjuste {
                 LOGGER.error("setPanelsAjuste - erro curva fase");
                 throw new RuntimeException("setPanelsAjuste - erro curva fase");
         }
-        this.ajusteFase = new PanelDadosAjusteRele(this.rele.getAcsNIFase(), this.rele.getAcsMIFase(), this.rele.getAcsEIFase(), this.rele.getAjusteFase(), index, this.rele, true, this);
+        this.ajusteFase = new PanelDadosAjusteRele(this.rele.getAcsNIFase(), this.rele.getAcsMIFase(), this.rele.getAcsEIFase(), this.rele.getAjusteFase(), index, this.rele, true, this, this.rede, this.ponto);
 
         switch (this.rele.getNomeCurva(this.rele.getAjusteNeutro().getCurva(), false)) {
             case "Curva Normalmente Inversa":
@@ -98,7 +95,7 @@ public class PanelAjusteReleTemp extends PanelAjuste {
                 LOGGER.error("setPanelsAjuste - erro curva neutro");
                 throw new RuntimeException("setPanelsAjuste - erro curva neutro");
         }
-        this.ajusteNeutro = new PanelDadosAjusteRele(this.rele.getAcsNINeutro(), this.rele.getAcsMINeutro(), this.rele.getAcsEINeutro(), this.rele.getAjusteNeutro(), index, rele, false, this);
+        this.ajusteNeutro = new PanelDadosAjusteRele(this.rele.getAcsNINeutro(), this.rele.getAcsMINeutro(), this.rele.getAcsEINeutro(), this.rele.getAjusteNeutro(), index, rele, false, this, this.rede, this.ponto);
     }
 
     private void addItens() {
@@ -119,7 +116,16 @@ public class PanelAjusteReleTemp extends PanelAjuste {
             BigDecimal corrente = new BigDecimal(numeroDigitado); //MARCAR ESTA CORRENTE COM TEMPO CALCULADO
             BigDecimal tempoFase = rele.getAjusteFase().calculaTempo(corrente);
             BigDecimal tempoNeutro = rele.getAjusteNeutro().calculaTempo(corrente);
-            this.nomePontos = this.coordenograma.add(corrente, Arrays.asList(tempoFase, tempoNeutro), "pontoDigitado", Arrays.asList(Color.BLUE, Color.RED));
+            LOGGER.debug("tempoFase - " + tempoFase);
+            LOGGER.debug("tempoNeutro - " + tempoNeutro);
+            if (tempoFase.compareTo(BigDecimal.ZERO) > 0) {
+                LOGGER.debug("ENTROU FASE");
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoFase), "pontoFase", Arrays.asList(Color.BLUE)));
+            }
+            if (tempoNeutro.compareTo(BigDecimal.ZERO) > 0) {
+                LOGGER.debug("ENTROU NEUTRO");
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoNeutro), "tempoNeutro", Arrays.asList(Color.RED)));
+            }
         } catch (NumberFormatException e) {
             Erro.entradaInvalida(this);
             LOGGER.trace("STRING INVÁLIDA" + e.getMessage());
@@ -134,10 +140,11 @@ public class PanelAjusteReleTemp extends PanelAjuste {
     }
 
     public void limparPontos() {
-        if (this.nomePontos != null) {
+        if (this.nomePontos != null && !this.nomePontos.isEmpty()) {
             this.nomePontos.forEach(s -> {
                 this.coordenograma.remove(s);
             });
+            this.nomePontos.clear();
         }
     }
 
@@ -151,6 +158,8 @@ public class PanelAjusteReleTemp extends PanelAjuste {
     class PanelDadosAjusteRele extends JPanel {
 
         private final Rele rele;
+        private final Rede rede;
+        private final Ponto ponto;
         private final boolean fase;
         private boolean impossiveis;
         private final PanelAjuste panelAjuste;
@@ -165,9 +174,11 @@ public class PanelAjusteReleTemp extends PanelAjuste {
         private JButton reset;
         private JToggleButton ajustesImpossiveis;
 
-        public PanelDadosAjusteRele(List<ACDisponivel> acsNI, List<ACDisponivel> acsMI, List<ACDisponivel> acsEI, AjusteRele ajusteInical, int indexCurvaInicial, Rele rele, boolean fase, PanelAjuste panelAjuste) {
+        public PanelDadosAjusteRele(List<ACDisponivel> acsNI, List<ACDisponivel> acsMI, List<ACDisponivel> acsEI, AjusteRele ajusteInical, int indexCurvaInicial, Rele rele, boolean fase, PanelAjuste panelAjuste, Rede rede, Ponto ponto) {
             this.indexCurvaInicial = indexCurvaInicial;
             this.rele = rele;
+            this.rede = rede;
+            this.ponto = ponto;
             this.fase = fase;
             this.panelAjuste = panelAjuste;
             this.acsNI = acsNI;
@@ -334,11 +345,22 @@ public class PanelAjusteReleTemp extends PanelAjuste {
             }
             ACDisponivel ac = this.listaAC.getItemAt(this.listaAC.getSelectedIndex());
             BigDecimal at = this.listaAT.getItemAt(this.listaAT.getSelectedIndex());
+            AjusteRele ajuste = new AjusteRele(BigDecimal.ZERO, at, ac.getAc(), curva);
             if (this.fase) {
                 this.rele.setAjusteFase(new AjusteRele(BigDecimal.ZERO, at, ac.getAc(), curva));
             } else {
                 this.rele.setAjusteNeutro(new AjusteRele(BigDecimal.ZERO, at, ac.getAc(), curva));
             }
+            Corrente corrente = fase ? Corrente.ICC2F : Corrente.ICCFTMIN;
+            BigDecimal iMinFFPP = BigDecimal.valueOf(this.rede.buscaCorrenteMinimaProximoPonto(this.ponto, corrente));
+            BigDecimal iMinFFPR = BigDecimal.valueOf(this.rede.buscaCorrenteMinima2Camadas(this.ponto, corrente));
+            BigDecimal tempo1 = ajuste.calculaTempo(iMinFFPP);
+            BigDecimal tempo2 = ajuste.calculaTempo(iMinFFPR);
+            LOGGER.info("TEMPOS AJUSTES RELE");
+            LOGGER.info("CORRENTE 1: " + iMinFFPP);
+            LOGGER.info("TEMPO 1: " + tempo1);
+            LOGGER.info("CORRENTE 2: " + iMinFFPR);
+            LOGGER.info("TEMPO 2: " + tempo2);
             Main.setCoordenograma(this.panelAjuste.geraCoordenograma());
         }
 

@@ -1,7 +1,5 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend;
 
-import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.*;
-import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.BancoDeDadosException;
@@ -10,7 +8,7 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.MainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.frames.RelativeMainFrame;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.CorrentesPonto;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.Navegacao;
-import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.*;
+import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.PanelAjuste;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultmain.Informacoes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +30,7 @@ public class Main {
     private static final Logger LOGGER = LogManager.getLogger(Main.class.getName());
     private static Rede rede;
     private static MainFrame frame;
+    private static Ajustes ajustes;
     private static Coordenograma coordenograma;
     private static int tipoSelecaoMapa = Main.SELECAO_DEFAULT;
     private static List<String> retasCorrentes;
@@ -55,6 +54,7 @@ public class Main {
 
     private static void setupMainFrame(MainFrame frame) throws BancoDeDadosException, AjusteImpossivelException {
         rede = getRedeInicial();
+        ajustes = new Ajustes(rede, frame);
         Component c = (Component) rede.getMapaView();
         c.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         c.setPreferredSize(new Dimension(100, 100));
@@ -69,119 +69,11 @@ public class Main {
     }
 
     public static boolean irPara(Ponto ponto, boolean inicioRede) throws AjusteImpossivelException {
-        if (inicioRede) {
-            return irParaInicioRede(ponto);
-        } else {
-            return irParaMeioRede(ponto);
-        }
+        return ajustes.irPara(ponto, inicioRede);
     }
 
-    private static boolean irParaInicioRede(Ponto ponto) {
-        TipoEquipamento tipoEquipamento = ponto.getTipoEquipamentoInstalado();
-        switch (tipoEquipamento) {
-            case ELO:
-                Elo ajuste;
-                try {
-                    ajuste = Criterios_Elo.criterio_elo(rede.getElosDisponiveis(), ponto, rede);
-                    selecionaEquipamento(ponto, ajuste);
-                } catch (AjusteImpossivelException ex) {
-                    LOGGER.error("AJUSTE IMPOSSIVEL" + ex.getMessage());
-                    return false;
-                }
-                break;
-            case RELE:
-                Rele rele = Criterios_Rele.getReleTeste(); //COMO DEFINIR QUAL EQUIPAMENTO ESTA INSTALADO NO PONTO
-                Criterios_Rele criteriosRele = new Criterios_Rele(rede, ponto, rele);
-                criteriosRele.ajuste();
-                frame.setAjuste(new PanelAjusteReleTemp(rele));
-                selecionaEquipamento(ponto, rele);
-                break;
-            case RELIGADOR:
-                Religador religador = CriteriosReligador.getReligadorTeste(); //DEFINIR QUAL RELIGADOR ESTA INSTALADO NO PONTO
-                CriteriosReligador criteriosReligador = new CriteriosReligador(Main.rede, ponto, religador);
-                criteriosReligador.ajuste();
-                frame.setAjuste(new PanelAjusteReligadorTemp(religador));
-                selecionaEquipamento(ponto, religador);
-                break;
-            default:
-                LOGGER.error("DEFAULT CLAUSE");
-                break;
-        }
-        return true;
-    }
-
-    private static boolean irParaMeioRede(Ponto ponto) throws AjusteImpossivelException {
-        Ponto pOrigem = rede.getParentRedeReduzida(ponto);
-        TipoEquipamento tipoEquipamento = ponto.getTipoEquipamentoInstalado();
-        TipoEquipamento tipoOrigem = pOrigem.getTipoEquipamentoInstalado();
-        switch (tipoOrigem) {
-            case ELO:
-                switch (tipoEquipamento) {
-                    case ELO:
-                        Criterios_Elo_Elo criteriosEloElo = new Criterios_Elo_Elo(rede, pOrigem, ponto);
-                        List<Metricas_Elo_Elo> metricas;
-                        try {
-                            metricas = criteriosEloElo.ajuste();
-                            ponto.resetAtributos(true);
-                            frame.setAjuste(new PanelAjusteEloElo(metricas, (Elo) pOrigem.getEquipamentoInstalado()));
-                        } catch (AjusteImpossivelException ex) {
-                            LOGGER.error("AJUSTE IMPOSSIVEL" + ex.getMessage());
-                            return false;
-                        }
-                        break;
-                    case RELE:
-
-                        break;
-                    case RELIGADOR:
-
-                        break;
-                    default:
-                        LOGGER.error("DEFAULT CLAUSE");
-                        break;
-                }
-                break;
-            case RELE:
-                switch (tipoEquipamento) {
-                    case ELO:
-                        frame.setAjuste(new PanelAjusteReleElo(ponto, rede, pOrigem));
-                        break;
-                    case RELE:
-
-                        break;
-                    case RELIGADOR:
-                        Rele relePai = (Rele) pOrigem.getEquipamentoInstalado();
-                        Religador religador = CriteriosReligador.getReligadorTeste(); //DEFINIR QUAL RELIGADOR ESTA INSTALADO NO PONTO
-                        CriteriosReleReligador criterios = new CriteriosReleReligador(relePai, ponto, rede, religador);
-                        criterios.ajuste();
-                        selecionaEquipamento(ponto, religador);
-                        frame.setAjuste(new PanelAjusteReleReligadorTemp(ponto, pOrigem));
-                        break;
-                    default:
-                        LOGGER.error("DEFAULT CLAUSE");
-                        break;
-                }
-                break;
-            case RELIGADOR:
-                switch (tipoEquipamento) {
-                    case ELO:
-                        frame.setAjuste(new PanelAjusteReligadorElo(ponto, rede, pOrigem));
-                        break;
-                    case RELE:
-
-                        break;
-                    case RELIGADOR:
-
-                        break;
-                    default:
-                        LOGGER.error("DEFAULT CLAUSE");
-                        break;
-                }
-                break;
-            default:
-                LOGGER.error("DEFAULT CLAUSE");
-                break;
-        }
-        return true;
+    public static boolean irPara(Ponto ponto, boolean inicioRede, boolean useCache) throws AjusteImpossivelException {
+        return ajustes.irPara(ponto, inicioRede, useCache);
     }
 
     public static void selecionaEquipamento(Ponto p, Equipamento e) {
@@ -196,6 +88,10 @@ public class Main {
         } else {
             frame.setCoordenograma(new JPanel());
         }
+    }
+
+    public static void setPanelAjuste(PanelAjuste p) {
+        frame.setAjuste(p != null ? p : new JPanel());
     }
 
     public static void setTipoSelecao(int tipoSelecao) {
@@ -249,9 +145,7 @@ public class Main {
     }
 
     public static void removeCorrentes() {
-        retasCorrentes.forEach(s -> {
-            coordenograma.remove(s);
-        });
+        retasCorrentes.forEach(s -> coordenograma.remove(s));
         retasCorrentes.clear();
     }
 
@@ -283,9 +177,7 @@ public class Main {
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
                 LOGGER.error("look and feel nao encontgrado" + ex.getMessage());
             }
-            SwingUtilities.invokeLater(() -> {
-                frame.setVisible(true);
-            });
+            SwingUtilities.invokeLater(() -> frame.setVisible(true));
             setupMainFrame(frame);
             LOGGER.info("over");
         } catch (BancoDeDadosException ex) {

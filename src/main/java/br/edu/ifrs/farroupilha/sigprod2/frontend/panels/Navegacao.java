@@ -122,7 +122,7 @@ public class Navegacao extends JPanel {
         Ponto target = rede.getParentRedeReduzida(atual);
         boolean inicioRede = this.camadaAtual == 2;
         try {
-            erro = Main.irPara(target, inicioRede);
+            erro = Main.irPara(target, inicioRede, true);
         } catch (AjusteImpossivelException e) {
             Erro.mostraMensagemErro(this, "Houve problema ao se movimentar na rede");
             LOGGER.error("ERRO DO TRY CATCH DO IF ERRO - " + e.getMessage());
@@ -161,7 +161,7 @@ public class Navegacao extends JPanel {
         }
         if (erro) {
             try {
-                Main.irPara(atual, this.camadaAtual == 1);
+                Main.irPara(atual, this.camadaAtual == 1, true);
             } catch (AjusteImpossivelException e) {
                 Erro.mostraMensagemErro(this, "Houve problema ao se movimentar na rede");
                 LOGGER.error("ERRO DO TRY CATCH DO IF ERRO - " + e.getMessage());
@@ -194,7 +194,7 @@ public class Navegacao extends JPanel {
         }
         if (erro) {
             try {
-                Main.irPara(atual, inicioRede);
+                Main.irPara(atual, inicioRede, true);
             } catch (AjusteImpossivelException e) {
                 Erro.mostraMensagemErro(this, "Houve problema ao se movimentar na rede");
                 LOGGER.error("ERRO DO TRY CATCH DO IF ERRO PROXIMO PONTO - " + e.getMessage());
@@ -220,7 +220,7 @@ public class Navegacao extends JPanel {
         } catch (java.lang.NullPointerException ex) {
             JOptionPane.showMessageDialog(null, "O equipamento superior não foi definido antecipadamente", "ERRO", JOptionPane.ERROR_MESSAGE);
             erro = true;
-
+            ex.printStackTrace();
         } catch (AjusteImpossivelException e) {
             Erro.mostraMensagemErro(this, "Nao ha ajustes disponiveis para o equipamento abaixo");
             LOGGER.error("ERRO AO DESCER CAMADA - " + e.getMessage());
@@ -228,7 +228,7 @@ public class Navegacao extends JPanel {
         }
         if (erro) {
             try {
-                Main.irPara(atual, inicioRede);
+                Main.irPara(atual, inicioRede, true);
             } catch (AjusteImpossivelException e) {
                 Erro.mostraMensagemErro(this, "Houve problema ao se movimentar na rede");
                 LOGGER.error("ERRO DO TRY CATCH DO IF ERRO PONTO PONTO ANTERIOR - " + e.getMessage());

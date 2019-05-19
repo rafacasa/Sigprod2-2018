@@ -10,10 +10,12 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class PanelAjusteReleReligadorTemp extends PanelAjuste {
+
     private static final Logger LOGGER = LogManager.getLogger(PanelAjusteReleReligadorTemp.class.getName());
     private Religador religador;
     private Rele relePai;
@@ -31,10 +33,28 @@ public class PanelAjusteReleReligadorTemp extends PanelAjuste {
     public PanelAjusteReleReligadorTemp(Ponto p, Ponto pOrigem) {
         this.relePai = (Rele) pOrigem.getEquipamentoInstalado();
         this.religador = (Religador) p.getEquipamentoInstalado();
+        this.nomePontos = new ArrayList<>();
+        this.logDadosRelePai();
         this.dadosReligador();
         this.initComponents();
         this.placeComponents();
         Main.setCoordenograma(this.geraCoordenograma());
+    }
+
+    private void logDadosRelePai() {
+        LOGGER.info("DADOS RELE PAI - AJUSTANDO RELIGADOR");
+        LOGGER.info("AJUSTES FASE");
+        LOGGER.info("AC: " + this.relePai.getAjusteFase().getAc());
+        LOGGER.info("AT: " + this.relePai.getAjusteFase().getAt());
+        LOGGER.info("CURVA NI: " + this.relePai.getAjusteFase().getCurva().equals(CurvaRele.NI));
+        LOGGER.info("CURVA MI: " + this.relePai.getAjusteFase().getCurva().equals(CurvaRele.MI));
+        LOGGER.info("CURVA EI: " + this.relePai.getAjusteFase().getCurva().equals(CurvaRele.EI));
+        LOGGER.info("AJUSTES NEUTRO");
+        LOGGER.info("AC: " + this.relePai.getAjusteNeutro().getAc());
+        LOGGER.info("AT: " + this.relePai.getAjusteNeutro().getAt());
+        LOGGER.info("CURVA NI: " + this.relePai.getAjusteNeutro().getCurva().equals(CurvaRele.NI));
+        LOGGER.info("CURVA MI: " + this.relePai.getAjusteNeutro().getCurva().equals(CurvaRele.MI));
+        LOGGER.info("CURVA EI: " + this.relePai.getAjusteNeutro().getCurva().equals(CurvaRele.EI));
     }
 
     private void initComponents() {
@@ -81,7 +101,24 @@ public class PanelAjusteReleReligadorTemp extends PanelAjuste {
             BigDecimal tempoNeutroRapida = religador.getAjusteRapidaNeutro().calculaTempo(corrente);
             BigDecimal tempoFaseRele = this.relePai.getAjusteFase().calculaTempo(corrente);
             BigDecimal tempoNeutroRele = this.relePai.getAjusteNeutro().calculaTempo(corrente);
-            this.nomePontos = this.coordenograma.add(corrente, Arrays.asList(tempoFaseLenta, tempoNeutroLenta, tempoFaseRapida, tempoNeutroRapida, tempoFaseRele, tempoNeutroRele), "pontoDigitado", Arrays.asList(Color.RED, Color.RED, Color.RED, Color.RED, Color.BLACK, Color.BLACK));
+            if (tempoFaseLenta.compareTo(BigDecimal.ZERO) > 0) {
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoFaseLenta), "Corrente Digitada 1", Arrays.asList(Color.RED)));
+            }
+            if (tempoNeutroLenta.compareTo(BigDecimal.ZERO) > 0) {
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoNeutroLenta), "Corrente Digitada 2", Arrays.asList(Color.RED)));
+            }
+            if (tempoFaseRapida.compareTo(BigDecimal.ZERO) > 0) {
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoFaseRapida), "Corrente Digitada 3", Arrays.asList(Color.RED)));
+            }
+            if (tempoNeutroRapida.compareTo(BigDecimal.ZERO) > 0) {
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoNeutroRapida), "Corrente Digitada 4", Arrays.asList(Color.RED)));
+            }
+            if (tempoFaseRele.compareTo(BigDecimal.ZERO) > 0) {
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoFaseRele), "Corrente Digitada 5", Arrays.asList(Color.BLACK)));
+            }
+            if (tempoNeutroRele.compareTo(BigDecimal.ZERO) > 0) {
+                this.nomePontos.addAll(this.coordenograma.add(corrente, Arrays.asList(tempoNeutroRele), "Corrente Digitada 6", Arrays.asList(Color.BLACK)));
+            }
         } catch (NumberFormatException e) {
             Erro.entradaInvalida(this);
             LOGGER.error("STRING INVÁLIDA" + e.getMessage());
@@ -96,10 +133,11 @@ public class PanelAjusteReleReligadorTemp extends PanelAjuste {
     }
 
     public void limparPontos() {
-        if (this.nomePontos != null) {
+        if (this.nomePontos != null && !this.nomePontos.isEmpty()) {
             this.nomePontos.forEach(s -> {
                 this.coordenograma.remove(s);
             });
+            this.nomePontos.clear();
         }
     }
 

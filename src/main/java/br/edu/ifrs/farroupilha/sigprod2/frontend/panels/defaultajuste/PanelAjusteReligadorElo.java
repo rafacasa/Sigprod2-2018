@@ -3,28 +3,20 @@ package br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste;
 import br.edu.ifrs.farroupilha.sigprod2.backend.Main;
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.CriteriosReligadorElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.MetricasReligadorElo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Coordenograma;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvasElo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Elo;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Religador;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.CorrenteForaDoAlcanceException;
 import br.edu.ifrs.farroupilha.sigprod2.frontend.dialogs.Erro;
-import java.awt.Color;
-import java.awt.Dimension;
+import net.miginfocom.swing.MigLayout;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import java.awt.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import net.miginfocom.swing.MigLayout;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -66,7 +58,41 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
         this.calculaAjustes(rede, pOrigem);
         this.initComponents();
         this.addItens();
+        this.setSelecionado();
+        this.logDadosReligadorPai();
         Main.setCoordenograma(this.geraCoordenograma());
+    }
+
+    private void logDadosReligadorPai() {
+        LOGGER.info("DADOS RELE PAI - AJUSTANDO RELIGADOR");
+        LOGGER.info("AJUSTES FASE");
+        LOGGER.info("AC: " + this.religadorPai.getAjusteFase().getAc());
+        LOGGER.info("AT LENTA: " + this.religadorPai.getAjusteFase().getAt());
+        LOGGER.info("AT RAPIDA: " + this.religadorPai.getAjusteRapidaFase().getAt());
+        LOGGER.info("CURVA NI: " + this.religadorPai.getAjusteFase().getCurva().equals(CurvaRele.NI));
+        LOGGER.info("CURVA MI: " + this.religadorPai.getAjusteFase().getCurva().equals(CurvaRele.MI));
+        LOGGER.info("CURVA EI: " + this.religadorPai.getAjusteFase().getCurva().equals(CurvaRele.EI));
+        LOGGER.info("AJUSTES NEUTRO");
+        LOGGER.info("AC: " + this.religadorPai.getAjusteNeutro().getAc());
+        LOGGER.info("AT LENTA: " + this.religadorPai.getAjusteNeutro().getAt());
+        LOGGER.info("AT RAPIDA: " + this.religadorPai.getAjusteRapidaNeutro().getAt());
+        LOGGER.info("CURVA NI: " + this.religadorPai.getAjusteNeutro().getCurva().equals(CurvaRele.NI));
+        LOGGER.info("CURVA MI: " + this.religadorPai.getAjusteNeutro().getCurva().equals(CurvaRele.MI));
+        LOGGER.info("CURVA EI: " + this.religadorPai.getAjusteNeutro().getCurva().equals(CurvaRele.EI));
+    }
+
+    private void setSelecionado() {
+        Equipamento equip = this.ponto.getEquipamentoInstalado();
+        if (equip != null) {
+            Elo elo = (Elo) equip;
+            for (int i = 0; i < this.lista.getItemCount(); i++) {
+                MetricasReligadorElo metrica = this.lista.getItemAt(i);
+                if (metrica.getElo().getCorrenteNominal() == elo.getCorrenteNominal()) {
+                    this.lista.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
     }
 
     private void calculaAjustes(Rede rede, Ponto pOrigem) {
@@ -154,8 +180,8 @@ public class PanelAjusteReligadorElo extends PanelAjuste {
         LOGGER.trace(evt.getActionCommand());
         MetricasReligadorElo metrica = this.lista.getItemAt(this.lista.getSelectedIndex());
         this.labelAlcance.setText(metrica.getAlcance().toString());
-        this.labelSeletividadeRapidaFase.setText(metrica.isSeletividadeRapidaFase()? "TRUE" : "FALSE");
-        this.labelSeletividadeRapidaNeutro.setText(metrica.isSeletividadeRapidaNeutro()? "TRUE" : "FALSE");
+        this.labelSeletividadeRapidaFase.setText(metrica.isSeletividadeRapidaFase() ? "TRUE" : "FALSE");
+        this.labelSeletividadeRapidaNeutro.setText(metrica.isSeletividadeRapidaNeutro() ? "TRUE" : "FALSE");
         this.labelSeletividadeNeutro.setText(metrica.isSeletividadeNeutro() ? "TRUE" : "FALSE");
         this.labelSeletividadeFasePonto.setText(metrica.isSeletividadeFasePonto() ? "TRUE" : "FALSE");
         this.labelSeletividadeFaseAbaixo.setText(metrica.isSeletividadeFaseAbaixo() ? "TRUE" : "FALSE");

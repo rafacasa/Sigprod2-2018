@@ -1,23 +1,18 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.criterios;
 
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.ACDisponivel;
+import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.ValorATImposivelException;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.AjusteRele;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Corrente;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.CurvaRele;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Ponto;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rede;
-import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.Rele;
 import ch.obermuhlner.math.big.BigDecimalMath;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -113,7 +108,7 @@ public class Criterios_Rele {
         List<AjusteRele> ajustesPossiveis = new ArrayList<>();
         List<BigDecimal> ac = restringeAC(curva, limiteMaximo, limiteMinimo);
         LOGGER.trace("RESTRINGIU OS ACS DISPONÍVEIS");
-        LOGGER.info("QTD AC - " + ac.size());
+        LOGGER.debug("QTD AC - " + ac.size());
         for (int i = 0; i < ac.size(); i++) {
             BigDecimal d = ac.get(i);
             BigDecimal at = this.calculaAT(curva, d, iMinFFPP, iMinFFPR, fase);

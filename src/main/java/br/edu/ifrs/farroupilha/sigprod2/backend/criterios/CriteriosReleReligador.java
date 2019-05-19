@@ -1,5 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.criterios;
 
+import br.edu.ifrs.farroupilha.sigprod2.backend.dadospreajuste.DadosPreAjusteReligadorElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.ValorATImposivelException;
@@ -50,10 +51,68 @@ public class CriteriosReleReligador {
             throw new AjusteImpossivelException("Nao ha ajustes disponiveis para o religador NEUTRO");
         }
 
-        this.religador.setAjusteFase(ajustesFase.get(0));
-        this.religador.setAjusteNeutro(ajustesNeutro.get(0));
+        this.religador.setAjusteFase(this.verificarPreAjusteLentaFase(ajustesFase));
+        this.religador.setAjusteNeutro(this.verificarPreAjusteLentaNeutro(ajustesNeutro));
 
         this.ajustarCurvaRapida();
+    }
+
+    private AjusteRele verificarPreAjusteLentaFase(List<AjusteRele> ajustesFase) {
+        Object o = this.pontoRede.getNode().getAttribute("preajuste");
+        if (o != null) {
+            DadosPreAjusteReligadorElo dados = (DadosPreAjusteReligadorElo) o;
+            BigDecimal tempoEloFFFPonto = dados.getTempoEloFFFPonto();
+            BigDecimal tempoEloFFAbaixo = dados.getTempoEloFFAbaixo();
+            BigDecimal correnteFFFPonto = dados.getCorrenteEloFFFPonto();
+            BigDecimal correnteFFAbaixo = dados.getCorrenteEloFFAbaixo();
+            BigDecimal tempoReligadorFFFPonto;
+            BigDecimal tempoReligadorFFAbaixo;
+            AjusteRele ajuste;
+            LOGGER.info("VERIFICARPREAJUSTELENTAFASE " + tempoEloFFFPonto + " " + tempoEloFFAbaixo);
+            LOGGER.info("CORRENTES " + correnteFFFPonto + " " + correnteFFAbaixo);
+            for (AjusteRele ajusteRele : ajustesFase) {
+                ajuste = ajusteRele;
+                tempoReligadorFFFPonto = ajuste.calculaTempo(correnteFFFPonto);
+                tempoReligadorFFAbaixo = ajuste.calculaTempo(correnteFFAbaixo);
+                if (tempoEloFFFPonto.compareTo(tempoReligadorFFFPonto) < 0 && tempoEloFFAbaixo.compareTo(tempoReligadorFFAbaixo) < 0) {
+                    LOGGER.info("VERIFICARPREAJUSTELENTAFASE " + tempoEloFFFPonto + " " + tempoReligadorFFFPonto + " " + tempoEloFFAbaixo + " " + tempoReligadorFFAbaixo);
+                    LOGGER.info("CORRENTES " + correnteFFFPonto + " " + correnteFFAbaixo);
+                    return ajuste;
+                }
+            }
+            LOGGER.error("Nenhum Ajuste Religador passa pelos pre ajustes fase");
+            return ajustesFase.get(0);
+        }
+        return ajustesFase.get(0);
+    }
+
+    private AjusteRele verificarPreAjusteLentaNeutro(List<AjusteRele> ajustesNeutro) {
+        Object o = this.pontoRede.getNode().getAttribute("preajuste");
+        if (o != null) {
+            DadosPreAjusteReligadorElo dados = (DadosPreAjusteReligadorElo) o;
+            BigDecimal tempoEloFTPonto = dados.getTempoEloFTPonto();
+            BigDecimal tempoEloFTMinAbaixo = dados.getTempoEloFTMinAbaixo();
+            BigDecimal correnteFTPonto = dados.getCorrenteEloFTPonto();
+            BigDecimal correnteFTMinAbaixo = dados.getCorrenteMinimaEloFTMinAbaixo();
+            BigDecimal tempoReligadorFTPonto;
+            BigDecimal tempoReligadorFTMinAbaixo;
+            AjusteRele ajuste;
+            LOGGER.info("VERIFICARPREAJUSTELENTANEUTRO " + tempoEloFTPonto + " " + tempoEloFTMinAbaixo);
+            LOGGER.info("CORRENTES " + correnteFTPonto + " " + correnteFTMinAbaixo);
+            for (AjusteRele ajusteRele : ajustesNeutro) {
+                ajuste = ajusteRele;
+                tempoReligadorFTPonto = ajuste.calculaTempo(correnteFTPonto);
+                tempoReligadorFTMinAbaixo = ajuste.calculaTempo(correnteFTMinAbaixo);
+                if (tempoEloFTPonto.compareTo(tempoReligadorFTPonto) < 0 && tempoEloFTMinAbaixo.compareTo(tempoReligadorFTMinAbaixo) < 0) {
+                    LOGGER.info("VERIFICARPREAJUSTELENTANEUTRO " + tempoEloFTPonto + " " + tempoReligadorFTPonto + " " + tempoEloFTMinAbaixo + " " + tempoReligadorFTMinAbaixo);
+                    LOGGER.info("CORRENTES " + correnteFTPonto + " " + correnteFTMinAbaixo);
+                    return ajuste;
+                }
+            }
+            LOGGER.error("Nenhum Ajuste Religador passa pelos pre ajustes neutro");
+            return ajustesNeutro.get(0);
+        }
+        return ajustesNeutro.get(0);
     }
 
     private List<AjusteRele> ajusteSeletividadeFase() {
@@ -64,9 +123,8 @@ public class CriteriosReleReligador {
         CurvaRele ni = this.religador.getnIFase();
         CurvaRele mi = this.religador.getmIFase();
         CurvaRele ei = this.religador.geteIFase();
-        List<AjusteRele> ajustesPossiveis = new ArrayList<>();
         List<ACDisponivel> acDisponiveis = new ArrayList<>();
-        ajustesPossiveis.addAll(calculaAjustesPossiveis(ni, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo, acDisponiveis));
+        List<AjusteRele> ajustesPossiveis = new ArrayList<>(calculaAjustesPossiveis(ni, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo, acDisponiveis));
         this.religador.setAcsNIFase(new ArrayList<>(acDisponiveis));
         acDisponiveis.clear();
         ajustesPossiveis.addAll(calculaAjustesPossiveis(mi, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo, acDisponiveis));
@@ -87,9 +145,8 @@ public class CriteriosReleReligador {
         CurvaRele ni = this.religador.getnINeutro();
         CurvaRele mi = this.religador.getmINeutro();
         CurvaRele ei = this.religador.geteINeutro();
-        List<AjusteRele> ajustesPossiveis = new ArrayList<>();
         List<ACDisponivel> acDisponiveis = new ArrayList<>();
-        ajustesPossiveis.addAll(calculaAjustesPossiveis(ni, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo, acDisponiveis));
+        List<AjusteRele> ajustesPossiveis = new ArrayList<>(calculaAjustesPossiveis(ni, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo, acDisponiveis));
         this.religador.setAcsNINeutro(new ArrayList<>(acDisponiveis));
         acDisponiveis.clear();
         ajustesPossiveis.addAll(calculaAjustesPossiveis(mi, dados.get(0), dados.get(2), dados.get(1), dados.get(3), limiteMaximo, limiteMinimo, acDisponiveis));
@@ -117,8 +174,7 @@ public class CriteriosReleReligador {
     private List<AjusteRele> calculaAjustesPossiveis(CurvaRele curva, BigDecimal corrente1, BigDecimal corrente2, BigDecimal tempo1, BigDecimal tempo2, BigDecimal limiteMaximo, BigDecimal limiteMinimo, List<ACDisponivel> acDisponiveis) {
         List<AjusteRele> ajustesPossiveis = new ArrayList<>();
         List<BigDecimal> ac = restringeAC(curva, limiteMaximo, limiteMinimo);
-        for (int i = 0; i < ac.size(); i++) {
-            BigDecimal d = ac.get(i);
+        for (BigDecimal d : ac) {
             BigDecimal at = this.calculaAT(curva, d, corrente1, corrente2, tempo1, tempo2);
             try {
                 at = this.verificaAT(curva, at);
@@ -253,15 +309,13 @@ public class CriteriosReleReligador {
     private BigDecimal calcularFM(CurvaRele curva, BigDecimal ac, BigDecimal at, BigDecimal corrente1, BigDecimal corrente2, BigDecimal tempo1, BigDecimal tempo2) {
         LOGGER.traceEntry();
         BigDecimal t0 = calculaTempo(curva, ac, at, corrente1);
-        BigDecimal t1 = tempo1;
         BigDecimal t2 = calculaTempo(curva, ac, at, corrente2);
-        BigDecimal t3 = tempo2;
         LOGGER.trace("t0 (tempo da curva 1) - " + t0);
-        LOGGER.trace("t1 - (tolerância máxima aceitável)" + t1);
+        LOGGER.trace("t1 - (tolerância máxima aceitável)" + tempo1);
         LOGGER.trace("t2 (tempo da curva 2)- " + t2);
-        LOGGER.trace("t3 - (tolerância máxima aceitável)" + t3);
-        BigDecimal diff1 = t1.subtract(t0);
-        BigDecimal diff2 = t3.subtract(t2);
+        LOGGER.trace("t3 - (tolerância máxima aceitável)" + tempo2);
+        BigDecimal diff1 = tempo1.subtract(t0);
+        BigDecimal diff2 = tempo2.subtract(t2);
         diff1 = diff1.pow(2);
         diff2 = diff2.pow(2);
         BigDecimal fm = diff1.add(diff2);
@@ -294,24 +348,12 @@ public class CriteriosReleReligador {
     }
 
     private void preencherAcsDisponiveis() {
-        this.religador.getAcsNIFase().forEach(ac -> {
-            ac.addAtRapida(CurvaRele.NI.gerarAT());
-        });
-        this.religador.getAcsNINeutro().forEach(ac -> {
-            ac.addAtRapida(CurvaRele.NI.gerarAT());
-        });
-        this.religador.getAcsMIFase().forEach(ac -> {
-            ac.addAtRapida(CurvaRele.MI.gerarAT());
-        });
-        this.religador.getAcsMINeutro().forEach(ac -> {
-            ac.addAtRapida(CurvaRele.MI.gerarAT());
-        });
-        this.religador.getAcsEIFase().forEach(ac -> {
-            ac.addAtRapida(CurvaRele.EI.gerarAT());
-        });
-        this.religador.getAcsEINeutro().forEach(ac -> {
-            ac.addAtRapida(CurvaRele.EI.gerarAT());
-        });
+        this.religador.getAcsNIFase().forEach(ac -> ac.addAtRapida(CurvaRele.NI.gerarAT()));
+        this.religador.getAcsNINeutro().forEach(ac -> ac.addAtRapida(CurvaRele.NI.gerarAT()));
+        this.religador.getAcsMIFase().forEach(ac -> ac.addAtRapida(CurvaRele.MI.gerarAT()));
+        this.religador.getAcsMINeutro().forEach(ac -> ac.addAtRapida(CurvaRele.MI.gerarAT()));
+        this.religador.getAcsEIFase().forEach(ac -> ac.addAtRapida(CurvaRele.EI.gerarAT()));
+        this.religador.getAcsEINeutro().forEach(ac -> ac.addAtRapida(CurvaRele.EI.gerarAT()));
     }
 
     private void ajustarCurvaRapida(boolean fase) throws ValorATImposivelException {
