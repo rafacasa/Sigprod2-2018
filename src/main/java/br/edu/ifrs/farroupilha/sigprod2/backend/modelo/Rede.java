@@ -226,6 +226,26 @@ public class Rede {
         return retorno;
     }
 
+    public int qtdEquipamentosAbaixoMaiorCaminho(Ponto p) {
+        List<Ponto> camadaAtual;
+        boolean parar = false;
+        int camada;
+        for (camada = 0; camada < this.camadasRedeReduzida.size(); camada++) {
+            camadaAtual = this.camadasRedeReduzida.get(camada);
+            for (int indice = 0; indice < camadaAtual.size(); indice++) {
+                Ponto ponto = camadaAtual.get(indice);
+                if (ponto.equals(p)) {
+                    parar = true;
+                    break;
+                }
+            }
+            if (parar) {
+                break;
+            }
+        }
+        return this.camadasRedeReduzida.size() - (camada + 2);
+    }
+
     public Ponto getPonto(String id) {
         for (Ponto p : this.pontosRede) {
             if (p.getNome().equals(id)) {
@@ -439,11 +459,19 @@ public class Rede {
         return proximos;
     }
 
-    public List<Double> buscaCorrenteProximoPonto(Ponto p, Corrente c) {
+    public List<Double> buscaCorrenteProximoPonto(Ponto p, Corrente c){
+        return buscaCorrenteProximoPonto(p, c, false);
+    }
+
+    public List<Double> buscaCorrenteProximoPonto(Ponto p, Corrente c, boolean interno) {
         List<Double> correntes = new ArrayList<>();
         if (p.isFimdeTrecho()) {
-            correntes.add(this.buscaCorrentePonto(p, c));
-            return correntes;
+            if(interno) {
+                return new ArrayList<>();
+            } else {
+                correntes.add(this.buscaCorrentePonto(p, c));
+                return correntes;
+            }
         }
         List<Ponto> proximos = this.buscaProximoPonto(p);
 
@@ -454,11 +482,11 @@ public class Rede {
     }
 
     public List<Double> buscaCorrenteProximoPonto(String s, Corrente c) {
-        return buscaCorrenteProximoPonto(this.getPonto(s), c);
+        return buscaCorrenteProximoPonto(this.getPonto(s), c, false);
     }
 
     public double buscaCorrenteMinimaProximoPonto(Ponto p, Corrente c) {
-        List<Double> correntes = this.buscaCorrenteProximoPonto(p, c);
+        List<Double> correntes = this.buscaCorrenteProximoPonto(p, c, false);
         return Collections.min(correntes);
     }
 
@@ -474,7 +502,7 @@ public class Rede {
         }
         List<Ponto> proximos = this.buscaProximoPonto(p);
         for (Ponto proximo : proximos) {
-            List<Double> correntesProximo = this.buscaCorrenteProximoPonto(proximo, c);
+            List<Double> correntesProximo = this.buscaCorrenteProximoPonto(proximo, c, true);
             correntes.addAll(correntesProximo);
         }
         return correntes;

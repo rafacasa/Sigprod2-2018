@@ -1,5 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.criterios;
 
+import br.edu.ifrs.farroupilha.sigprod2.backend.dadospreajuste.DadosPreAjusteReleReligador;
 import br.edu.ifrs.farroupilha.sigprod2.backend.dadospreajuste.DadosPreAjusteReligadorElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.AjusteImpossivelException;
@@ -169,6 +170,10 @@ public class CriteriosReleReligador {
         BigDecimal tempoReligador1 = tempoRele1.subtract(cti);
         BigDecimal tempoReligador2 = tempoRele2.subtract(cti);
         return Arrays.asList(i1, tempoReligador1, i2, tempoReligador2);
+    }
+
+    public DadosPreAjusteReleReligador calculaPreAjuste(boolean fase) {
+        return new DadosPreAjusteReleReligador(this.CTIFase, this.getCTINeutro(), this.getI1Seletividade(true), this.getI2Seletividade(true),this.getI1Seletividade(false), this.getI2Seletividade(false));
     }
 
     private List<AjusteRele> calculaAjustesPossiveis(CurvaRele curva, BigDecimal corrente1, BigDecimal corrente2, BigDecimal tempo1, BigDecimal tempo2, BigDecimal limiteMaximo, BigDecimal limiteMinimo, List<ACDisponivel> acDisponiveis) {

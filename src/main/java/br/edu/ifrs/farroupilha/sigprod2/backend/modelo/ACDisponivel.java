@@ -44,6 +44,22 @@ public class ACDisponivel {
     public ACDisponivel() {
     }
 
+    public List<AjusteRele> getAjustesLenta(CurvaRele c) {
+        List<AjusteRele> retorno = new ArrayList<>();
+        for (BigDecimal at : this.listaAt) {
+            retorno.add(new AjusteRele(BigDecimal.ZERO, at, this.ac, c));
+        }
+        return retorno;
+    }
+
+    public int qtdAcertos() {
+        return this.listaAt.size();
+    }
+
+    public void removeAt(BigDecimal at) {
+        this.listaAt.remove(at);
+    }
+
     public BigDecimal getAc() {
         return ac;
     }

@@ -1,5 +1,6 @@
 package br.edu.ifrs.farroupilha.sigprod2.backend.criterios;
 
+import br.edu.ifrs.farroupilha.sigprod2.backend.dadospreajuste.DadosPreAjusteReleReligador;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.exceptions.ValorATImposivelException;
 import ch.obermuhlner.math.big.BigDecimalMath;
@@ -51,8 +52,253 @@ public class Criterios_Rele {
         List<AjusteRele> ajustesFase = ajustaFase();
         List<AjusteRele> ajustesNeutro = ajustaNeutro();
 
-        this.rele.setAjusteFase(ajustesFase.get(0));
-        this.rele.setAjusteNeutro(ajustesNeutro.get(0));
+        //this.rele.setAjusteFase(ajustesFase.get(0));
+        //this.rele.setAjusteNeutro(ajustesNeutro.get(0));
+
+        this.rele.setAjusteFase(verificarPreAjusteFase(ajustesFase));
+        this.rele.setAjusteNeutro(verificarPreAjusteNeutro(ajustesNeutro));
+
+        this.preAjustesAcsDisponiveis();
+    }
+
+    private void preAjustesAcsDisponiveis() {
+        List<BigDecimal> temp;
+        List<ACDisponivel> tempAc = new ArrayList<>();
+
+        for(ACDisponivel ac : this.rele.getAcsNIFase()) {
+            temp = this.verificaPreAjustes(ac.getAjustesLenta(CurvaRele.NI), true);
+            for (BigDecimal at : temp) {
+                ac.removeAt(at);
+            }
+            if (ac.qtdAcertos() == 0) {
+                tempAc.add(ac);
+            }
+        }
+
+        for (ACDisponivel ac : tempAc) {
+            this.rele.getAcsNIFase().remove(ac);
+        }
+        tempAc.clear();
+
+        for(ACDisponivel ac : this.rele.getAcsMIFase()) {
+            temp = this.verificaPreAjustes(ac.getAjustesLenta(CurvaRele.MI), true);
+            for (BigDecimal at : temp) {
+                ac.removeAt(at);
+            }
+            if (ac.qtdAcertos() == 0) {
+                tempAc.add(ac);
+            }
+        }
+
+        for (ACDisponivel ac : tempAc) {
+            this.rele.getAcsMIFase().remove(ac);
+        }
+        tempAc.clear();
+
+        for(ACDisponivel ac : this.rele.getAcsEIFase()) {
+            temp = this.verificaPreAjustes(ac.getAjustesLenta(CurvaRele.EI), true);
+            for (BigDecimal at : temp) {
+                ac.removeAt(at);
+            }
+            if (ac.qtdAcertos() == 0) {
+                tempAc.add(ac);
+            }
+        }
+
+        for (ACDisponivel ac : tempAc) {
+            this.rele.getAcsEIFase().remove(ac);
+        }
+        tempAc.clear();
+
+        for(ACDisponivel ac : this.rele.getAcsNINeutro()) {
+            temp = this.verificaPreAjustes(ac.getAjustesLenta(CurvaRele.NI), false);
+            for (BigDecimal at : temp) {
+                ac.removeAt(at);
+            }
+            if (ac.qtdAcertos() == 0) {
+                tempAc.add(ac);
+            }
+        }
+
+        for (ACDisponivel ac : tempAc) {
+            this.rele.getAcsNINeutro().remove(ac);
+        }
+        tempAc.clear();
+
+        for(ACDisponivel ac : this.rele.getAcsMINeutro()) {
+            temp = this.verificaPreAjustes(ac.getAjustesLenta(CurvaRele.MI), false);
+            for (BigDecimal at : temp) {
+                ac.removeAt(at);
+            }
+            if (ac.qtdAcertos() == 0) {
+                tempAc.add(ac);
+            }
+        }
+
+        for (ACDisponivel ac : tempAc) {
+            this.rele.getAcsMINeutro().remove(ac);
+        }
+        tempAc.clear();
+
+        for(ACDisponivel ac : this.rele.getAcsEINeutro()) {
+            temp = this.verificaPreAjustes(ac.getAjustesLenta(CurvaRele.EI), false);
+            for (BigDecimal at : temp) {
+                ac.removeAt(at);
+            }
+            if (ac.qtdAcertos() == 0) {
+                tempAc.add(ac);
+            }
+        }
+
+        for (ACDisponivel ac : tempAc) {
+            this.rele.getAcsEINeutro().remove(ac);
+        }
+    }
+
+    private List<BigDecimal> verificaPreAjustes(List<AjusteRele> ajustes, boolean fase) {
+        Object oElo = this.ponto.getNode().getAttribute("preajusteELO");
+        Object oRelig = this.ponto.getNode().getAttribute("preajusteRELIG");
+        if (oElo != null && oRelig != null) {
+
+        } else if (oElo != null) {
+            return verificaPreAjustesElo(ajustes, oElo);
+        } else if (oRelig != null) {
+            return verificaPreAjustesReligador(ajustes, oRelig, fase);
+        }
+        return new ArrayList<>();
+    }
+
+    private List<BigDecimal> verificaPreAjustesElo(List<AjusteRele> ajustes, Object o) {
+        return null;
+    }
+
+    private List<BigDecimal> verificaPreAjustesReligador(List<AjusteRele> ajustes, Object o, boolean fase) {
+        List<DadosPreAjusteReleReligador> listaDados = (List<DadosPreAjusteReleReligador>) o;
+        List<BigDecimal> retorno = new ArrayList<>();
+        boolean ok = true;
+        BigDecimal tempo1;
+        BigDecimal tempo2;
+        BigDecimal i1;
+        BigDecimal i2;
+        BigDecimal cti;
+        int equipAbaixo = this.rede.qtdEquipamentosAbaixoMaiorCaminho(this.ponto);
+        for (AjusteRele ajuste : ajustes) {
+            for (DadosPreAjusteReleReligador dados : listaDados) {
+                i1 = fase ? dados.getI1Fase() : dados.getI1Neutro();
+                i2 = fase ? dados.getI2Fase() : dados.getI2Neutro();
+                cti = fase ? dados.getCtiFase() : dados.getCtiNeutro();
+                cti.multiply(new BigDecimal(equipAbaixo));
+                tempo1 = ajuste.calculaTempo(i1);
+                tempo2 = ajuste.calculaTempo(i2);
+                LOGGER.debug("PRE AJUSTES ACS DISPONIVEIS RELE-RELIGADOR");
+                LOGGER.debug("I1: " + i1);
+                LOGGER.debug("tempo1: " + tempo1);
+                LOGGER.debug("I2: " + i2);
+                LOGGER.debug("tempo2: " + tempo2);
+                ok = ok && (tempo1.compareTo(cti) > 0) && (tempo2.compareTo(cti) > 0);
+            }
+            if (!ok) {
+                retorno.add(ajuste.getAt());
+                ok = true;
+            }
+        }
+        return retorno;
+    }
+
+    private AjusteRele verificarPreAjusteFase(List<AjusteRele> ajustesFase) {
+        Object oElo = this.ponto.getNode().getAttribute("preajusteELO");
+        Object oRelig = this.ponto.getNode().getAttribute("preajusteRELIG");
+
+        if (oElo != null && oRelig != null) {
+
+        } else if (oElo != null) {
+            return this.verificaPreAjusteFaseElo(ajustesFase, oElo);
+        } else if (oRelig != null) {
+            return this.verificaPreAjusteFaseReligador(ajustesFase, oRelig);
+        }
+        return ajustesFase.get(0);
+    }
+
+    private AjusteRele verificaPreAjusteFaseElo(List<AjusteRele> ajustesFase, Object o) {
+        throw new UnsupportedOperationException();
+    }
+
+    private AjusteRele verificaPreAjusteFaseReligador(List<AjusteRele> ajustesFase, Object o) {
+        List<DadosPreAjusteReleReligador> listaDados = (List<DadosPreAjusteReleReligador>) o;
+        boolean ok = true;
+        BigDecimal tempo1;
+        BigDecimal tempo2;
+        int equipAbaixo = this.rede.qtdEquipamentosAbaixoMaiorCaminho(this.ponto);
+        BigDecimal cti;
+        LOGGER.info("EQUIPAMENTOS ABAIXO ELO = " + equipAbaixo);
+        for (AjusteRele ajuste : ajustesFase) {
+            for (DadosPreAjusteReleReligador dados : listaDados) {
+                tempo1 = ajuste.calculaTempo(dados.getI1Fase());
+                tempo2 = ajuste.calculaTempo(dados.getI2Fase());
+                cti = dados.getCtiFase().multiply(new BigDecimal(equipAbaixo));
+                LOGGER.info("PRE AJUSTES FASE RELE-RELIGADOR");
+                LOGGER.info("I1: " + dados.getI1Fase());
+                LOGGER.info("tempo1: " + tempo1);
+                LOGGER.info("I2: " + dados.getI2Fase());
+                LOGGER.info("tempo2: " + tempo2);
+                ok = ok && (tempo1.compareTo(cti) > 0) && (tempo2.compareTo(cti) > 0);
+            }
+            if (ok) {
+                return ajuste;
+            } else {
+                ok = true;
+            }
+        }
+        LOGGER.error("NENHUM AJUSTE DE FASE PARA O RELE PASSA NOS PRE AJUSTES");
+        return ajustesFase.get(0);
+    }
+
+    private AjusteRele verificarPreAjusteNeutro(List<AjusteRele> ajustesNeutro) {
+        Object oElo = this.ponto.getNode().getAttribute("preajusteELO");
+        Object oRelig = this.ponto.getNode().getAttribute("preajusteRELIG");
+
+        if (oElo != null && oRelig != null) {
+
+        } else if (oElo != null) {
+            return this.verificaPreAjusteNeutroElo(ajustesNeutro, oElo);
+        } else if (oRelig != null) {
+            return this.verificaPreAjusteNeutroReligador(ajustesNeutro, oRelig);
+        }
+        return ajustesNeutro.get(0);
+    }
+
+    private AjusteRele verificaPreAjusteNeutroElo(List<AjusteRele> ajustesNeutro, Object o) {
+        throw new UnsupportedOperationException();
+    }
+
+    private AjusteRele verificaPreAjusteNeutroReligador(List<AjusteRele> ajustesNeutro, Object o) {
+        List<DadosPreAjusteReleReligador> listaDados = (List<DadosPreAjusteReleReligador>) o;
+        boolean ok = true;
+        BigDecimal tempo1;
+        BigDecimal tempo2;
+        int equipAbaixo = this.rede.qtdEquipamentosAbaixoMaiorCaminho(this.ponto);
+        BigDecimal cti;
+        LOGGER.info("EQUIPAMENTOS ABAIXO ELO = " + equipAbaixo);
+        for (AjusteRele ajuste : ajustesNeutro) {
+            for (DadosPreAjusteReleReligador dados : listaDados) {
+                tempo1 = ajuste.calculaTempo(dados.getI1Neutro());
+                tempo2 = ajuste.calculaTempo(dados.getI2Neutro());
+                cti = dados.getCtiNeutro().multiply(new BigDecimal(equipAbaixo));
+                LOGGER.info("PRE AJUSTES NEUTRO RELE-RELIGADOR");
+                LOGGER.info("I1: " + dados.getI1Neutro());
+                LOGGER.info("tempo1: " + tempo1);
+                LOGGER.info("I2: " + dados.getI2Neutro());
+                LOGGER.info("tempo2: " + tempo2);
+                ok = ok && (tempo1.compareTo(cti) > 0) && (tempo2.compareTo(cti) > 0);
+            }
+            if (ok) {
+                return ajuste;
+            } else {
+                ok = true;
+            }
+        }
+        LOGGER.error("NENHUM AJUSTE DE NEUTRO PARA O RELE PASSA NOS PRE AJUSTES");
+        return ajustesNeutro.get(0);
     }
 
     private List<AjusteRele> ajustaFase() {
@@ -140,11 +386,11 @@ public class Criterios_Rele {
         LOGGER.trace("PRIMEIRO AC DA LISTA - " + primeiroAc);
         LOGGER.trace("ULTIMO AC DA LISTA - " + ultimoAc);
 
-        if (primeiroAc.compareTo(limiteMinimo) <= 0) {
+        if (primeiroAc.compareTo(limiteMinimo) < 0) {
             ac = restringeMinAC(ac, limiteMinimo);
         }
 
-        if (limiteMaximo.compareTo(ultimoAc) <= 0) {
+        if (limiteMaximo.compareTo(ultimoAc) < 0) {
             ac = restringeMaxAC(ac, limiteMaximo);
         }
 
@@ -174,7 +420,7 @@ public class Criterios_Rele {
         int indice = ac.size() - 1;
         BigDecimal atualAc = ac.get(indice);
 
-        while (limiteMaximo.compareTo(atualAc) <= 0) {
+        while (limiteMaximo.compareTo(atualAc) < 0) {
             LOGGER.trace("REPETIÇÃO DO LAÇO WHILE");
             indice--;
             atualAc = ac.get(indice);

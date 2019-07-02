@@ -2,6 +2,7 @@ package br.edu.ifrs.farroupilha.sigprod2.backend;
 
 import br.edu.ifrs.farroupilha.sigprod2.backend.criterios.*;
 import br.edu.ifrs.farroupilha.sigprod2.backend.dadospreajuste.DadosPreAjusteReleElo;
+import br.edu.ifrs.farroupilha.sigprod2.backend.dadospreajuste.DadosPreAjusteReleReligador;
 import br.edu.ifrs.farroupilha.sigprod2.backend.dadospreajuste.DadosPreAjusteReligadorElo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.metricas.Metricas_Elo_Elo;
 import br.edu.ifrs.farroupilha.sigprod2.backend.modelo.*;
@@ -11,6 +12,8 @@ import br.edu.ifrs.farroupilha.sigprod2.frontend.panels.defaultajuste.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Ajustes {
@@ -37,6 +40,7 @@ public class Ajustes {
     }
 
     private boolean realizarPreAjuste(Ponto p) throws AjusteImpossivelException {
+        Object o;
         TipoEquipamento tipoFilho = p.getTipoEquipamentoInstalado();
         Ponto pai = rede.getParentRedeReduzida(p);
         TipoEquipamento tipoPai = pai.getTipoEquipamentoInstalado();
@@ -47,27 +51,39 @@ public class Ajustes {
         switch (tipoPai) {
             case ELO:
                 if (tipoFilho == TipoEquipamento.ELO) {
-                    throw new UnsupportedOperationException();
+                    //throw new UnsupportedOperationException();
                 } else {
-                    throw new UnsupportedOperationException();
+                    //throw new UnsupportedOperationException();
                 }
+                return false;
             case RELE:
                 switch (tipoFilho) {
                     case ELO:
                         Criterios_Rele_Elo criterios = new Criterios_Rele_Elo(null, p, this.rede);
                         List<Elo> elosDisponiveis = criterios.getElosPossiveis();
-                        Object o = pai.getNode().getAttribute("preajuste");
+                        o = pai.getNode().getAttribute("preajusteELO");
                         DadosPreAjusteReleElo dados;
                         if (o == null) {
                             dados = new DadosPreAjusteReleElo(elosDisponiveis.get(elosDisponiveis.size() - 1), p, this.rede);
-                            pai.getNode().setAttribute("preajuste", dados);
+                            pai.getNode().setAttribute("preajusteELO", dados);
                         } else {
                             dados = (DadosPreAjusteReleElo) o;
                             dados.addPreAjuste(elosDisponiveis.get(elosDisponiveis.size() - 1), p, this.rede);
                         }
                         break;
                     case RELIGADOR:
-
+                        CriteriosReleReligador criterio = new CriteriosReleReligador(null, p, this.rede, null);
+                        DadosPreAjusteReleReligador correntes = criterio.calculaPreAjuste(true);
+                        o = pai.getNode().getAttribute("preajusteRELIG");
+                        List<DadosPreAjusteReleReligador> listaDados;
+                        if (o == null) {
+                            listaDados = new ArrayList<>();
+                            listaDados.add(correntes);
+                            pai.getNode().setAttribute("preajusteRELIG",listaDados);
+                        } else {
+                            listaDados = (List<DadosPreAjusteReleReligador>) o;
+                            listaDados.add(correntes);
+                        }
                         break;
                     default:
                         throw new UnsupportedOperationException();
@@ -77,7 +93,7 @@ public class Ajustes {
                 if (tipoFilho == TipoEquipamento.ELO) {
                     CriteriosReligadorElo criterios = new CriteriosReligadorElo(null, p, this.rede);
                     List<Elo> elosDisponiveis = criterios.getElosPossiveis();
-                    Object o = pai.getNode().getAttribute("preajuste");
+                    o = pai.getNode().getAttribute("preajuste");
                     DadosPreAjusteReligadorElo dados;
                     if (o == null) {
                         dados = new DadosPreAjusteReligadorElo(elosDisponiveis.get(0), p, this.rede, criterios.getFatorK(), elosDisponiveis.get(elosDisponiveis.size() - 1));
@@ -98,11 +114,12 @@ public class Ajustes {
 
     public boolean irPara(Ponto ponto, boolean inicioRede) throws AjusteImpossivelException {
         Equipamento equipamento = null;
-        try {
+        //try {
             equipamento = this.calculaAjuste(ponto, inicioRede);
-        } catch (RuntimeException e) {
-            LOGGER.debug("Nao eh necessario passar pelo metodo calculaAjuste()");
-        }
+        //} catch (RuntimeException e) {
+            //LOGGER.debug("Nao eh necessario passar pelo metodo calculaAjuste()");
+            //LOGGER.error(e.getMessage());
+        //}
         this.getAjustePanel(ponto, equipamento, inicioRede);
         return true;
     }
@@ -153,7 +170,8 @@ public class Ajustes {
             criterios.ajuste();
             return religador;
         }
-        throw new RuntimeException("calculaAjusteMeioRede() nao era Rele-Religador");
+        //throw new RuntimeException("calculaAjusteMeioRede() nao era Rele-Religador");
+        return null;
     }
 
     private void getAjustePanel(Ponto p, Equipamento e, boolean inicioRede) throws AjusteImpossivelException {
@@ -195,6 +213,8 @@ public class Ajustes {
                     metricas = criteriosEloElo.ajuste();
                     ponto.resetAtributos(true);
                     Main.setPanelAjuste(new PanelAjusteEloElo(metricas, (Elo) pOrigem.getEquipamentoInstalado()));
+                } else if (tipoEquipamento == TipoEquipamento.NENHUM) {
+                    LOGGER.error("fim de trecho selecionado");
                 } else {
                     LOGGER.error("DEFAULT CLAUSE - getAjustePanelMeioRede - tipoOrigem = ELO");
                     throw new UnsupportedOperationException();
@@ -209,6 +229,9 @@ public class Ajustes {
                         Main.selecionaEquipamento(ponto, e);
                         Main.setPanelAjuste(new PanelAjusteReleReligadorTemp(ponto, pOrigem));
                         break;
+                    case NENHUM:
+                        LOGGER.error("fim de trecho selecionado");
+                        break;
                     default:
                         LOGGER.error("DEFAULT CLAUSE - getAjustePanelMeioRede - tipoOrigem = RELE");
                         throw new UnsupportedOperationException();
@@ -217,6 +240,8 @@ public class Ajustes {
             case RELIGADOR:
                 if (tipoEquipamento == TipoEquipamento.ELO) {
                     Main.setPanelAjuste(new PanelAjusteReligadorElo(ponto, rede, pOrigem));
+                } else if (tipoEquipamento == TipoEquipamento.NENHUM) {
+                    LOGGER.error("fim de trecho selecionado");
                 } else {
                     LOGGER.error("DEFAULT CLAUSE - getAjustePanelMeioRede - tipoOrigem = RELIGADOR");
                     throw new UnsupportedOperationException();

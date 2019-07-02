@@ -49,7 +49,7 @@ public class Main {
     }
 
     private static Arquivo getArquivoRedeInicial() {
-        return new Arquivo("redeExemploGED.ABCEEEE");
+        return new Arquivo("ieee34.ABCEEE");
     }
 
     private static void setupMainFrame(MainFrame frame) throws BancoDeDadosException, AjusteImpossivelException {
